@@ -15,6 +15,8 @@ import StudentLayout from './components/layout/StudentLayout';
 import SmartMatchSection from './components/scholarships/SmartMatchSection';
 import ApplicationStatusList from './components/scholarships/ApplicationStatusList';
 import AllScholarshipsView from './components/scholarships/AllScholarshipsView';
+import PaldoModal from './components/scholarships/PaldoModal';
+import { useScholarships } from './context/ScholarshipContext';
 
 // Admin Layout & Components
 import AdminLayout from './components/layout/AdminLayout';
@@ -126,9 +128,31 @@ const InnerApp = () => {
 // ======================================================
 const StudentDashboard = ({ addToast }) => {
   const [view, setView] = useState('dashboard');
+  const { applications, simulateApproval, clearJustApproved } = useScholarships();
+
+  // Find if any application was just approved
+  const approvedApp = applications.find(a => a.justApproved);
+
+  // Hotkey to simulate an approval for testing/demo (Shift + 3)
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.shiftKey && (e.key === '3' || e.key === '#')) {
+        simulateApproval();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [simulateApproval]);
 
   return (
     <StudentLayout>
+      {approvedApp && (
+        <PaldoModal 
+          application={approvedApp} 
+          onClose={() => clearJustApproved(approvedApp.id)} 
+        />
+      )}
+      
       {view === 'dashboard' ? (
         <>
           <WelcomeBanner />
