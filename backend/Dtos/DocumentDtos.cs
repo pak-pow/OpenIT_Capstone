@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using Kaagapay.Api.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Kaagapay.Api.Dtos;
 
@@ -28,4 +29,14 @@ public class DocumentCreateDto
 public class DocumentStatusUpdateDto
 {
     public DocumentStatus Status { get; set; }
+}
+
+public class DocumentUploadRequest
+{
+    [Required]
+    public int ApplicationId { get; set; }
+    [Required]
+    public DocumentType Type { get; set; }
+    [Required]
+    public IFormFile File { get; set; } = default!;
 }
