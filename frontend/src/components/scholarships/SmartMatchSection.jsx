@@ -8,7 +8,7 @@ const getMatchClass = (pct) => {
   return 'match-badge-low';              // gray
 };
 
-const SmartMatchSection = ({ onApply }) => {
+const SmartMatchSection = ({ onApply, onSeeAll }) => {
   const { scholarships, hasApplied, applyToScholarship } = useScholarships();
   const [selectedScholarship, setSelectedScholarship] = useState(null);
 
@@ -23,7 +23,7 @@ const SmartMatchSection = ({ onApply }) => {
       <section className="smart-match-section">
         <div className="section-header-row">
           <h3 className="section-title">Recommended for You</h3>
-          <button className="see-all-link">See All ({scholarships.length})</button>
+          <button className="see-all-link" onClick={onSeeAll}>See All ({scholarships.length})</button>
         </div>
 
         <div className="cards-scroll-wrapper">

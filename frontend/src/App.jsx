@@ -14,6 +14,7 @@ import AdminLoginPage from './pages/Login/AdminLoginPage';
 import StudentLayout from './components/layout/StudentLayout';
 import SmartMatchSection from './components/scholarships/SmartMatchSection';
 import ApplicationStatusList from './components/scholarships/ApplicationStatusList';
+import AllScholarshipsView from './components/scholarships/AllScholarshipsView';
 
 // Admin Layout & Components
 import AdminLayout from './components/layout/AdminLayout';
@@ -120,21 +121,38 @@ const InnerApp = () => {
 // ======================================================
 // Student Dashboard
 // ======================================================
-const StudentDashboard = ({ addToast }) => (
-  <StudentLayout>
-    <WelcomeBanner />
-    <SmartMatchSection
-      onApply={(scholarship, success) => {
-        if (success) {
-          addToast(`Successfully applied to "${scholarship.title}"!`, 'success');
-        } else {
-          addToast(`You already applied to "${scholarship.title}".`, 'error');
-        }
-      }}
-    />
-    <ApplicationStatusList />
-  </StudentLayout>
-);
+// ======================================================
+// Student Dashboard
+// ======================================================
+const StudentDashboard = ({ addToast }) => {
+  const [view, setView] = useState('dashboard');
+
+  return (
+    <StudentLayout>
+      {view === 'dashboard' ? (
+        <>
+          <WelcomeBanner />
+          <SmartMatchSection
+            onSeeAll={() => setView('all')}
+            onApply={(scholarship, success) => {
+              if (success) {
+                addToast(`Successfully applied to "${scholarship.title}"!`, 'success');
+              } else {
+                addToast(`You already applied to "${scholarship.title}".`, 'error');
+              }
+            }}
+          />
+          <ApplicationStatusList />
+        </>
+      ) : (
+        <AllScholarshipsView 
+          onBack={() => setView('dashboard')} 
+          addToast={addToast} 
+        />
+      )}
+    </StudentLayout>
+  );
+};
 
 // ======================================================
 // Welcome Banner
