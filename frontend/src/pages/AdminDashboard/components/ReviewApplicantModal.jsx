@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, Check, XCircle, FileText } from 'lucide-react';
-import { useAdminContext } from '../../context/AdminContext';
+import { useAdminContext } from '../../../context/AdminContext';
 
 const ReviewApplicantModal = ({ applicant, onClose, addToast }) => {
   const { approveApplicant, rejectApplicant } = useAdminContext();

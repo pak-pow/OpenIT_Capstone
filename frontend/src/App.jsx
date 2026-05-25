@@ -21,12 +21,7 @@ import NotPaldoModal from './components/scholarships/NotPaldoModal';
 import { useScholarships } from './context/ScholarshipContext';
 
 // Admin Layout & Components
-import AdminLayout from './components/layout/AdminLayout';
-import SectionHeader from './components/common/SectionHeader';
-import MetricCards from './components/common/MetricCards';
-import DataTable from './components/common/DataTable';
-import CreateProgramModal from './components/common/CreateProgramModal';
-import { AdminProvider } from './context/AdminContext';
+import AdminDashboardIndex from './pages/AdminDashboard/index';
 
 // Shared Components
 import ToastContainer from './components/common/Toast';
@@ -76,66 +71,14 @@ const InnerApp = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // ── Admin Modals State ──────────────────────────────────────────
-  const [showCreateProgram, setShowCreateProgram] = useState(false);
-  const [adminActiveTab, setAdminActiveTab] = useState('Dashboard');
-
   // ── If user is logged in → show their dashboard ──────────────────
   if (currentUser) {
     if (currentUser.role === 'admin') {
       return (
-        <AdminProvider>
-          <AdminLayout activeTab={adminActiveTab} setActiveTab={setAdminActiveTab}>
-            
-            {adminActiveTab === 'Dashboard' && (
-              <>
-                <SectionHeader
-                  title="Overview"
-                  buttonText="Create New Program"
-                  onButtonClick={() => setShowCreateProgram(true)}
-                />
-                <MetricCards />
-                <SectionHeader title="Recent Applicants" />
-                <DataTable addToast={addToast} />
-              </>
-            )}
-
-            {adminActiveTab === 'Scholarships' && (
-              <>
-                <SectionHeader
-                  title="Manage Scholarships"
-                  buttonText="Create New Program"
-                  onButtonClick={() => setShowCreateProgram(true)}
-                />
-                <div className="card">
-                   <p style={{ color: 'var(--text-medium)', padding: '1rem 0' }}>Scholarship management table goes here.</p>
-                </div>
-              </>
-            )}
-
-            {adminActiveTab === 'Applicants' && (
-              <>
-                <SectionHeader title="Applicant Tracking" />
-                <DataTable addToast={addToast} />
-              </>
-            )}
-
-            {['Documents', 'Reports'].includes(adminActiveTab) && (
-              <div className="card empty-state">
-                <h3>Coming Soon</h3>
-                <p>The {adminActiveTab} module is currently under development.</p>
-              </div>
-            )}
-            
-            {showCreateProgram && (
-              <CreateProgramModal 
-                onClose={() => setShowCreateProgram(false)} 
-                addToast={addToast} 
-              />
-            )}
-          </AdminLayout>
+        <>
+          <AdminDashboardIndex addToast={addToast} />
           <ToastContainer toasts={toasts} removeToast={removeToast} />
-        </AdminProvider>
+        </>
       );
     }
 

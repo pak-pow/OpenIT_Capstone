@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
-import { useAdminContext } from '../../context/AdminContext';
+import { useAdminContext } from '../../../context/AdminContext';
 import ReviewApplicantModal from './ReviewApplicantModal';
 
 const getBadgeClass = (status) => {
@@ -8,6 +7,7 @@ const getBadgeClass = (status) => {
     case 'Approved':     return 'badge badge-success';
     case 'Pending':      return 'badge badge-warning';
     case 'Under Review': return 'badge badge-info';
+    case 'Rejected':     return 'badge badge-danger';
     default:             return 'badge';
   }
 };

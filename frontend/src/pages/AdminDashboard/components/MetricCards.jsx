@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import { FileText, CheckCircle, Clock } from 'lucide-react';
-import { useAdminContext } from '../../context/AdminContext';
+import { useAdminContext } from '../../../context/AdminContext';
 
 const MetricCards = () => {
   const { adminMetrics } = useAdminContext();
