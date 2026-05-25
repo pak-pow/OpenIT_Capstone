@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAdminContext } from '../../../context/AdminContext';
+import { useAdminContext } from '../../context/AdminContext';
 import ReviewApplicantModal from './ReviewApplicantModal';
 
 const getBadgeClass = (status) => {

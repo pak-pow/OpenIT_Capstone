@@ -3,7 +3,7 @@ import AdminLayout from '../../components/layout/AdminLayout';
 import AdminOverview from './AdminOverview';
 import AdminScholarships from './AdminScholarships';
 import AdminApplicants from './AdminApplicants';
-import CreateProgramModal from './components/CreateProgramModal';
+import CreateProgramModal from '../../components/admin/CreateProgramModal';
 import { AdminProvider } from '../../context/AdminContext';
 
 const AdminDashboardIndex = ({ addToast }) => {

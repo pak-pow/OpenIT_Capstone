@@ -1,6 +1,6 @@
 import React from 'react';
 import SectionHeader from '../../components/common/SectionHeader';
-import DataTable from './components/DataTable';
+import DataTable from '../../components/admin/DataTable';
 
 const AdminApplicants = ({ addToast }) => (
   <>

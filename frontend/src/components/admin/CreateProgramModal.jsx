@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { X, Save } from 'lucide-react';
-import { useAdminContext } from '../../../context/AdminContext';
+import { useAdminContext } from '../../context/AdminContext';
 
 const CreateProgramModal = ({ onClose, addToast }) => {
   const { createScholarship } = useAdminContext();

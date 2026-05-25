@@ -1,7 +1,7 @@
 import React from 'react';
-import MetricCards from './components/MetricCards';
+import MetricCards from '../../components/admin/MetricCards';
 import SectionHeader from '../../components/common/SectionHeader';
-import DataTable from './components/DataTable';
+import DataTable from '../../components/admin/DataTable';
 
 const AdminOverview = ({ setShowCreateProgram, addToast }) => (
   <>
