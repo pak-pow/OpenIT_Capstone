@@ -1,5 +1,7 @@
-import React from 'react';
-import { applicants } from '../../mockdata';
+/* eslint-disable no-unused-vars */
+import React, { useState } from 'react';
+import { useAdminContext } from '../../context/AdminContext';
+import ReviewApplicantModal from './ReviewApplicantModal';
 
 const getBadgeClass = (status) => {
   switch (status) {
@@ -10,9 +12,14 @@ const getBadgeClass = (status) => {
   }
 };
 
-const DataTable = () => (
-  <div className="card table-container">
-    <table className="data-table">
+const DataTable = ({ addToast }) => {
+  const { adminApplicants } = useAdminContext();
+  const [selectedApplicant, setSelectedApplicant] = useState(null);
+
+  return (
+    <>
+      <div className="card table-container">
+        <table className="data-table">
       <thead>
         <tr>
           <th>Applicant Name</th>
@@ -24,19 +31,38 @@ const DataTable = () => (
         </tr>
       </thead>
       <tbody>
-        {applicants.map((a) => (
+        {adminApplicants.map((a) => (
           <tr key={a.id}>
             <td className="table-cell-name">{a.name}</td>
             <td>{a.program}</td>
             <td>{a.gpa}</td>
             <td>{a.appliedDate}</td>
             <td><span className={getBadgeClass(a.status)}>{a.status}</span></td>
-            <td><button className="btn-review">Review</button></td>
+            <td>
+              <button 
+                className="btn-review" 
+                onClick={() => setSelectedApplicant(a)}
+                disabled={a.status === 'Approved' || a.status === 'Rejected'}
+                style={{ opacity: (a.status === 'Approved' || a.status === 'Rejected') ? 0.5 : 1 }}
+              >
+                {a.status === 'Approved' || a.status === 'Rejected' ? 'Reviewed' : 'Review'}
+              </button>
+            </td>
           </tr>
         ))}
       </tbody>
-    </table>
-  </div>
-);
+        </table>
+      </div>
+
+      {selectedApplicant && (
+        <ReviewApplicantModal 
+          applicant={selectedApplicant} 
+          onClose={() => setSelectedApplicant(null)} 
+          addToast={addToast}
+        />
+      )}
+    </>
+  );
+};
 
 export default DataTable;

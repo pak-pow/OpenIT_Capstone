@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useCallback } from 'react';
 import './index.css';
 
@@ -21,9 +22,11 @@ import { useScholarships } from './context/ScholarshipContext';
 
 // Admin Layout & Components
 import AdminLayout from './components/layout/AdminLayout';
-import MetricCards from './components/common/MetricCards';
 import SectionHeader from './components/common/SectionHeader';
+import MetricCards from './components/common/MetricCards';
 import DataTable from './components/common/DataTable';
+import CreateProgramModal from './components/common/CreateProgramModal';
+import { AdminProvider } from './context/AdminContext';
 
 // Shared Components
 import ToastContainer from './components/common/Toast';
@@ -73,23 +76,33 @@ const InnerApp = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // ── Admin Modals State ──────────────────────────────────────────
+  const [showCreateProgram, setShowCreateProgram] = useState(false);
+
   // ── If user is logged in → show their dashboard ──────────────────
   if (currentUser) {
     if (currentUser.role === 'admin') {
       return (
-        <>
+        <AdminProvider>
           <AdminLayout>
             <SectionHeader
               title="Overview"
               buttonText="Create New Program"
-              onButtonClick={() => addToast('Create Program feature coming soon!', 'success')}
+              onButtonClick={() => setShowCreateProgram(true)}
             />
             <MetricCards />
             <SectionHeader title="Applicant Tracking" />
-            <DataTable />
+            <DataTable addToast={addToast} />
+            
+            {showCreateProgram && (
+              <CreateProgramModal 
+                onClose={() => setShowCreateProgram(false)} 
+                addToast={addToast} 
+              />
+            )}
           </AdminLayout>
           <ToastContainer toasts={toasts} removeToast={removeToast} />
-        </>
+        </AdminProvider>
       );
     }
 
@@ -121,12 +134,6 @@ const InnerApp = () => {
   );
 };
 
-// ======================================================
-// Student Dashboard
-// ======================================================
-// ======================================================
-// Student Dashboard
-// ======================================================
 const StudentDashboard = ({ addToast }) => {
   const [view, setView] = useState('dashboard');
   const { applications, simulateApproval, simulateRejection, clearJustApproved, clearJustRejected } = useScholarships();

@@ -1,0 +1,159 @@
+/* eslint-disable no-unused-vars */
+import React, { useState } from 'react';
+import { X, Save } from 'lucide-react';
+import { useAdminContext } from '../../context/AdminContext';
+
+const CreateProgramModal = ({ onClose, addToast }) => {
+  const { createScholarship } = useAdminContext();
+  const [formData, setFormData] = useState({
+    title: '',
+    provider: '',
+    type: 'LGU',
+    amount: '',
+    slots: '',
+    deadline: '',
+    description: '',
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!formData.title || !formData.amount || !formData.deadline) {
+      addToast('Please fill in all required fields.', 'error');
+      return;
+    }
+    
+    // Convert to the required format
+    const newProgram = {
+      ...formData,
+      amount: `₱${formData.amount}`,
+      slots: parseInt(formData.slots, 10) || 0,
+    };
+
+    createScholarship(newProgram);
+    addToast('New program created successfully!', 'success');
+    onClose();
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose} style={{ zIndex: 10000 }}>
+      <div className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '500px' }}>
+        <div className="modal-header">
+          <h2 className="modal-title">Create New Program</h2>
+          <button className="modal-close-btn" onClick={onClose}>
+            <X size={22} />
+          </button>
+        </div>
+        <div className="modal-body">
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div className="form-group">
+              <label className="form-label">Program Title *</label>
+              <input
+                type="text"
+                name="title"
+                className="form-input"
+                value={formData.title}
+                onChange={handleChange}
+                placeholder="e.g. Mayor's Honor Roll"
+                required
+              />
+            </div>
+            
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label className="form-label">Provider</label>
+                <input
+                  type="text"
+                  name="provider"
+                  className="form-input"
+                  value={formData.provider}
+                  onChange={handleChange}
+                  placeholder="e.g. LGU"
+                />
+              </div>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label className="form-label">Type</label>
+                <select name="type" className="form-input" value={formData.type} onChange={handleChange}>
+                  <option value="LGU">LGU</option>
+                  <option value="SK">SK</option>
+                  <option value="CHED">CHED</option>
+                  <option value="Private/NGO">Private/NGO</option>
+                  <option value="Barangay">Barangay</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label className="form-label">Stipend Amount *</label>
+                <div className="form-input-wrapper">
+                  <span className="peso-prefix" style={{ padding: '0 10px', alignSelf: 'center' }}>₱</span>
+                  <input
+                    type="number"
+                    name="amount"
+                    className="form-input"
+                    style={{ border: 'none', paddingLeft: '5px' }}
+                    value={formData.amount}
+                    onChange={handleChange}
+                    placeholder="5000"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label className="form-label">Slots</label>
+                <input
+                  type="number"
+                  name="slots"
+                  className="form-input"
+                  value={formData.slots}
+                  onChange={handleChange}
+                  placeholder="e.g. 50"
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Deadline *</label>
+              <input
+                type="date"
+                name="deadline"
+                className="form-input"
+                value={formData.deadline}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Description</label>
+              <textarea
+                name="description"
+                className="form-input"
+                rows="3"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Brief description of the scholarship..."
+              />
+            </div>
+
+            <div className="form-actions" style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
+              <button type="button" className="btn btn-ghost" onClick={onClose}>
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Save size={18} /> Save Program
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CreateProgramModal;

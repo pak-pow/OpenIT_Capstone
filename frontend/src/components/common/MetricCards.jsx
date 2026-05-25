@@ -1,8 +1,11 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { FileText, CheckCircle, Clock } from 'lucide-react';
-import { metrics } from '../../mockdata';
+import { useAdminContext } from '../../context/AdminContext';
 
-const MetricCards = () => (
+const MetricCards = () => {
+  const { adminMetrics } = useAdminContext();
+  return (
   <div className="metrics-grid">
     <div className="card metric-card">
       <div className="metric-icon metric-icon-blue">
@@ -10,7 +13,7 @@ const MetricCards = () => (
       </div>
       <div className="metric-content">
         <span className="metric-label">Active Scholarships</span>
-        <h3 className="metric-value">{metrics.activeScholarships}</h3>
+        <h3 className="metric-value">{adminMetrics.activeScholarships}</h3>
       </div>
     </div>
     <div className="card metric-card">
@@ -19,7 +22,7 @@ const MetricCards = () => (
       </div>
       <div className="metric-content">
         <span className="metric-label">Pending Applications</span>
-        <h3 className="metric-value">{metrics.pendingApplications}</h3>
+        <h3 className="metric-value">{adminMetrics.pendingApplications}</h3>
       </div>
     </div>
     <div className="card metric-card">
@@ -28,10 +31,11 @@ const MetricCards = () => (
       </div>
       <div className="metric-content">
         <span className="metric-label">Approved Scholars</span>
-        <h3 className="metric-value">{metrics.approvedScholars}</h3>
+        <h3 className="metric-value">{adminMetrics.approvedScholars}</h3>
       </div>
     </div>
-  </div>
-);
+    </div>
+  );
+};
 
 export default MetricCards;
