@@ -16,8 +16,8 @@
 
 /* Student Top Header */
 .student-header {
-  background-color: var(--white);
-  color: var(--text-dark);
+  background-color: var(--navy-blue);
+  color: var(--white);
   padding: 1rem 1.5rem;
   display: flex;
   justify-content: space-between;
@@ -25,21 +25,20 @@
   position: sticky;
   top: 0;
   z-index: var(--z-header);
-  box-shadow: var(--shadow-sm);
-  border-bottom: 4px solid var(--navy-blue);
+  box-shadow: var(--shadow-md);
 }
 
 .student-header .header-brand h2 {
   font-size: var(--font-size-lg);
-  font-weight: 800;
-  color: var(--navy-blue);
+  font-weight: 700;
+  color: var(--golden-yellow);
   margin: 0;
   letter-spacing: -0.02em;
 }
 
 .student-header .header-brand p {
   font-size: var(--font-size-xs);
-  color: var(--text-light);
+  color: rgba(255, 255, 255, 0.5);
   margin: 0;
 }
 
@@ -59,7 +58,7 @@
 .user-greeting {
   font-size: var(--font-size-sm);
   font-weight: 500;
-  color: var(--text-dark);
+  color: rgba(255, 255, 255, 0.85);
   display: none;
 }
 
