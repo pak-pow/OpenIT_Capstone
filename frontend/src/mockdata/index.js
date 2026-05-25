@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { INCOME_RANK } from './constants';
 
 // ============================================================
@@ -25,11 +26,9 @@ export const scholarships = [
     requirements: [
       'Certified true copy of latest grades (minimum GWA 85 / 1.75)',
       'Certificate of Indigency from Barangay',
-      'Income Tax Return (ITR) or Certificate of Non-Filing from BIR',
       'Proof of enrolment / Registration Form',
       'Two (2) 2x2 ID photos',
-      'Valid government-issued ID of parent or guardian',
-      'Barangay Clearance',
+      'Valid ID of parent or guardian',
     ],
     eligibility: {
       minGwa: 1.75,
@@ -120,12 +119,11 @@ export const scholarships = [
       'The CHED Tulong Dunong Program (TDP) is a national scholarship program that provides financial assistance to poor but deserving students in public Higher Education Institutions (HEIs). The program covers tuition fees, miscellaneous expenses, and provides a living allowance to full-time scholars.',
     requirements: [
       'Accomplished CHED Tulong Dunong application form',
-      'Income certificate — PSA-certified or DSWD certificate of indigency',
+      'Certificate of Indigency from Barangay or DSWD',
       'Form 137-A or Senior High School Report Card',
-      'PSA Birth Certificate (original or certified true copy)',
-      'Barangay Certification of Residency',
-      'Two (2) passport-sized photos',
-      'Proof of Enrollment in a State University or College (SUC)',
+      'PSA Birth Certificate',
+      'Barangay Certificate of Residency',
+      'Proof of Enrollment',
     ],
     eligibility: {
       minGwa: 2.00,
@@ -149,11 +147,10 @@ export const scholarships = [
     requirements: [
       'Accomplished SM Foundation application form',
       'Latest certified true copy of grades (GWA 90 / 1.25 or better)',
-      'Income documents: ITR or Sworn Affidavit of Income',
+      'Certificate of Indigency from Barangay or DSWD',
       'PSA Birth Certificate',
       'Certificate of Enrollment / Admission',
       'Essay: "What does education mean to you?" (300–500 words)',
-      'Two (2) character references from non-relatives',
       'Recent 2x2 ID photo with white background',
     ],
     eligibility: {
@@ -187,10 +184,9 @@ export const scholarships = [
     requirements: [
       'DOST-SEI Online application form (submitted via SEI portal)',
       'Senior High School Grade 12 Report Card or equivalent',
-      'Proof of income: Certificate of Tax Exemption / ITR',
+      'Certificate of Indigency from Barangay',
       'PSA Birth Certificate',
-      'Certificate of Good Moral Character from school principal',
-      'Medical Certificate from a licensed physician',
+      'Certificate of Good Moral Character',
     ],
     eligibility: {
       minGwa: 1.40,
