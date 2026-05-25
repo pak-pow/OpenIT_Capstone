@@ -25,7 +25,6 @@ export const scholarships = [
       "The Mayor's Educational Assistance Program (MEAP) is a flagship scholarship of the Local Government Unit designed to support academically deserving students from low-income families within the barangay. The program aims to reduce the dropout rate in tertiary education by providing direct financial assistance for tuition and school fees.",
     requirements: [
       'Certified true copy of latest grades (minimum GWA 85 / 1.75)',
-      'Certificate of Indigency from Barangay',
       'Proof of enrolment / Registration Form',
       'Two (2) 2x2 ID photos',
       'Valid ID of parent or guardian',
@@ -52,7 +51,6 @@ export const scholarships = [
     requirements: [
       'Certified true copy of grades with GWA of at least 88 / 1.50',
       'Barangay Certificate of Residency (at least 2 years)',
-      'Recommendation letter from the Barangay Captain',
       'Proof of enrollment',
       'One (1) 2x2 ID photo',
     ],
@@ -84,7 +82,6 @@ export const scholarships = [
       'Latest grades with GWA of at least 87 / 1.60',
       'Essay: "How will your STEM education contribute to the community?" (500 words)',
       'Certificate of Residency in the Barangay',
-      'Two (2) character reference letters',
     ],
     eligibility: {
       minGwa: 1.60,
@@ -119,7 +116,6 @@ export const scholarships = [
       'The CHED Tulong Dunong Program (TDP) is a national scholarship program that provides financial assistance to poor but deserving students in public Higher Education Institutions (HEIs). The program covers tuition fees, miscellaneous expenses, and provides a living allowance to full-time scholars.',
     requirements: [
       'Accomplished CHED Tulong Dunong application form',
-      'Certificate of Indigency from Barangay or DSWD',
       'Form 137-A or Senior High School Report Card',
       'PSA Birth Certificate',
       'Barangay Certificate of Residency',
@@ -147,7 +143,6 @@ export const scholarships = [
     requirements: [
       'Accomplished SM Foundation application form',
       'Latest certified true copy of grades (GWA 90 / 1.25 or better)',
-      'Certificate of Indigency from Barangay or DSWD',
       'PSA Birth Certificate',
       'Certificate of Enrollment / Admission',
       'Essay: "What does education mean to you?" (300–500 words)',
@@ -184,7 +179,6 @@ export const scholarships = [
     requirements: [
       'DOST-SEI Online application form (submitted via SEI portal)',
       'Senior High School Grade 12 Report Card or equivalent',
-      'Certificate of Indigency from Barangay',
       'PSA Birth Certificate',
       'Certificate of Good Moral Character',
     ],
@@ -222,7 +216,6 @@ export const scholarships = [
     requirements: [
       'DOH scholarship application form',
       'Certified true copy of grades (GWA 86 / 1.70)',
-      'Income certificate from DSWD or MSWDO',
       'Medical Certificate',
       'PSA Birth Certificate',
       'Proof of enrollment in a health professions program',
@@ -377,7 +370,6 @@ export const scholarships = [
       'Certified true copy of grades (GWA 87 / 1.60)',
       'Proof of enrollment in eligible courses',
       'Leadership portfolio: list of positions held and community activities',
-      'Two (2) recommendation letters from professors or community leaders',
       'PSA Birth Certificate',
       'Barangay Clearance',
     ],
