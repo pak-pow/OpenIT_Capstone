@@ -15,6 +15,7 @@ public class ScholarshipDto
     public DateTime Deadline { get; set; }
     public int AvailableSlots { get; set; }
     public ScholarshipStatus Status { get; set; }
+    public ScholarshipType Type { get; set; }
     public int BarangayId { get; set; }
 }
 
@@ -29,6 +30,7 @@ public class ScholarshipCreateDto
     public DateTime Deadline { get; set; }
     public int AvailableSlots { get; set; }
     public ScholarshipStatus Status { get; set; } = ScholarshipStatus.Open;
+    public ScholarshipType Type { get; set; } = ScholarshipType.Government;
     public int BarangayId { get; set; }
 }
 

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Kaagapay.Api.Models;
 
 namespace Kaagapay.Api.Dtos;
 
@@ -12,6 +13,7 @@ public class StudentProfileDto
     public string Course { get; set; } = string.Empty;
     public int YearLevel { get; set; }
     public string School { get; set; } = string.Empty;
+    public ScholarshipType? PreferredScholarshipType { get; set; }
     public int BarangayId { get; set; }
 }
 
@@ -25,6 +27,7 @@ public class StudentProfileCreateDto
     public string Course { get; set; } = string.Empty;
     public int YearLevel { get; set; }
     public string School { get; set; } = string.Empty;
+    public ScholarshipType? PreferredScholarshipType { get; set; }
     public int BarangayId { get; set; }
 }
 
