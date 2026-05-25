@@ -30,7 +30,8 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
       amount: scholarship.amount,
       dateApplied: new Date().toISOString().split('T')[0],
       status: 'Pending',
-      justApproved: false
+      justApproved: false,
+      justRejected: false
     };
     setApplications((prev) => [newApp, ...prev]);
     return true;
@@ -48,9 +49,27 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
     });
   };
 
+  const simulateRejection = () => {
+    setApplications((prev) => {
+      // Find the first Pending or Under Review application
+      const idx = prev.findIndex(a => a.status === 'Pending' || a.status === 'Under Review');
+      if (idx === -1) return prev;
+      
+      const next = [...prev];
+      next[idx] = { ...next[idx], status: 'Rejected', justRejected: true };
+      return next;
+    });
+  };
+
   const clearJustApproved = (appId) => {
     setApplications((prev) => 
       prev.map(a => a.id === appId ? { ...a, justApproved: false } : a)
+    );
+  };
+
+  const clearJustRejected = (appId) => {
+    setApplications((prev) => 
+      prev.map(a => a.id === appId ? { ...a, justRejected: false } : a)
     );
   };
 
@@ -62,7 +81,9 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
         applyToScholarship, 
         hasApplied,
         simulateApproval,
-        clearJustApproved
+        simulateRejection,
+        clearJustApproved,
+        clearJustRejected
       }}
     >
       {children}

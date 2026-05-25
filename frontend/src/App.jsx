@@ -16,6 +16,7 @@ import SmartMatchSection from './components/scholarships/SmartMatchSection';
 import ApplicationStatusList from './components/scholarships/ApplicationStatusList';
 import AllScholarshipsView from './components/scholarships/AllScholarshipsView';
 import PaldoModal from './components/scholarships/PaldoModal';
+import NotPaldoModal from './components/scholarships/NotPaldoModal';
 import { useScholarships } from './context/ScholarshipContext';
 
 // Admin Layout & Components
@@ -128,21 +129,26 @@ const InnerApp = () => {
 // ======================================================
 const StudentDashboard = ({ addToast }) => {
   const [view, setView] = useState('dashboard');
-  const { applications, simulateApproval, clearJustApproved } = useScholarships();
+  const { applications, simulateApproval, simulateRejection, clearJustApproved, clearJustRejected } = useScholarships();
 
-  // Find if any application was just approved
+  // Find if any application was just approved or rejected
   const approvedApp = applications.find(a => a.justApproved);
+  const rejectedApp = applications.find(a => a.justRejected);
 
-  // Hotkey to simulate an approval for testing/demo (Shift + 3)
+  // Hotkey to simulate approval (Shift + 3) or rejection (Shift + 4) for testing
   useEffect(() => {
     const onKey = (e) => {
-      if (e.shiftKey && (e.key === '3' || e.key === '#')) {
-        simulateApproval();
+      if (e.shiftKey) {
+        if (e.key === '3' || e.key === '#') {
+          simulateApproval();
+        } else if (e.key === '4' || e.key === '$') {
+          simulateRejection();
+        }
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [simulateApproval]);
+  }, [simulateApproval, simulateRejection]);
 
   return (
     <StudentLayout>
@@ -150,6 +156,12 @@ const StudentDashboard = ({ addToast }) => {
         <PaldoModal 
           application={approvedApp} 
           onClose={() => clearJustApproved(approvedApp.id)} 
+        />
+      )}
+      {rejectedApp && (
+        <NotPaldoModal 
+          application={rejectedApp} 
+          onClose={() => clearJustRejected(rejectedApp.id)} 
         />
       )}
       
