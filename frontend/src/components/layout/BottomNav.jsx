@@ -1,19 +1,27 @@
-import React from 'react';
-import { Home, FileText, User } from 'lucide-react';
+import React from "react";
+import { Home, FileText } from "lucide-react";
 
-const BottomNav = () => (
+const BottomNav = ({ activeView, setView }) => (
   <nav className="bottom-nav">
-    <div className="nav-item active">
+    <div
+      className={`nav-item ${activeView === "dashboard" ? "active" : ""}`}
+      onClick={() => setView("dashboard")}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === "Enter" && setView("dashboard")}
+    >
       <Home size={22} />
       <span>Home</span>
     </div>
-    <div className="nav-item">
+    <div
+      className={`nav-item ${activeView === "all" ? "active" : ""}`}
+      onClick={() => setView("all")}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === "Enter" && setView("all")}
+    >
       <FileText size={22} />
-      <span>Applications</span>
-    </div>
-    <div className="nav-item">
-      <User size={22} />
-      <span>Profile</span>
+      <span>Scholarships</span>
     </div>
   </nav>
 );

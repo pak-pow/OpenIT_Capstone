@@ -1,9 +1,17 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import {
-  X, CheckCircle, Calendar, Building, AlertTriangle,
-  Upload, FileText, ChevronRight, ChevronLeft, Loader,
-} from 'lucide-react';
+  X,
+  CheckCircle,
+  Calendar,
+  Building,
+  AlertTriangle,
+  Upload,
+  FileText,
+  ChevronRight,
+  ChevronLeft,
+  Loader,
+} from "lucide-react";
 
 // ── Step 1: Overview ──────────────────────────────────────────────
 const OverviewStep = ({ scholarship, onNext, onClose }) => (
@@ -38,7 +46,9 @@ const OverviewStep = ({ scholarship, onNext, onClose }) => (
           Required Documents
         </h3>
         <p className="modal-req-count">
-          You will need to upload <strong>{scholarship.requirements.length} documents</strong> in the next step.
+          You will need to upload{" "}
+          <strong>{scholarship.requirements.length} documents</strong> in the
+          next step.
         </p>
         <ul className="requirements-list">
           {scholarship.requirements.map((req, i) => (
@@ -53,14 +63,17 @@ const OverviewStep = ({ scholarship, onNext, onClose }) => (
       <div className="modal-notice">
         <AlertTriangle size={16} />
         <p>
-          Ensure all documents are <strong>clear, complete, and valid</strong>. Incomplete
-          submissions may be disqualified. You will upload them in the next step.
+          Ensure all documents are <strong>clear, complete, and valid</strong>.
+          Incomplete submissions may be disqualified. You will upload them in
+          the next step.
         </p>
       </div>
     </div>
 
     <div className="modal-footer">
-      <button className="btn btn-ghost" onClick={onClose}>Cancel</button>
+      <button className="btn btn-ghost" onClick={onClose}>
+        Cancel
+      </button>
       <button className="btn btn-primary" onClick={onNext}>
         Upload Documents <ChevronRight size={16} />
       </button>
@@ -69,9 +82,15 @@ const OverviewStep = ({ scholarship, onNext, onClose }) => (
 );
 
 // ── Step 2: Document Upload ───────────────────────────────────────
-const UploadStep = ({ scholarship, onConfirm, onBack, onClose, isSubmitting }) => {
+const UploadStep = ({
+  scholarship,
+  onConfirm,
+  onBack,
+  onClose,
+  isSubmitting,
+}) => {
   const [uploads, setUploads] = useState(
-    scholarship.requirements.map(() => null)  // null = not uploaded
+    scholarship.requirements.map(() => null), // null = not uploaded
   );
   const fileRefs = useRef([]);
 
@@ -88,31 +107,47 @@ const UploadStep = ({ scholarship, onConfirm, onBack, onClose, isSubmitting }) =
   // ── Dev Hotkey: Shift + 0 to simulate uploads ──
   useEffect(() => {
     const onKey = (e) => {
-      if (e.shiftKey && (e.key === '0' || e.key === ')')) {
-        setUploads(scholarship.requirements.map(() => new File(['mock content'], 'simulated_document.pdf', { type: 'application/pdf' })));
+      if (e.shiftKey && (e.key === "0" || e.key === ")")) {
+        setUploads(
+          scholarship.requirements.map(
+            () =>
+              new File(["mock content"], "simulated_document.pdf", {
+                type: "application/pdf",
+              }),
+          ),
+        );
       }
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [scholarship.requirements]);
 
-  const uploadedCount  = uploads.filter(Boolean).length;
-  const totalRequired  = scholarship.requirements.length;
-  const allUploaded    = uploadedCount === totalRequired;
-  const progressPct    = Math.round((uploadedCount / totalRequired) * 100);
+  const uploadedCount = uploads.filter(Boolean).length;
+  const totalRequired = scholarship.requirements.length;
+  const allUploaded = uploadedCount === totalRequired;
+  const progressPct = Math.round((uploadedCount / totalRequired) * 100);
 
   return (
     <>
       {/* Upload progress bar */}
       <div className="modal-upload-progress">
         <div className="upload-progress-labels">
-          <span>{uploadedCount} of {totalRequired} documents uploaded</span>
-          <span className={allUploaded ? 'upload-done-label' : ''}>{progressPct}%</span>
+          <span>
+            {uploadedCount} of {totalRequired} documents uploaded
+          </span>
+          <span className={allUploaded ? "upload-done-label" : ""}>
+            {progressPct}%
+          </span>
         </div>
         <div className="upload-progress-bar">
           <div
             className="upload-progress-fill"
-            style={{ width: `${progressPct}%`, backgroundColor: allUploaded ? 'var(--success-text)' : 'var(--golden-yellow)' }}
+            style={{
+              width: `${progressPct}%`,
+              backgroundColor: allUploaded
+                ? "var(--success-text)"
+                : "var(--golden-yellow)",
+            }}
           />
         </div>
       </div>
@@ -121,8 +156,8 @@ const UploadStep = ({ scholarship, onConfirm, onBack, onClose, isSubmitting }) =
         <div className="modal-section">
           <h3 className="modal-section-title">Upload Your Documents</h3>
           <p className="modal-description modal-description-spaced">
-            Click each field below to attach the corresponding file. Accepted formats:
-            PDF, JPG, PNG. Max 5MB per file.
+            Click each field below to attach the corresponding file. Accepted
+            formats: PDF, JPG, PNG. Max 5MB per file.
           </p>
 
           <div className="upload-list">
@@ -131,25 +166,36 @@ const UploadStep = ({ scholarship, onConfirm, onBack, onClose, isSubmitting }) =
               return (
                 <div
                   key={i}
-                  className={`upload-item ${file ? 'upload-item-done' : ''}`}
+                  className={`upload-item ${file ? "upload-item-done" : ""}`}
                   onClick={() => fileRefs.current[i]?.click()}
                 >
                   <div className="upload-item-icon">
-                    {file ? <CheckCircle size={20} color="var(--success-text)" /> : <Upload size={20} />}
+                    {file ? (
+                      <CheckCircle size={20} color="var(--success-text)" />
+                    ) : (
+                      <Upload size={20} />
+                    )}
                   </div>
                   <div className="upload-item-info">
                     <span className="upload-item-label">{req}</span>
-                    {file
-                      ? <span className="upload-item-filename">{file.name}</span>
-                      : <span className="upload-item-hint">Click to browse file…</span>
-                    }
+                    {file ? (
+                      <span className="upload-item-filename">{file.name}</span>
+                    ) : (
+                      <span className="upload-item-hint">
+                        Click to browse file…
+                      </span>
+                    )}
                   </div>
                   {file && (
                     <button
                       className="upload-item-remove"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setUploads((prev) => { const n = [...prev]; n[i] = null; return n; });
+                        setUploads((prev) => {
+                          const n = [...prev];
+                          n[i] = null;
+                          return n;
+                        });
                       }}
                     >
                       <X size={14} />
@@ -158,7 +204,7 @@ const UploadStep = ({ scholarship, onConfirm, onBack, onClose, isSubmitting }) =
                   <input
                     type="file"
                     accept=".pdf,.jpg,.jpeg,.png"
-                    style={{ display: 'none' }}
+                    style={{ display: "none" }}
                     ref={(el) => (fileRefs.current[i] = el)}
                     onChange={(e) => handleFileChange(i, e)}
                   />
@@ -171,20 +217,31 @@ const UploadStep = ({ scholarship, onConfirm, onBack, onClose, isSubmitting }) =
         {!allUploaded && (
           <div className="modal-notice">
             <AlertTriangle size={16} />
-            <p>Please upload <strong>all {totalRequired} required documents</strong> before confirming.</p>
+            <p>
+              Please upload{" "}
+              <strong>all {totalRequired} required documents</strong> before
+              confirming.
+            </p>
           </div>
         )}
 
         {allUploaded && (
           <div className="modal-notice modal-notice-success">
             <CheckCircle size={16} />
-            <p>All documents uploaded! Review your files above, then click <strong>Confirm Application</strong>.</p>
+            <p>
+              All documents uploaded! Review your files above, then click{" "}
+              <strong>Confirm Application</strong>.
+            </p>
           </div>
         )}
       </div>
 
       <div className="modal-footer">
-        <button className="btn btn-ghost" onClick={onBack} disabled={isSubmitting}>
+        <button
+          className="btn btn-ghost"
+          onClick={onBack}
+          disabled={isSubmitting}
+        >
           <ChevronLeft size={16} /> Back
         </button>
         <button
@@ -192,7 +249,13 @@ const UploadStep = ({ scholarship, onConfirm, onBack, onClose, isSubmitting }) =
           onClick={onConfirm}
           disabled={!allUploaded || isSubmitting}
         >
-          {isSubmitting ? <><Loader size={16} className="spin-icon" /> Submitting…</> : 'Confirm Application'}
+          {isSubmitting ? (
+            <>
+              <Loader size={16} className="spin-icon" /> Submitting…
+            </>
+          ) : (
+            "Confirm Application"
+          )}
         </button>
       </div>
     </>
@@ -206,9 +269,11 @@ const ApplyModal = ({ scholarship, onConfirm, onClose }) => {
 
   // Close on Escape
   useEffect(() => {
-    const onKey = (e) => { if (e.key === 'Escape' && !isSubmitting) onClose(); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    const onKey = (e) => {
+      if (e.key === "Escape" && !isSubmitting) onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [onClose, isSubmitting]);
 
   if (!scholarship) return null;
@@ -223,9 +288,11 @@ const ApplyModal = ({ scholarship, onConfirm, onClose }) => {
   };
 
   return (
-    <div className="modal-overlay" onClick={!isSubmitting ? onClose : undefined}>
+    <div
+      className="modal-overlay"
+      onClick={!isSubmitting ? onClose : undefined}
+    >
       <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-
         {/* Header (persistent) */}
         <div className="modal-header">
           <div className="modal-title-block">
@@ -235,11 +302,15 @@ const ApplyModal = ({ scholarship, onConfirm, onClose }) => {
           <div className="modal-header-actions">
             {/* Step indicator */}
             <div className="modal-steps">
-              <span className={`modal-step-dot ${step >= 1 ? 'active' : ''}`} />
+              <span className={`modal-step-dot ${step >= 1 ? "active" : ""}`} />
               <span className="modal-step-line" />
-              <span className={`modal-step-dot ${step >= 2 ? 'active' : ''}`} />
+              <span className={`modal-step-dot ${step >= 2 ? "active" : ""}`} />
             </div>
-            <button className="modal-close-btn" onClick={onClose} disabled={isSubmitting}>
+            <button
+              className="modal-close-btn"
+              onClick={onClose}
+              disabled={isSubmitting}
+            >
               <X size={22} />
             </button>
           </div>

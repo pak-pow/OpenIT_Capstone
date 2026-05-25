@@ -1,10 +1,10 @@
-import { INCOME_RANK } from '../mockdata/constants';
+import { INCOME_RANK } from "../mockdata/constants";
 
 // ============================================================
 //  computeMatch — Smart Eligibility Matching Engine
 //
 //  Scoring breakdown (100 pts total):
-//    Special Conditions → HARD GATE (0 if not met)
+//    Special Conditions → (0 if not met)
 //    GWA               → 35 pts
 //    Income            → 30 pts
 //    Barangay          → 20 pts
@@ -16,9 +16,9 @@ export function computeMatch(profile, scholarship) {
     incomeBracket,
     barangay,
     course,
-    isPwd        = false,
+    isPwd = false,
     isSoloParent = false,
-    gender       = '',
+    gender = "",
     isIndigenous = false,
   } = profile;
 
@@ -26,11 +26,11 @@ export function computeMatch(profile, scholarship) {
   const conditions = eligibility.specialConditions || [];
   if (conditions.length > 0) {
     const meetsAny = conditions.some((cond) => {
-      if (cond === 'pwd_or_solo_parent') return isPwd || isSoloParent;
-      if (cond === 'pwd')                return isPwd;
-      if (cond === 'solo_parent')        return isSoloParent;
-      if (cond === 'female')             return gender === 'female';
-      if (cond === 'indigenous')         return isIndigenous;
+      if (cond === "pwd_or_solo_parent") return isPwd || isSoloParent;
+      if (cond === "pwd") return isPwd;
+      if (cond === "solo_parent") return isSoloParent;
+      if (cond === "female") return gender === "female";
+      if (cond === "indigenous") return isIndigenous;
       return false;
     });
     if (!meetsAny) return 0;
@@ -41,11 +41,12 @@ export function computeMatch(profile, scholarship) {
   // ── GWA (35 pts) ─────────────────────────────────────────────────
   // Scale: 1.00 = highest grade, 5.00 = lowest. Lower = better.
   const userGwa = parseFloat(gwa);
-  const minGwa  = eligibility.minGwa;
+  const minGwa = eligibility.minGwa;
+
   if (!isNaN(userGwa) && userGwa <= minGwa) {
-    score += 35;                          // meets or exceeds requirement
+    score += 35; // meets or exceeds requirement
   } else if (!isNaN(userGwa) && userGwa <= minGwa + 0.25) {
-    score += 15;                          // close but not quite — partial
+    score += 15; // close but not quite — partial
   }
 
   // ── Income (30 pts) ──────────────────────────────────────────────
@@ -55,13 +56,17 @@ export function computeMatch(profile, scholarship) {
   }
 
   // ── Barangay (20 pts) ────────────────────────────────────────────
-  const openBarangay = !eligibility.eligibleBarangays || eligibility.eligibleBarangays.length === 0;
+  const openBarangay =
+    !eligibility.eligibleBarangays ||
+    eligibility.eligibleBarangays.length === 0;
+
   if (openBarangay || eligibility.eligibleBarangays.includes(barangay)) {
     score += 20;
   }
 
   // ── Course (15 pts) ──────────────────────────────────────────────
-  const openCourse = !eligibility.eligibleCourses || eligibility.eligibleCourses.length === 0;
+  const openCourse =
+    !eligibility.eligibleCourses || eligibility.eligibleCourses.length === 0;
   if (openCourse || eligibility.eligibleCourses.includes(course)) {
     score += 15;
   }

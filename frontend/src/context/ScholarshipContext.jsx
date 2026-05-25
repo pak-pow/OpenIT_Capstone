@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useMemo } from 'react';
-import { scholarships as allScholarships } from '../mockdata';
-import { computeMatch } from '../utils/matchEngine';
+import React, { createContext, useContext, useState, useMemo } from "react";
+import { scholarships as allScholarships } from "../mockdata";
+import { computeMatch } from "../utils/matchEngine";
 
 const ScholarshipContext = createContext(null);
 
@@ -28,10 +28,10 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
       scholarshipName: scholarship.title,
       provider: scholarship.provider,
       amount: scholarship.amount,
-      dateApplied: new Date().toISOString().split('T')[0],
-      status: 'Pending',
+      dateApplied: new Date().toISOString().split("T")[0],
+      status: "Pending",
       justApproved: false,
-      justRejected: false
+      justRejected: false,
     };
     setApplications((prev) => [newApp, ...prev]);
     return true;
@@ -40,11 +40,13 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
   const simulateApproval = () => {
     setApplications((prev) => {
       // Find the first Pending or Under Review application
-      const idx = prev.findIndex(a => a.status === 'Pending' || a.status === 'Under Review');
+      const idx = prev.findIndex(
+        (a) => a.status === "Pending" || a.status === "Under Review",
+      );
       if (idx === -1) return prev;
-      
+
       const next = [...prev];
-      next[idx] = { ...next[idx], status: 'Approved', justApproved: true };
+      next[idx] = { ...next[idx], status: "Approved", justApproved: true };
       return next;
     });
   };
@@ -52,38 +54,40 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
   const simulateRejection = () => {
     setApplications((prev) => {
       // Find the first Pending or Under Review application
-      const idx = prev.findIndex(a => a.status === 'Pending' || a.status === 'Under Review');
+      const idx = prev.findIndex(
+        (a) => a.status === "Pending" || a.status === "Under Review",
+      );
       if (idx === -1) return prev;
-      
+
       const next = [...prev];
-      next[idx] = { ...next[idx], status: 'Rejected', justRejected: true };
+      next[idx] = { ...next[idx], status: "Rejected", justRejected: true };
       return next;
     });
   };
 
   const clearJustApproved = (appId) => {
-    setApplications((prev) => 
-      prev.map(a => a.id === appId ? { ...a, justApproved: false } : a)
+    setApplications((prev) =>
+      prev.map((a) => (a.id === appId ? { ...a, justApproved: false } : a)),
     );
   };
 
   const clearJustRejected = (appId) => {
-    setApplications((prev) => 
-      prev.map(a => a.id === appId ? { ...a, justRejected: false } : a)
+    setApplications((prev) =>
+      prev.map((a) => (a.id === appId ? { ...a, justRejected: false } : a)),
     );
   };
 
   return (
     <ScholarshipContext.Provider
-      value={{ 
-        scholarships: scholarshipsWithMatch, 
-        applications, 
-        applyToScholarship, 
+      value={{
+        scholarships: scholarshipsWithMatch,
+        applications,
+        applyToScholarship,
         hasApplied,
         simulateApproval,
         simulateRejection,
         clearJustApproved,
-        clearJustRejected
+        clearJustRejected,
       }}
     >
       {children}

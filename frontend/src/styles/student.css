@@ -1,15 +1,17 @@
+/* =========================================
+   WELCOME BANNER
+   ========================================= */
 .dashboard-welcome {
   background: linear-gradient(135deg, var(--navy-blue), #142848);
   color: var(--white);
   padding: var(--spacing-xl) var(--spacing-xl);
   border-radius: var(--radius-lg);
-  margin-bottom: var(--spacing-xl);
   position: relative;
   overflow: hidden;
 }
 
 .dashboard-welcome::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -30px;
   right: -30px;
@@ -36,16 +38,18 @@
   color: var(--golden-yellow);
 }
 
-/* --- Smart Match Section --- */
+/* =========================================
+   SMART MATCH SECTION
+   ========================================= */
 .smart-match-section {
-  margin-bottom: var(--spacing-xl);
+  /* no extra margin — parent gap handles it */
 }
 
 .section-header-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
 }
 
 .section-header-row .section-title {
@@ -87,7 +91,9 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .scholarship-card:hover {
@@ -120,17 +126,6 @@
 .match-badge-low {
   background-color: var(--border-color);
   color: var(--text-light);
-}
-
-.scholarship-type-tag {
-  display: inline-block;
-  font-size: var(--font-size-xs);
-  font-weight: 600;
-  color: var(--text-light);
-  background-color: var(--light-gray);
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--border-color);
 }
 
 .scholarship-provider {
@@ -182,9 +177,11 @@
   color: var(--danger-text);
 }
 
-/* --- Application Status List --- */
+/* =========================================
+   APPLICATION STATUS LIST
+   ========================================= */
 .application-status-section {
-  margin-bottom: var(--spacing-xl);
+  /* no extra margin */
 }
 
 .list-card {
@@ -201,7 +198,7 @@
 }
 
 .list-item:hover {
-  background-color: #F8FAFC;
+  background-color: var(--light-gray);
 }
 
 .list-item + .list-item {
@@ -257,12 +254,54 @@
   }
 }
 
-/* --- Notification Dropdown --- */
+/* STATUS TABS */
+.status-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.status-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.status-tab-btn {
+  background-color: var(--light-gray);
+  color: var(--text-medium);
+  border: 1px solid var(--border-color);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.status-tab-btn:hover {
+  background-color: var(--border-color);
+  color: var(--navy-blue);
+}
+
+.status-tab-btn.active {
+  background-color: var(--navy-blue);
+  color: var(--golden-yellow);
+  border-color: var(--navy-blue);
+  box-shadow: 0 2px 6px rgba(10, 25, 49, 0.2);
+}
+
+/* =========================================
+   NOTIFICATIONS DROPDOWN
+   ========================================= */
 .notif-badge {
   position: absolute;
   top: -2px;
   right: -2px;
-  background-color: var(--danger-color, #dc2626);
+  background-color: #dc2626;
   color: white;
   font-size: 10px;
   font-weight: bold;
@@ -332,8 +371,12 @@
   flex-shrink: 0;
 }
 
-.notif-icon.success { color: var(--success-text); }
-.notif-icon.info { color: var(--navy-blue); }
+.notif-icon.success {
+  color: var(--success-text);
+}
+.notif-icon.info {
+  color: var(--navy-blue);
+}
 
 .notif-content p {
   margin: 0 0 4px 0;
@@ -347,7 +390,9 @@
   color: var(--text-light);
 }
 
-/* --- All Scholarships View --- */
+/* =========================================
+   ALL SCHOLARSHIPS VIEW
+   ========================================= */
 .all-scholarships-header {
   display: flex;
   justify-content: space-between;
@@ -414,35 +459,4 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: var(--spacing-lg);
-}
-/* =========================================
-   APPLICATION STATUS LIST
-   ========================================= */
-.status-list-header {
-  align-items: center;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.status-tabs {
-  display: flex;
-  gap: 8px;
-}
-
-.status-tab-btn {
-  background-color: var(--light-gray);
-  color: var(--text-light);
-  border: none;
-  padding: 4px 12px;
-  border-radius: 16px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.status-tab-btn.active {
-  background-color: var(--navy-blue);
-  color: var(--white);
 }

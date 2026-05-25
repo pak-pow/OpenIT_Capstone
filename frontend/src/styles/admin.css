@@ -41,10 +41,22 @@
   flex-shrink: 0;
 }
 
-.metric-icon-blue  { background-color: var(--info-bg); color: var(--info-text); }
-.metric-icon-yellow{ background-color: var(--warning-bg); color: var(--warning-text); }
-.metric-icon-green { background-color: var(--success-bg); color: var(--success-text); }
-.metric-icon-red   { background-color: var(--danger-bg); color: var(--danger-text); }
+.metric-icon-blue {
+  background-color: var(--info-bg);
+  color: var(--info-text);
+}
+.metric-icon-yellow {
+  background-color: var(--warning-bg);
+  color: var(--warning-text);
+}
+.metric-icon-green {
+  background-color: var(--success-bg);
+  color: var(--success-text);
+}
+.metric-icon-red {
+  background-color: var(--danger-bg);
+  color: var(--danger-text);
+}
 
 .metric-content {
   display: flex;
@@ -108,7 +120,7 @@
 }
 
 .data-table tbody tr:hover {
-  background-color: #F8FAFC;
+  background-color: #f8fafc;
 }
 
 .table-cell-name {

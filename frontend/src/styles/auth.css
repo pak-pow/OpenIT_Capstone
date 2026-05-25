@@ -8,7 +8,12 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  background: linear-gradient(135deg, var(--navy-blue) 0%, #142848 60%, #0d2038 100%);
+  background: linear-gradient(
+    135deg,
+    var(--navy-blue) 0%,
+    #142848 60%,
+    #0d2038 100%
+  );
   padding: var(--spacing-xl) var(--spacing-md);
   padding-top: 2.5rem;
   padding-bottom: 2.5rem;
@@ -149,7 +154,7 @@
 }
 
 .form-section-label::after {
-  content: '';
+  content: "";
   flex: 1;
   height: 1px;
   background-color: var(--border-color);
@@ -161,6 +166,14 @@
   color: var(--text-light);
   margin-top: 3px;
   line-height: 1.4;
+}
+
+/* --- "optional" label next to field label --- */
+.form-optional {
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--text-light);
+  margin-left: 2px;
 }
 
 /* --- Select fix --- */
@@ -315,11 +328,11 @@
 }
 
 .auth-footer-admin {
-  color: #92400E;
+  color: #92400e;
   font-size: 0.7rem;
   margin-top: 1rem;
 }
 
 .auth-logo-icon.admin-theme {
-  background-color: #92400E;
+  background-color: #92400e;
 }

@@ -1,25 +1,25 @@
 :root {
   /* Color Palette */
-  --navy-blue: #0A1931;
+  --navy-blue: #0a1931;
   --navy-blue-light: #122444;
-  --golden-yellow: #FFC000;
+  --golden-yellow: #ffc000;
   --golden-yellow-dark: #e6ad00;
-  --light-gray: #F8F9FA;
-  --white: #FFFFFF;
-  --text-dark: #1A202C;
-  --text-medium: #4A5568;
+  --light-gray: #f8f9fa;
+  --white: #ffffff;
+  --text-dark: #1a202c;
+  --text-medium: #4a5568;
   --text-light: #718096;
-  --border-color: #E2E8F0;
+  --border-color: #e2e8f0;
 
   /* Status Colors */
-  --success-bg: #DEF7EC;
-  --success-text: #03543F;
-  --warning-bg: #FEF3C7;
-  --warning-text: #92400E;
-  --info-bg: #E1EFFE;
-  --info-text: #1E429F;
-  --danger-bg: #FDE8E8;
-  --danger-text: #9B1C1C;
+  --success-bg: #def7ec;
+  --success-text: #03543f;
+  --warning-bg: #fef3c7;
+  --warning-text: #92400e;
+  --info-bg: #e1effe;
+  --info-text: #1e429f;
+  --danger-bg: #fde8e8;
+  --danger-text: #9b1c1c;
 
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -41,7 +41,7 @@
   --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
 
   /* Typography */
-  --font-family: 'Inter', 'Roboto', system-ui, sans-serif;
+  --font-family: "Inter", "Roboto", system-ui, sans-serif;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;

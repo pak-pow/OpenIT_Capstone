@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { CheckCircle, X } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { CheckCircle, X } from "lucide-react";
 
-const Toast = ({ message, type = 'success', onClose }) => {
+const Toast = ({ message, type = "success", onClose }) => {
   const [hiding, setHiding] = useState(false);
 
   useEffect(() => {
@@ -13,13 +13,16 @@ const Toast = ({ message, type = 'success', onClose }) => {
   }, [onClose]);
 
   return (
-    <div className={`toast toast-${type} ${hiding ? 'toast-hide' : ''}`}>
+    <div className={`toast toast-${type} ${hiding ? "toast-hide" : ""}`}>
       <CheckCircle size={18} />
       <span>{message}</span>
       <button
         className="icon-btn"
-        onClick={() => { setHiding(true); setTimeout(onClose, 300); }}
-        style={{ marginLeft: 'auto', padding: '2px' }}
+        onClick={() => {
+          setHiding(true);
+          setTimeout(onClose, 300);
+        }}
+        style={{ marginLeft: "auto", padding: "2px" }}
       >
         <X size={16} />
       </button>
@@ -30,7 +33,12 @@ const Toast = ({ message, type = 'success', onClose }) => {
 const ToastContainer = ({ toasts, removeToast }) => (
   <div className="toast-wrapper">
     {toasts.map((t) => (
-      <Toast key={t.id} message={t.message} type={t.type} onClose={() => removeToast(t.id)} />
+      <Toast
+        key={t.id}
+        message={t.message}
+        type={t.type}
+        onClose={() => removeToast(t.id)}
+      />
     ))}
   </div>
 );

@@ -1,0 +1,943 @@
+/* =========================================
+   DASHBOARD LAYOUT & WIDGETS
+   ========================================= */
+
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 992px) {
+  .dashboard-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.dashboard-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.dashboard-side {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* =========================================
+   DEADLINE ALERT BAR
+   ========================================= */
+.deadline-alert-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  margin-bottom: 8px;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.deadline-alert-bar.alert-warning {
+  background-color: var(--warning-bg);
+  color: var(--warning-text);
+  border: 1px solid #f6d860;
+}
+
+.deadline-alert-bar.alert-urgent {
+  background-color: var(--danger-bg);
+  color: var(--danger-text);
+  border: 1px solid #fca5a5;
+}
+
+.alert-icon {
+  flex-shrink: 0;
+}
+
+.deadline-alert-bar span {
+  flex: 1;
+}
+
+.alert-dismiss {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.6;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  transition: opacity 0.15s;
+}
+
+.alert-dismiss:hover {
+  opacity: 1;
+}
+
+/* =========================================
+   QUICK ACTIONS PANEL
+   ========================================= */
+.quick-actions-panel {
+  /* No extra wrapper padding needed */
+}
+
+.quick-actions-title {
+  margin-bottom: 12px !important;
+}
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .quick-actions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.qa-tile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: var(--radius-lg);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+  width: 100%;
+}
+
+.qa-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.qa-tile.qa-navy {
+  background-color: var(--navy-blue);
+  color: var(--white);
+}
+
+.qa-tile.qa-gold {
+  background-color: var(--golden-yellow);
+  color: var(--navy-blue);
+}
+
+.qa-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+.qa-navy .qa-icon {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.qa-gold .qa-icon {
+  background-color: rgba(10, 25, 49, 0.1);
+}
+
+.qa-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.qa-label {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.qa-desc {
+  font-size: var(--font-size-xs);
+  opacity: 0.7;
+}
+
+.qa-arrow {
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+/* =========================================
+   CURRENT SCHOLARSHIP WIDGET
+   ========================================= */
+.current-scholarship-widget {
+  background: linear-gradient(145deg, #ffffff, #f0fdf4);
+  border: 1px solid #bbf7d0;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.current-scholarship-widget::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(
+    circle,
+    rgba(34, 197, 94, 0.1) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  border-radius: 50%;
+  transform: translate(30%, -30%);
+}
+
+.widget-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.widget-icon-wrapper {
+  background-color: #fef08a;
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text-golden {
+  color: #ca8a04;
+}
+
+.widget-title {
+  margin: 0 0 6px 0;
+  font-size: 1.1rem;
+  color: #166534;
+}
+
+.widget-body h4 {
+  margin: 0 0 4px 0;
+  font-size: 1.4rem;
+  color: #1f2937;
+}
+
+.widget-body .provider {
+  color: #4b5563;
+  font-size: 0.95rem;
+  margin: 0 0 20px 0;
+}
+
+.meta-info {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.meta-item .label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.meta-item .value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.payment-notice {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background-color: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-top: 4px;
+}
+
+.payment-notice-icon {
+  color: var(--golden-yellow-dark);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.payment-notice-text {
+  flex: 1;
+}
+
+.payment-notice-text strong {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #92400e;
+  margin-bottom: 4px;
+}
+
+.payment-notice-text p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #78350f;
+  line-height: 1.5;
+}
+
+/* =========================================
+   FEATURED SCHOLARSHIPS (NO ACTIVE SCHOLAR)
+   ========================================= */
+.featured-widget-container {
+  margin-bottom: 0;
+}
+
+.featured-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.featured-card {
+  background-color: var(--white);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--golden-yellow-dark);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
+  cursor: pointer;
+}
+
+.featured-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.featured-card::before {
+  display: none;
+}
+
+.featured-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.urgent-badge {
+  background-color: var(--danger-bg);
+  color: var(--danger-text);
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.featured-card h4 {
+  margin: 0 0 12px 0;
+  color: var(--navy-blue);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.featured-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
+}
+
+.featured-amount {
+  font-weight: 800;
+  color: var(--navy-blue);
+  font-size: 1.05rem;
+}
+
+.featured-deadline {
+  font-size: 0.78rem;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+/* =========================================
+   NEXT STEPS CHECKLIST
+   ========================================= */
+.checklist-card {
+  background-color: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.checklist-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.checklist-header h3 {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--navy-blue);
+}
+
+.checklist-icon {
+  color: var(--golden-yellow);
+}
+
+.checklist-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.checklist-step {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.step-number {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--navy-blue);
+  color: var(--golden-yellow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.step-body {
+  flex: 1;
+}
+
+.step-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--navy-blue);
+  margin-bottom: 4px;
+}
+
+.step-label svg {
+  color: var(--golden-yellow-dark);
+  flex-shrink: 0;
+}
+
+.step-action-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--navy-blue);
+  text-decoration: underline;
+  padding: 0;
+  margin-left: 4px;
+}
+
+.step-action-link:hover {
+  color: var(--golden-yellow-dark);
+}
+
+.step-desc {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--text-light);
+  line-height: 1.5;
+}
+
+/* =========================================
+   SIDEBAR WIDGETS
+   ========================================= */
+.sidebar-widget {
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.widget-header-small {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  color: var(--navy-blue);
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.widget-header-small h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy-blue);
+}
+
+.widget-header-small svg {
+  color: var(--golden-yellow-dark);
+}
+
+/* TIMELINE */
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+  align-items: flex-start;
+}
+
+.timeline-item:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+/* Urgency dots */
+.urgency-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.dot-red {
+  background-color: #ef4444;
+}
+.dot-amber {
+  background-color: var(--golden-yellow-dark);
+}
+.dot-green {
+  background-color: #22c55e;
+}
+
+.timeline-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.timeline-date-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
+.timeline-date {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-urgent {
+  background-color: var(--danger-bg);
+  color: var(--danger-text);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+.days-remaining {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-light);
+  white-space: nowrap;
+}
+
+.timeline-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--navy-blue);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.no-deadlines {
+  color: var(--text-light);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* =========================================
+   SCHOLARSHIP TYPE TAGS
+   ========================================= */
+.type-tag {
+  display: inline-block;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.3px;
+}
+
+.type-government {
+  background-color: var(--info-bg);
+  color: var(--info-text);
+}
+
+.type-lgu,
+.type-barangay,
+.type-sk {
+  background-color: var(--success-bg);
+  color: var(--success-text);
+}
+
+.type-private {
+  background-color: #ede9fe;
+  color: #5b21b6;
+}
+
+.type-default {
+  background-color: var(--light-gray);
+  color: var(--text-light);
+  border: 1px solid var(--border-color);
+}
+
+/* =========================================
+   SLOTS URGENCY
+   ========================================= */
+.slots-ok {
+  color: #059669;
+}
+
+.slots-low {
+  color: #d97706;
+  font-weight: 700;
+}
+
+/* =========================================
+   SCHOLARSHIP FILTER TABS
+   ========================================= */
+.scholarship-filter-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.sfilter-btn {
+  background-color: var(--light-gray);
+  color: var(--text-medium);
+  border: 1px solid var(--border-color);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sfilter-btn:hover {
+  background-color: var(--border-color);
+  color: var(--navy-blue);
+}
+
+.sfilter-btn.sfilter-active {
+  background-color: var(--navy-blue);
+  color: var(--golden-yellow);
+  border-color: var(--navy-blue);
+}
+
+/* =========================================
+   MINI CALENDAR
+   ========================================= */
+.mini-cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.cal-month-label {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--navy-blue);
+}
+
+.cal-nav-btn {
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 3px 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: var(--text-medium);
+  transition: all 0.15s;
+}
+
+.cal-nav-btn:hover {
+  background-color: var(--light-gray);
+  color: var(--navy-blue);
+  border-color: var(--navy-blue);
+}
+
+.mini-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 10px;
+}
+
+.cal-day-head {
+  text-align: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-light);
+  padding: 4px 0;
+  text-transform: uppercase;
+}
+
+.cal-day-cell {
+  position: relative;
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-medium);
+  padding: 5px 0;
+  border-radius: var(--radius-sm);
+  line-height: 1;
+}
+
+.cal-day-cell.cal-today {
+  background-color: var(--navy-blue);
+  color: var(--golden-yellow);
+  font-weight: 700;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.cal-day-cell.cal-has-event {
+  font-weight: 700;
+  color: var(--navy-blue);
+}
+
+.cal-day-cell.cal-empty {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cal-event-dot {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  display: block;
+}
+
+/* Legend */
+.cal-legend {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 0.68rem;
+  color: var(--text-light);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.cal-legend span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cal-divider {
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 14px 0;
+}
+
+/* =========================================
+   DEADLINE LIST (in sidebar)
+   ========================================= */
+.deadline-count {
+  margin-left: auto;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--text-light);
+  background-color: var(--light-gray);
+  border-radius: var(--radius-full);
+  padding: 2px 8px;
+}
+
+/* Month group label */
+.deadline-month-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-light);
+  background-color: var(--light-gray);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  margin: 10px 0 6px;
+  display: inline-block;
+}
+
+/* First group label has no top margin */
+.timeline-list > div:first-child .deadline-month-label {
+  margin-top: 0;
+}
+
+.deadline-list-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.deadline-list-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.deadline-date-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  min-width: 40px;
+  background-color: var(--navy-blue);
+  color: white;
+  border-radius: var(--radius-md);
+  padding: 6px 4px;
+  line-height: 1;
+}
+
+.ddate-month {
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--golden-yellow);
+  letter-spacing: 0.5px;
+}
+
+.ddate-day {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-top: 2px;
+}
+
+.deadline-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.deadline-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--navy-blue);
+  line-height: 1.3;
+  margin-bottom: 5px;
+  /* wrap long names */
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.deadline-tags {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* days-pill urgency */
+.days-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+}
+
+.pill-urgent {
+  background-color: var(--danger-bg);
+  color: var(--danger-text);
+}
+
+.pill-warn {
+  background-color: var(--warning-bg);
+  color: var(--warning-text);
+}
+
+.pill-ok {
+  background-color: var(--success-bg);
+  color: var(--success-text);
+}

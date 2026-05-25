@@ -1,30 +1,37 @@
-import React, { useState } from 'react';
-import { Mail, Lock, Eye, EyeOff, Shield } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import React, { useState } from "react";
+import { Mail, Lock, Eye, EyeOff, Shield, Loader2 } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 
 const LoginPage = ({ onNavigateRegister, onNavigateAdminLogin }) => {
   const { loginAsStudent } = useAuth();
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [form, setForm] = useState({ email: "", password: "" });
   const [showPwd, setShowPwd] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (!form.email || !form.password) {
-      setError('Please fill in all fields.');
+      setError("Please fill in all fields.");
       return;
     }
 
-    // Mock login — accepts any email/password
-    const name = form.email.split('@')[0];
-    loginAsStudent({
-      firstName: name.charAt(0).toUpperCase() + name.slice(1),
-      email: form.email,
-    });
+    setIsLoading(true);
+
+    // Mock login — accepts any email/password after a delay
+    setTimeout(() => {
+      const name = form.email.split("@")[0];
+      loginAsStudent({
+        firstName: name.charAt(0).toUpperCase() + name.slice(1),
+        email: form.email,
+      });
+      setIsLoading(false);
+    }, 1500);
   };
 
   return (
@@ -36,13 +43,17 @@ const LoginPage = ({ onNavigateRegister, onNavigateAdminLogin }) => {
             <Shield size={28} color="#FFC000" />
           </div>
           <h1 className="auth-title">Paldo</h1>
-          <p className="auth-subtitle">Barangay Scholarship Management System</p>
+          <p className="auth-subtitle">
+            Barangay Scholarship Management System
+          </p>
         </div>
 
         {/* Form */}
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label" htmlFor="email">Email Address</label>
+            <label className="form-label" htmlFor="email">
+              Email Address
+            </label>
             <div className="input-wrapper">
               <Mail size={18} className="input-icon" />
               <input
@@ -59,13 +70,15 @@ const LoginPage = ({ onNavigateRegister, onNavigateAdminLogin }) => {
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="password">Password</label>
+            <label className="form-label" htmlFor="password">
+              Password
+            </label>
             <div className="input-wrapper">
               <Lock size={18} className="input-icon" />
               <input
                 id="password"
                 className="form-input"
-                type={showPwd ? 'text' : 'password'}
+                type={showPwd ? "text" : "password"}
                 name="password"
                 placeholder="Enter your password"
                 value={form.password}
@@ -84,13 +97,31 @@ const LoginPage = ({ onNavigateRegister, onNavigateAdminLogin }) => {
 
           {error && <p className="form-error auth-error-msg">{error}</p>}
 
-          <button type="submit" className="btn btn-primary btn-full auth-submit-btn">
-            Sign In
+          <button
+            type="submit"
+            className="btn btn-primary btn-full auth-submit-btn"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <Loader2
+                  size={18}
+                  className="animate-spin"
+                  style={{
+                    marginRight: "8px",
+                    animation: "spin 1s linear infinite",
+                  }}
+                />
+                Signing In...
+              </>
+            ) : (
+              "Sign In"
+            )}
           </button>
         </form>
 
         <div className="auth-footer">
-          Don't have an account?{' '}
+          Don't have an account?{" "}
           <button className="auth-link" onClick={onNavigateRegister}>
             Create Account
           </button>

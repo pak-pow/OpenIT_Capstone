@@ -1,30 +1,31 @@
-import React, { useState, useMemo } from 'react';
-import { Search, ArrowLeft, Filter } from 'lucide-react';
-import { useScholarships } from '../../context/ScholarshipContext';
-import ApplyModal from './ApplyModal';
+import React, { useState, useMemo } from "react";
+import { Search, ArrowLeft, Filter } from "lucide-react";
+import { useScholarships } from "../../context/ScholarshipContext";
+import ApplyModal from "./ApplyModal";
 
 const getMatchClass = (pct) => {
-  if (pct >= 85) return '';               // green
-  if (pct >= 60) return 'match-badge-medium'; // blue
-  return 'match-badge-low';              // gray
+  if (pct >= 85) return ""; // green
+  if (pct >= 60) return "match-badge-medium"; // blue
+  return "match-badge-low"; // gray
 };
 
-const AllScholarshipsView = ({ onBack, addToast }) => {
+const AllScholarshipsView = ({ onBack, addToast, disabled }) => {
   const { scholarships, hasApplied, applyToScholarship } = useScholarships();
-  
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState('All');
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState("All");
   const [selectedScholarship, setSelectedScholarship] = useState(null);
 
   // Derive unique provider types for the dropdown
-  const types = ['All', ...new Set(scholarships.map(s => s.type))];
+  const types = ["All", ...new Set(scholarships.map((s) => s.type))];
 
   // Filter scholarships based on search term and type
   const filteredScholarships = useMemo(() => {
     return scholarships.filter((s) => {
-      const matchesSearch = s.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                            s.provider.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesType = filterType === 'All' || s.type === filterType;
+      const matchesSearch =
+        s.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.provider.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesType = filterType === "All" || s.type === filterType;
       return matchesSearch && matchesType;
     });
   }, [scholarships, searchTerm, filterType]);
@@ -32,9 +33,15 @@ const AllScholarshipsView = ({ onBack, addToast }) => {
   const handleConfirmApply = () => {
     const success = applyToScholarship(selectedScholarship);
     if (success) {
-      addToast(`Successfully applied to "${selectedScholarship.title}"!`, 'success');
+      addToast(
+        `Successfully applied to "${selectedScholarship.title}"!`,
+        "success",
+      );
     } else {
-      addToast(`You already applied to "${selectedScholarship.title}".`, 'error');
+      addToast(
+        `You already applied to "${selectedScholarship.title}".`,
+        "error",
+      );
     }
     setSelectedScholarship(null);
   };
@@ -50,23 +57,28 @@ const AllScholarshipsView = ({ onBack, addToast }) => {
         <div className="filter-controls">
           <div className="search-input-wrapper">
             <Search size={16} />
-            <input 
-              type="text" 
-              placeholder="Search programs..." 
+            <input
+              type="text"
+              placeholder="Search programs..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          
-          <div className="filter-select-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+
+          <div
+            className="filter-select-wrapper"
+            style={{ display: "flex", alignItems: "center", gap: "8px" }}
+          >
             <Filter size={16} color="var(--text-light)" />
-            <select 
+            <select
               className="filter-select"
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
             >
-              {types.map(t => (
-                <option key={t} value={t}>{t}</option>
+              {types.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
               ))}
             </select>
           </div>
@@ -85,7 +97,11 @@ const AllScholarshipsView = ({ onBack, addToast }) => {
             const match = s.matchPercentage;
 
             return (
-              <div key={s.id} className="card scholarship-card" style={{ maxWidth: '100%' }}>
+              <div
+                key={s.id}
+                className="card scholarship-card"
+                style={{ maxWidth: "100%" }}
+              >
                 <div className="card-top">
                   <span className={`match-badge ${getMatchClass(match)}`}>
                     {match}% Match
@@ -110,10 +126,19 @@ const AllScholarshipsView = ({ onBack, addToast }) => {
                 </div>
                 <button
                   className="btn btn-primary btn-full"
-                  disabled={applied}
-                  onClick={() => !applied && setSelectedScholarship(s)}
+                  disabled={applied || disabled}
+                  onClick={() => {
+                    if (disabled) {
+                      addToast(
+                        `You already have an active scholarship. You can apply for others when it expires.`,
+                        "error",
+                      );
+                      return;
+                    }
+                    if (!applied) setSelectedScholarship(s);
+                  }}
                 >
-                  {applied ? 'Already Applied' : 'Apply Now'}
+                  {applied ? "Already Applied" : "Apply Now"}
                 </button>
               </div>
             );

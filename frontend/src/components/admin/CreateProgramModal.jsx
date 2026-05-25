@@ -1,17 +1,25 @@
-import React, { useState } from 'react';
-import { X, Save } from 'lucide-react';
-import { useAdminContext } from '../../context/AdminContext';
+import React, { useState } from "react";
+import { X, Save } from "lucide-react";
+import { useAdminContext } from "../../context/AdminContext";
+import { BARANGAYS_BY_CITY, COURSES, VOCATIONAL_COURSES, SHS_STRANDS, JHS_TRACKS } from "../../mockdata/constants";
 
-const CreateProgramModal = ({ onClose, addToast }) => {
-  const { createScholarship } = useAdminContext();
+const allBarangays = Object.values(BARANGAYS_BY_CITY).flat().sort();
+const allCourses = [...COURSES, ...VOCATIONAL_COURSES, ...SHS_STRANDS, ...JHS_TRACKS].sort();
+
+const CreateProgramModal = ({ onClose, addToast, editData }) => {
+  const { createScholarship, updateScholarship } = useAdminContext();
   const [formData, setFormData] = useState({
-    title: '',
-    provider: '',
-    type: 'LGU',
-    amount: '',
-    slots: '',
-    deadline: '',
-    description: '',
+    title: editData?.title || editData?.name || "",
+    provider: editData?.provider || "",
+    type: editData?.type || "LGU",
+    amount: editData?.amountRaw || editData?.amount?.replace(/\D/g, "") || "",
+    slots: editData?.slots || "",
+    deadline: editData?.deadline || "",
+    description: editData?.description || "",
+    minGwa: editData?.eligibility?.minGwa || 2.0,
+    maxIncomeRank: editData?.eligibility?.maxIncomeRank || 5,
+    eligibleBarangay: editData?.eligibility?.eligibleBarangays?.[0] || "All",
+    eligibleCourse: editData?.eligibility?.eligibleCourses?.[0] || "All",
   });
 
   const handleChange = (e) => {
@@ -22,33 +30,54 @@ const CreateProgramModal = ({ onClose, addToast }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.title || !formData.amount || !formData.deadline) {
-      addToast('Please fill in all required fields.', 'error');
+      addToast("Please fill in all required fields.", "error");
       return;
     }
-    
+
     // Convert to the required format
     const newProgram = {
       ...formData,
       amount: `₱${formData.amount}`,
       slots: parseInt(formData.slots, 10) || 0,
+      eligibility: {
+        minGwa: parseFloat(formData.minGwa) || 2.0,
+        maxIncomeRank: parseInt(formData.maxIncomeRank, 10) || 5,
+        eligibleBarangays: formData.eligibleBarangay === "All" ? [] : [formData.eligibleBarangay],
+        eligibleCourses: formData.eligibleCourse === "All" ? [] : [formData.eligibleCourse],
+        specialConditions: editData?.eligibility?.specialConditions || [],
+      },
     };
 
-    createScholarship(newProgram);
-    addToast('New program created successfully!', 'success');
+    if (editData) {
+      updateScholarship({ ...editData, ...newProgram });
+      addToast("Program updated successfully!", "success");
+    } else {
+      createScholarship(newProgram);
+      addToast("New program created successfully!", "success");
+    }
     onClose();
   };
 
   return (
     <div className="modal-overlay" onClick={onClose} style={{ zIndex: 10000 }}>
-      <div className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '500px' }}>
+      <div
+        className="modal-card"
+        onClick={(e) => e.stopPropagation()}
+        style={{ maxWidth: "500px" }}
+      >
         <div className="modal-header">
-          <h2 className="modal-title">Create New Program</h2>
+          <h2 className="modal-title">
+            {editData ? "Edit Program" : "Create New Program"}
+          </h2>
           <button className="modal-close-btn" onClick={onClose}>
             <X size={22} />
           </button>
         </div>
         <div className="modal-body">
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <form
+            onSubmit={handleSubmit}
+            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+          >
             <div className="form-group">
               <label className="form-label">Program Title *</label>
               <input
@@ -61,8 +90,8 @@ const CreateProgramModal = ({ onClose, addToast }) => {
                 required
               />
             </div>
-            
-            <div style={{ display: 'flex', gap: '1rem' }}>
+
+            <div style={{ display: "flex", gap: "1rem" }}>
               <div className="form-group" style={{ flex: 1 }}>
                 <label className="form-label">Provider</label>
                 <input
@@ -76,7 +105,12 @@ const CreateProgramModal = ({ onClose, addToast }) => {
               </div>
               <div className="form-group" style={{ flex: 1 }}>
                 <label className="form-label">Type</label>
-                <select name="type" className="form-input" value={formData.type} onChange={handleChange}>
+                <select
+                  name="type"
+                  className="form-input"
+                  value={formData.type}
+                  onChange={handleChange}
+                >
                   <option value="LGU">LGU</option>
                   <option value="SK">SK</option>
                   <option value="CHED">CHED</option>
@@ -86,15 +120,39 @@ const CreateProgramModal = ({ onClose, addToast }) => {
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '1rem' }}>
+            <div style={{ display: "flex", gap: "1rem" }}>
               <div className="form-group" style={{ flex: 1 }}>
                 <label className="form-label">Stipend Amount *</label>
-                <div className="form-input" style={{ display: 'flex', padding: 0, overflow: 'hidden', alignItems: 'center' }}>
-                  <span style={{ padding: '0 0.75rem', color: 'var(--text-medium)', fontWeight: '600' }}>₱</span>
+                <div
+                  className="form-input"
+                  style={{
+                    display: "flex",
+                    padding: 0,
+                    overflow: "hidden",
+                    alignItems: "center",
+                  }}
+                >
+                  <span
+                    style={{
+                      padding: "0 0.75rem",
+                      color: "var(--text-medium)",
+                      fontWeight: "600",
+                    }}
+                  >
+                    ₱
+                  </span>
                   <input
                     type="number"
                     name="amount"
-                    style={{ border: 'none', padding: '0.75rem 0', width: '100%', outline: 'none', background: 'transparent', fontSize: 'var(--font-size-base)', color: 'var(--text-dark)' }}
+                    style={{
+                      border: "none",
+                      padding: "0.75rem 0",
+                      width: "100%",
+                      outline: "none",
+                      background: "transparent",
+                      fontSize: "var(--font-size-base)",
+                      color: "var(--text-dark)",
+                    }}
                     value={formData.amount}
                     onChange={handleChange}
                     placeholder="5000"
@@ -139,12 +197,87 @@ const CreateProgramModal = ({ onClose, addToast }) => {
               />
             </div>
 
-            <div className="form-actions" style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
+            <hr style={{ margin: "1rem 0", borderColor: "var(--border-light)" }} />
+            <h4 style={{ marginBottom: "0.5rem", color: "var(--navy-blue)" }}>Eligibility Requirements</h4>
+
+            <div style={{ display: "flex", gap: "1rem" }}>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label className="form-label">Minimum GWA (e.g. 1.5)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  name="minGwa"
+                  className="form-input"
+                  value={formData.minGwa}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label className="form-label">Max Income Bracket</label>
+                <select
+                  name="maxIncomeRank"
+                  className="form-input"
+                  value={formData.maxIncomeRank}
+                  onChange={handleChange}
+                >
+                  <option value={1}>Below ₱10,000</option>
+                  <option value={2}>Up to ₱20,000</option>
+                  <option value={3}>Up to ₱40,000</option>
+                  <option value={4}>Up to ₱60,000</option>
+                  <option value={5}>Any Income / Open</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: "1rem" }}>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label className="form-label">Barangay Restriction</label>
+                <select
+                  name="eligibleBarangay"
+                  className="form-input"
+                  value={formData.eligibleBarangay}
+                  onChange={handleChange}
+                >
+                  <option value="All">Open to All Barangays</option>
+                  {allBarangays.map((b) => (
+                    <option key={b} value={b}>{b}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label className="form-label">Course Restriction</label>
+                <select
+                  name="eligibleCourse"
+                  className="form-input"
+                  value={formData.eligibleCourse}
+                  onChange={handleChange}
+                >
+                  <option value="All">Open to All Courses</option>
+                  {allCourses.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div
+              className="form-actions"
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: "1rem",
+                marginTop: "1rem",
+              }}
+            >
               <button type="button" className="btn btn-ghost" onClick={onClose}>
                 Cancel
               </button>
-              <button type="submit" className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Save size={18} /> Save Program
+              <button
+                type="submit"
+                className="btn btn-primary"
+                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+              >
+                <Save size={18} /> {editData ? "Save Changes" : "Save Program"}
               </button>
             </div>
           </form>
