@@ -4,7 +4,7 @@ import { LayoutDashboard, FileSpreadsheet, Users, FileText, BarChart } from 'luc
 const Sidebar = () => (
   <aside className="sidebar">
     <div className="sidebar-brand">
-      <h2>Scholar Portal</h2>
+      <h2>Paldo</h2>
       <p>Barangay Admin Panel</p>
     </div>
     <nav className="sidebar-nav">

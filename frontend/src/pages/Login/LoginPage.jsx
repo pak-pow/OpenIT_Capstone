@@ -35,7 +35,7 @@ const LoginPage = ({ onNavigateRegister, onNavigateAdminLogin }) => {
           <div className="auth-logo-icon">
             <Shield size={28} color="#FFC000" />
           </div>
-          <h1 className="auth-title">Scholar Portal</h1>
+          <h1 className="auth-title">Paldo</h1>
           <p className="auth-subtitle">Barangay Scholarship Management System</p>
         </div>
 

@@ -23,7 +23,7 @@ const StudentLayout = ({ children }) => {
     <div className="student-layout">
       <header className="student-header">
         <div className="header-brand">
-          <h2>Scholar Portal</h2>
+          <h2>Paldo</h2>
           <p>Barangay Scholarship System</p>
         </div>
         <div className="header-actions">
