@@ -117,6 +117,29 @@
   color: var(--info-text);
 }
 
+.match-badge-low {
+  background-color: var(--border-color);
+  color: var(--text-light);
+}
+
+.scholarship-type-tag {
+  display: inline-block;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--text-light);
+  background-color: var(--light-gray);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+}
+
+.scholarship-provider {
+  font-size: var(--font-size-xs);
+  color: var(--text-light);
+  margin-bottom: var(--spacing-md);
+  margin-top: -8px;
+}
+
 .scholarship-title {
   font-size: var(--font-size-base);
   font-weight: 700;
