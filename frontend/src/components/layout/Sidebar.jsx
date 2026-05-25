@@ -5,7 +5,6 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
   const tabs = [
     { id: 'Dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { id: 'Scholarships', icon: FileSpreadsheet, label: 'Manage Scholarships' },
-    { id: 'Applicants', icon: Users, label: 'Applicant Tracking' },
     { id: 'Documents', icon: FileText, label: 'Document Requests' },
     { id: 'Reports', icon: BarChart, label: 'Reports' },
   ];
