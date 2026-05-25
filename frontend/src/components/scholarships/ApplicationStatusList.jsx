@@ -7,6 +7,7 @@ const getBadgeClass = (status) => {
     case 'Approved':     return 'badge badge-success';
     case 'Pending':      return 'badge badge-warning';
     case 'Under Review': return 'badge badge-info';
+    case 'Rejected':     return 'badge badge-danger';
     default:             return 'badge';
   }
 };
