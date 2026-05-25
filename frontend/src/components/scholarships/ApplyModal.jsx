@@ -229,8 +229,8 @@ const ApplyModal = ({ scholarship, onConfirm, onClose }) => {
         {/* Header (persistent) */}
         <div className="modal-header">
           <div className="modal-title-block">
-            <span className="modal-provider-tag">{scholarship.provider}</span>
             <h2 className="modal-title">{scholarship.title}</h2>
+            <span className="modal-provider-tag">{scholarship.provider}</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
             {/* Step indicator */}

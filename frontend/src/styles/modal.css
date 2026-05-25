@@ -43,7 +43,7 @@
   justify-content: space-between;
   align-items: flex-start;
   padding: var(--spacing-lg) var(--spacing-xl);
-  border-bottom: 4px solid var(--navy-blue);
+  border-bottom: 1px solid var(--border-color);
   flex-shrink: 0;
 }
 
@@ -62,6 +62,7 @@
   background-color: var(--info-bg);
   padding: 2px 10px;
   border-radius: var(--radius-full);
+  align-self: flex-start;
 }
 
 .modal-title {
