@@ -11,7 +11,6 @@ const OverviewStep = ({ scholarship, onNext, onClose }) => (
     {/* Quick Stats */}
     <div className="modal-stats-row">
       <div className="modal-stat">
-        <span className="modal-stat-peso">₱</span>
         <span className="modal-stat-value">{scholarship.amount}</span>
         <span className="modal-stat-label">per semester</span>
       </div>
