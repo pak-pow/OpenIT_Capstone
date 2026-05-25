@@ -410,3 +410,104 @@
     width: 100%;
   }
 }
+/* ============================================
+   CELEBRATION MODALS (Paldo & NotPaldo)
+   ============================================ */
+.modal-celebration-card {
+  max-width: 420px;
+  text-align: center;
+  padding: 2rem;
+  position: relative;
+}
+
+.modal-celebration-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+.celebration-icon-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.celebration-icon-wrapper {
+  border-radius: 50%;
+  padding: 1.5rem;
+  display: inline-flex;
+}
+.celebration-icon-wrapper.success {
+  background-color: var(--golden-yellow);
+}
+.celebration-icon-wrapper.danger {
+  background-color: var(--light-gray);
+}
+
+.celebration-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--navy-blue);
+  margin: 0 0 0.5rem;
+}
+
+.celebration-title-large {
+  font-size: 2rem;
+}
+
+.celebration-message {
+  font-size: 1rem;
+  color: var(--text-medium);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.celebration-info-box {
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+}
+.celebration-info-box.success {
+  background-color: var(--light-gray);
+}
+.celebration-info-box.danger {
+  background-color: var(--info-bg);
+  border: 1px solid rgba(0, 114, 206, 0.2);
+}
+
+.celebration-stipend-label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+
+.celebration-stipend-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--success-text);
+}
+
+.celebration-info-text {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--info-text);
+}
+
+.celebration-btn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.modal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+.modal-description-spaced {
+  margin-bottom: 1rem;
+}

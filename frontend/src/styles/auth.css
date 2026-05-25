@@ -282,3 +282,44 @@
   font-weight: 600;
   margin: 0 auto var(--spacing-md);
 }
+/* =========================================
+   AUTH FORM UTILITIES
+   ========================================= */
+.form-hint {
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-medium);
+  line-height: 1.5;
+}
+
+.form-actions-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.form-action-btn-primary {
+  flex: 2;
+}
+
+.form-action-btn-secondary {
+  flex: 1;
+}
+
+.peso-prefix {
+  font-size: 14px;
+  font-weight: 700;
+}
+.auth-error-msg {
+  margin-bottom: 0.75rem;
+}
+
+.auth-footer-admin {
+  color: #92400E;
+  font-size: 0.7rem;
+  margin-top: 1rem;
+}
+
+.auth-logo-icon.admin-theme {
+  background-color: #92400E;
+}

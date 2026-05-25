@@ -82,7 +82,7 @@ const LoginPage = ({ onNavigateRegister, onNavigateAdminLogin }) => {
             </div>
           </div>
 
-          {error && <p className="form-error" style={{ marginBottom: '0.75rem' }}>{error}</p>}
+          {error && <p className="form-error auth-error-msg">{error}</p>}
 
           <button type="submit" className="btn btn-primary btn-full auth-submit-btn">
             Sign In

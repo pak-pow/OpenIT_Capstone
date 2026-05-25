@@ -120,7 +120,7 @@ const UploadStep = ({ scholarship, onConfirm, onBack, onClose, isSubmitting }) =
       <div className="modal-body">
         <div className="modal-section">
           <h3 className="modal-section-title">Upload Your Documents</h3>
-          <p className="modal-description" style={{ marginBottom: '1rem' }}>
+          <p className="modal-description modal-description-spaced">
             Click each field below to attach the corresponding file. Accepted formats:
             PDF, JPG, PNG. Max 5MB per file.
           </p>
@@ -232,7 +232,7 @@ const ApplyModal = ({ scholarship, onConfirm, onClose }) => {
             <h2 className="modal-title">{scholarship.title}</h2>
             <span className="modal-provider-tag">{scholarship.provider}</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
+          <div className="modal-header-actions">
             {/* Step indicator */}
             <div className="modal-steps">
               <span className={`modal-step-dot ${step >= 1 ? 'active' : ''}`} />

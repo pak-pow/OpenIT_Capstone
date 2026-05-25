@@ -344,7 +344,7 @@ const RegisterPage = ({ onNavigateLogin }) => {
 
             {/* ── Financial ── */}
             <div className="form-section-label">
-              <span style={{ fontSize: '14px', fontWeight: 700 }}>₱</span>
+              <span className="peso-prefix">₱</span>
               Household Income
             </div>
 
@@ -371,9 +371,8 @@ const RegisterPage = ({ onNavigateLogin }) => {
               Additional Eligibility
             </div>
 
-            <p className="form-hint" style={{ marginBottom: '1rem', fontSize: '0.8rem', color: 'var(--text-medium)', lineHeight: '1.5' }}>
-              Some scholarships are exclusively for specific groups. Answer honestly so we can show
-              or hide those programs from your recommendations.
+            <p className="form-hint">
+              Check all circumstances that apply to you. Some scholarships have specific matching criteria based on these.
             </p>
 
             {/* Gender */}
@@ -421,13 +420,13 @@ const RegisterPage = ({ onNavigateLogin }) => {
             </div>
 
             {/* Actions */}
-            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
-              <button type="button" className="btn btn-ghost" style={{ flex: 1 }}
+            <div className="form-actions-row">
+              <button type="button" className="btn btn-ghost form-action-btn-secondary"
                 onClick={() => setStep(1)}>
-                ← Back
+                Back
               </button>
-              <button type="submit" className="btn btn-primary" style={{ flex: 2 }}>
-                Create Account
+              <button type="submit" className="btn btn-primary form-action-btn-primary">
+                Register & Match
               </button>
             </div>
           </form>

@@ -24,24 +24,14 @@ const ApplicationStatusList = () => {
 
   return (
     <section className="application-status-section">
-      <div className="section-header-row" style={{ alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="section-header-row status-list-header">
         <h3 className="section-title">My Applications</h3>
-        <div className="status-tabs" style={{ display: 'flex', gap: '8px' }}>
+        <div className="status-tabs">
           {['All', 'Pending', 'Approved', 'Rejected'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              style={{
-                background: activeTab === tab ? 'var(--navy-blue)' : 'var(--light-gray)',
-                color: activeTab === tab ? 'white' : 'var(--text-light)',
-                border: 'none',
-                padding: '4px 12px',
-                borderRadius: '16px',
-                fontSize: '12px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-              }}
+              className={`status-tab-btn ${activeTab === tab ? 'active' : ''}`}
             >
               {tab}
             </button>

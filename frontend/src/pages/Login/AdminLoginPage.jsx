@@ -27,7 +27,7 @@ const AdminLoginPage = () => {
     <div className="auth-page">
       <div className="auth-card">
         <div className="auth-logo">
-          <div className="auth-logo-icon" style={{ backgroundColor: '#92400E' }}>
+          <div className="auth-logo-icon admin-theme">
             <ShieldAlert size={28} color="#FFC000" />
           </div>
           <div className="admin-badge">
@@ -76,14 +76,14 @@ const AdminLoginPage = () => {
             </div>
           </div>
 
-          {error && <p className="form-error" style={{ marginBottom: '0.75rem' }}>{error}</p>}
+          {error && <p className="form-error auth-error-msg">{error}</p>}
 
           <button type="submit" className="btn btn-primary btn-full auth-submit-btn">
             Sign In as Administrator
           </button>
         </form>
 
-        <div className="auth-footer" style={{ color: '#92400E', fontSize: '0.7rem', marginTop: '1rem' }}>
+        <div className="auth-footer auth-footer-admin">
           This page is confidential. Unauthorized access is strictly prohibited.
         </div>
       </div>
