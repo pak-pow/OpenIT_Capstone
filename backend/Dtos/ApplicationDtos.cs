@@ -1,0 +1,28 @@
+using System;
+using Kaagapay.Api.Models;
+
+namespace Kaagapay.Api.Dtos;
+
+public class ApplicationDto
+{
+    public int Id { get; set; }
+    public int ScholarshipId { get; set; }
+    public int StudentId { get; set; }
+    public ApplicationStatus Status { get; set; }
+    public DateTime SubmittedAt { get; set; }
+    public DateTime? ReviewedAt { get; set; }
+    public string? Remarks { get; set; }
+}
+
+public class ApplicationCreateDto
+{
+    public int ScholarshipId { get; set; }
+    public int StudentId { get; set; }
+    public string? Remarks { get; set; }
+}
+
+public class ApplicationStatusUpdateDto
+{
+    public ApplicationStatus Status { get; set; }
+    public string? Remarks { get; set; }
+}
