@@ -55,12 +55,21 @@
 }
 
 .btn-danger {
-  background-color: var(--danger-bg);
-  color: var(--danger-text);
+  background-color: #dc2626;
+  color: white;
 }
 
 .btn-danger:hover {
-  background-color: #f8b4b4;
+  background-color: #b91c1c;
+}
+
+.btn-success {
+  background-color: #059669;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #047857;
 }
 
 .btn-full {
@@ -122,7 +131,7 @@
   width: 100%;
 }
 
-.form-input:focus {
+.form-input:focus, .form-input:focus-within {
   outline: none;
   border-color: var(--navy-blue);
   box-shadow: 0 0 0 3px rgba(10, 25, 49, 0.1);

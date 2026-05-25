@@ -78,21 +78,54 @@ const InnerApp = () => {
 
   // ── Admin Modals State ──────────────────────────────────────────
   const [showCreateProgram, setShowCreateProgram] = useState(false);
+  const [adminActiveTab, setAdminActiveTab] = useState('Dashboard');
 
   // ── If user is logged in → show their dashboard ──────────────────
   if (currentUser) {
     if (currentUser.role === 'admin') {
       return (
         <AdminProvider>
-          <AdminLayout>
-            <SectionHeader
-              title="Overview"
-              buttonText="Create New Program"
-              onButtonClick={() => setShowCreateProgram(true)}
-            />
-            <MetricCards />
-            <SectionHeader title="Applicant Tracking" />
-            <DataTable addToast={addToast} />
+          <AdminLayout activeTab={adminActiveTab} setActiveTab={setAdminActiveTab}>
+            
+            {adminActiveTab === 'Dashboard' && (
+              <>
+                <SectionHeader
+                  title="Overview"
+                  buttonText="Create New Program"
+                  onButtonClick={() => setShowCreateProgram(true)}
+                />
+                <MetricCards />
+                <SectionHeader title="Recent Applicants" />
+                <DataTable addToast={addToast} />
+              </>
+            )}
+
+            {adminActiveTab === 'Scholarships' && (
+              <>
+                <SectionHeader
+                  title="Manage Scholarships"
+                  buttonText="Create New Program"
+                  onButtonClick={() => setShowCreateProgram(true)}
+                />
+                <div className="card">
+                   <p style={{ color: 'var(--text-medium)', padding: '1rem 0' }}>Scholarship management table goes here.</p>
+                </div>
+              </>
+            )}
+
+            {adminActiveTab === 'Applicants' && (
+              <>
+                <SectionHeader title="Applicant Tracking" />
+                <DataTable addToast={addToast} />
+              </>
+            )}
+
+            {['Documents', 'Reports'].includes(adminActiveTab) && (
+              <div className="card empty-state">
+                <h3>Coming Soon</h3>
+                <p>The {adminActiveTab} module is currently under development.</p>
+              </div>
+            )}
             
             {showCreateProgram && (
               <CreateProgramModal 

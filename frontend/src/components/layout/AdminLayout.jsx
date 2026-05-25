@@ -3,12 +3,12 @@ import { Bell, LogOut } from 'lucide-react';
 import Sidebar from './Sidebar';
 import { useAuth } from '../../context/AuthContext';
 
-const AdminLayout = ({ children }) => {
+const AdminLayout = ({ children, activeTab, setActiveTab }) => {
   const { currentUser, logout } = useAuth();
 
   return (
     <div className="admin-layout">
-      <Sidebar />
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
       <div className="admin-main-wrapper">
         <header className="admin-header">
           <h2 className="header-title">Admin Dashboard</h2>

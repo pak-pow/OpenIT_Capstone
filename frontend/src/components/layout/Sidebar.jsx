@@ -1,37 +1,38 @@
 import React from 'react';
 import { LayoutDashboard, FileSpreadsheet, Users, FileText, BarChart } from 'lucide-react';
 
-const Sidebar = () => (
-  <aside className="sidebar">
-    <div className="sidebar-brand">
-      <h2>Paldo</h2>
-      <p>Barangay Admin Panel</p>
-    </div>
-    <nav className="sidebar-nav">
-      <ul>
-        <li className="nav-item active">
-          <LayoutDashboard size={20} />
-          <span>Dashboard</span>
-        </li>
-        <li className="nav-item">
-          <FileSpreadsheet size={20} />
-          <span>Manage Scholarships</span>
-        </li>
-        <li className="nav-item">
-          <Users size={20} />
-          <span>Applicant Tracking</span>
-        </li>
-        <li className="nav-item">
-          <FileText size={20} />
-          <span>Document Requests</span>
-        </li>
-        <li className="nav-item">
-          <BarChart size={20} />
-          <span>Reports</span>
-        </li>
-      </ul>
-    </nav>
-  </aside>
-);
+const Sidebar = ({ activeTab, setActiveTab }) => {
+  const tabs = [
+    { id: 'Dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+    { id: 'Scholarships', icon: FileSpreadsheet, label: 'Manage Scholarships' },
+    { id: 'Applicants', icon: Users, label: 'Applicant Tracking' },
+    { id: 'Documents', icon: FileText, label: 'Document Requests' },
+    { id: 'Reports', icon: BarChart, label: 'Reports' },
+  ];
+
+  return (
+    <aside className="sidebar">
+      <div className="sidebar-brand">
+        <h2>Paldo</h2>
+        <p>Barangay Admin Panel</p>
+      </div>
+      <nav className="sidebar-nav">
+        <ul>
+          {tabs.map((tab) => (
+            <li 
+              key={tab.id}
+              className={`nav-item ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              <tab.icon size={20} />
+              <span>{tab.label}</span>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </aside>
+  );
+};
+
 
 export default Sidebar;

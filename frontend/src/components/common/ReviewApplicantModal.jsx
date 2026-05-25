@@ -74,15 +74,15 @@ const ReviewApplicantModal = ({ applicant, onClose, addToast }) => {
 
           <div style={{ display: 'flex', gap: '1rem' }}>
             <button 
-              className="btn" 
-              style={{ flex: 1, backgroundColor: 'var(--error-text)', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
+              className="btn btn-danger" 
+              style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
               onClick={handleReject}
             >
               <XCircle size={18} /> Reject
             </button>
             <button 
-              className="btn btn-primary" 
-              style={{ flex: 1, backgroundColor: 'var(--success-text)', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
+              className="btn btn-success" 
+              style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
               onClick={handleApprove}
             >
               <Check size={18} /> Approve

@@ -90,13 +90,12 @@ const CreateProgramModal = ({ onClose, addToast }) => {
             <div style={{ display: 'flex', gap: '1rem' }}>
               <div className="form-group" style={{ flex: 1 }}>
                 <label className="form-label">Stipend Amount *</label>
-                <div className="form-input-wrapper">
-                  <span className="peso-prefix" style={{ padding: '0 10px', alignSelf: 'center' }}>₱</span>
+                <div className="form-input" style={{ display: 'flex', padding: 0, overflow: 'hidden', alignItems: 'center' }}>
+                  <span style={{ padding: '0 0.75rem', color: 'var(--text-medium)', fontWeight: '600' }}>₱</span>
                   <input
                     type="number"
                     name="amount"
-                    className="form-input"
-                    style={{ border: 'none', paddingLeft: '5px' }}
+                    style={{ border: 'none', padding: '0.75rem 0', width: '100%', outline: 'none', background: 'transparent', fontSize: 'var(--font-size-base)', color: 'var(--text-dark)' }}
                     value={formData.amount}
                     onChange={handleChange}
                     placeholder="5000"
