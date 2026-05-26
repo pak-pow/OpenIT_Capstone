@@ -2,13 +2,19 @@
 import React, { useState } from "react";
 import { User, Lock, Eye, EyeOff, GraduationCap, Loader2, ArrowLeft } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate, Navigate } from "react-router-dom";
 
-const AdminLoginPage = ({ onNavigateLogin }) => {
-  const { loginAsAdmin } = useAuth();
+const AdminLoginPage = () => {
+  const navigate = useNavigate();
+  const { currentUser, loginAsAdmin } = useAuth();
   const [form, setForm] = useState({ username: "", password: "" });
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  if (currentUser) {
+    return <Navigate to="/" replace />;
+  }
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -117,27 +123,24 @@ const AdminLoginPage = ({ onNavigateLogin }) => {
           This page is confidential. Unauthorized access is strictly prohibited.
         </div>
 
-        {onNavigateLogin && (
-          <button
-            type="button"
-            onClick={onNavigateLogin}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-              margin: "0.75rem auto 0",
-              background: "none",
-              border: "none",
-              color: "var(--text-medium)",
-              fontSize: "var(--font-size-sm)",
-              cursor: "pointer",
-              padding: "4px 8px",
-              borderRadius: "var(--radius-sm)",
-            }}
-          >
-            <ArrowLeft size={14} /> Back to Login
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={() => navigate("/login")}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            margin: "0.75rem auto 0",
+            background: "none",
+            border: "none",
+            color: "var(--text-light)",
+            fontSize: "0.85rem",
+            cursor: "pointer",
+          }}
+        >
+          <ArrowLeft size={16} />
+          Back to Student Login
+        </button>
       </div>
     </div>
   );

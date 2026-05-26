@@ -13,6 +13,7 @@ import {
   Banknote,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate, Navigate } from "react-router-dom";
 import {
   CITIES,
   BARANGAYS_BY_CITY,
@@ -71,8 +72,13 @@ const getYearLabel = (educationLevel) => {
 };
 
 // ──────────────────────────────────────────────────────────────────
-const RegisterPage = ({ onNavigateLogin }) => {
-  const { registerStudent } = useAuth();
+const RegisterPage = () => {
+  const navigate = useNavigate();
+  const { currentUser, registerStudent } = useAuth();
+
+  if (currentUser) {
+    return <Navigate to="/" replace />;
+  }
 
   const [step, setStep] = useState(1);
   const [showPwd, setShowPwd] = useState(false);
@@ -789,7 +795,7 @@ const RegisterPage = ({ onNavigateLogin }) => {
 
         <div className="auth-footer">
           Already have an account?{" "}
-          <button className="auth-link" onClick={onNavigateLogin}>
+          <button className="auth-link" onClick={() => navigate("/login")}>
             Sign In
           </button>
         </div>

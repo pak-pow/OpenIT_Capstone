@@ -1,13 +1,19 @@
 import React, { useState } from "react";
 import { Mail, Lock, Eye, EyeOff, GraduationCap, Loader2 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate, Navigate } from "react-router-dom";
 
-const LoginPage = ({ onNavigateRegister, onNavigateAdminLogin }) => {
-  const { loginAsStudent } = useAuth();
+const LoginPage = () => {
+  const navigate = useNavigate();
+  const { currentUser, loginAsStudent } = useAuth();
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  if (currentUser) {
+    return <Navigate to="/" replace />;
+  }
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -120,7 +126,7 @@ const LoginPage = ({ onNavigateRegister, onNavigateAdminLogin }) => {
 
         <div className="auth-footer">
           Don't have an account?{" "}
-          <button className="auth-link" onClick={onNavigateRegister}>
+          <button className="auth-link" onClick={() => navigate("/register")}>
             Create Account
           </button>
         </div>
