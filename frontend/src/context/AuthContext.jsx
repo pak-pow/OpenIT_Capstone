@@ -65,17 +65,7 @@ const buildProfileFromStudent = (student) => ({
   },
 });
 
-const buildStudentProfileDto = (form, userId) => ({
-  userId,
-  fullName: `${form.firstName} ${form.lastName}`.trim(),
-  gwa: parseFloat(form.gwa) || 0,
-  householdIncome: incomeBracketToValue(form.incomeBracket),
-  course: form.course || "",
-  yearLevel: parseYearLevel(form.yearLevel),
-  school: form.schoolName || "",
-  preferredScholarshipType: null,
-  barangayId: 1,
-});
+// buildStudentProfileDto removed, built inline in registerStudent
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY));
@@ -161,7 +151,28 @@ export const AuthProvider = ({ children }) => {
       },
     });
 
-    const profileDto = buildStudentProfileDto(form, response.user.id);
+    let barangays = [];
+    try {
+      const bRes = await apiRequest("/api/barangays");
+      barangays = Array.isArray(bRes) ? bRes : (bRes.value || []);
+    } catch (e) {
+      console.error(e);
+    }
+    const foundBarangay = barangays.find((b) => b.name === form.barangay);
+    const bId = foundBarangay ? foundBarangay.id : 1;
+
+    const profileDto = {
+      userId: response.user.id,
+      fullName: `${form.firstName} ${form.lastName}`.trim(),
+      gwa: parseFloat(form.gwa) || 0,
+      householdIncome: incomeBracketToValue(form.incomeBracket),
+      course: form.course || "",
+      yearLevel: parseYearLevel(form.yearLevel),
+      school: form.schoolName || "",
+      preferredScholarshipType: null,
+      barangayId: bId,
+    };
+
     await apiRequest("/api/students", {
       method: "POST",
       token: response.token,

@@ -22,6 +22,8 @@ public class EligibilityService
         }
 
         var scholarships = await _context.Scholarships.AsNoTracking()
+            .Include(s => s.Barangay)
+            .Include(s => s.Applications)
             .Where(s => s.Status == ScholarshipStatus.Open)
             .ToListAsync();
 

@@ -74,6 +74,7 @@ public static class MappingExtensions
         SubmittedAt = application.SubmittedAt,
         ReviewedAt = application.ReviewedAt,
         Remarks = application.Remarks,
+        StudentName = application.Student?.FullName,
         ScholarshipName = application.Scholarship?.Title,
         Provider = application.Scholarship != null 
             ? (application.Scholarship.Barangay != null ? application.Scholarship.Barangay.Name : application.Scholarship.Type.ToString())

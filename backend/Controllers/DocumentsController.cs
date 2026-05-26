@@ -155,7 +155,23 @@ public class DocumentsController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
+        var document = await _service.GetByIdAsync(id);
+        if (document is null)
+        {
+            return NotFound();
+        }
+
         var removed = await _service.DeleteAsync(id);
+        if (removed && !string.IsNullOrEmpty(document.FilePath))
+        {
+            var fileName = Path.GetFileName(document.FilePath);
+            var fullPath = Path.Combine(_environment.ContentRootPath, "App_Data", "uploads", fileName);
+            if (System.IO.File.Exists(fullPath))
+            {
+                System.IO.File.Delete(fullPath);
+            }
+        }
+
         if (!removed)
         {
             return NotFound();

@@ -12,23 +12,34 @@ public static class SeedData
 {
     public static async Task EnsureSeededAsync(KaagapayContext context)
     {
-        if (await context.Users.AnyAsync()
-            || await context.Barangays.AnyAsync()
-            || await context.Students.AnyAsync()
-            || await context.Scholarships.AnyAsync())
+        if (await context.Scholarships.AnyAsync())
         {
-            // Auto-heal existing scholarships with empty/missing requirements
-            var scholarshipsWithEmptyReqs = await context.Scholarships
-                .Where(s => string.IsNullOrEmpty(s.Requirements))
-                .ToListAsync();
-
-            if (scholarshipsWithEmptyReqs.Any())
+            var frontendScholarshipsPathAuto = Path.Combine(Directory.GetCurrentDirectory(), "..", "frontend", "src", "mockdata", "scholarships.json");
+            if (File.Exists(frontendScholarshipsPathAuto))
             {
-                foreach (var s in scholarshipsWithEmptyReqs)
+                var raw = await File.ReadAllTextAsync(frontendScholarshipsPathAuto);
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var frontendScholarships = JsonSerializer.Deserialize<List<FrontendScholarship>>(raw, options) ?? new List<FrontendScholarship>();
+
+                var allScholarships = await context.Scholarships.ToListAsync();
+                bool changed = false;
+                foreach (var s in allScholarships)
                 {
-                    s.Requirements = "Certificate of Grades,Barangay Indigency,Valid ID";
+                    var fs = frontendScholarships.FirstOrDefault(x => x.Title == s.Title);
+                    if (fs != null && fs.Requirements != null)
+                    {
+                        var expectedReqs = string.Join(',', fs.Requirements);
+                        if (s.Requirements != expectedReqs)
+                        {
+                            s.Requirements = expectedReqs;
+                            changed = true;
+                        }
+                    }
                 }
-                await context.SaveChangesAsync();
+                if (changed)
+                {
+                    await context.SaveChangesAsync();
+                }
             }
             return;
         }
@@ -72,7 +83,11 @@ public static class SeedData
                 scholarships.Add(s);
             }
 
-            context.Users.AddRange(seededUsers);
+            foreach (var u in seededUsers) {
+                if (!await context.Users.AnyAsync(existing => existing.Id == u.Id)) {
+                    context.Users.Add(u);
+                }
+            }
             context.Barangays.Add(barangay);
             context.Scholarships.AddRange(scholarships);
             await context.SaveChangesAsync();
@@ -111,7 +126,11 @@ public static class SeedData
                     idx++;
                 }
 
-                context.Users.AddRange(studentUsers);
+                foreach (var u in studentUsers) {
+                    if (!await context.Users.AnyAsync(existing => existing.Id == u.Id)) {
+                        context.Users.Add(u);
+                    }
+                }
                 context.Students.AddRange(students);
                 await context.SaveChangesAsync();
 
@@ -264,7 +283,11 @@ public static class SeedData
             }
         };
 
-        context.Users.AddRange(users);
+        foreach (var u in users) {
+            if (!await context.Users.AnyAsync(existing => existing.Id == u.Id)) {
+                context.Users.Add(u);
+            }
+        }
         context.Barangays.Add(barangayFallback);
         context.Students.AddRange(studentsFallback);
         context.Scholarships.AddRange(scholarshipsFallback);

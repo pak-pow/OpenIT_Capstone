@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Search, ArrowLeft, Filter } from "lucide-react";
 import { useScholarships } from "../../context/ScholarshipContext";
 import ApplyModal from "./ApplyModal";
@@ -30,8 +30,8 @@ const AllScholarshipsView = ({ onBack, addToast, disabled }) => {
     });
   }, [scholarships, searchTerm, filterType]);
 
-  const handleConfirmApply = async () => {
-    const success = await applyToScholarship(selectedScholarship);
+  const handleConfirmApply = async (uploads) => {
+    const success = await applyToScholarship(selectedScholarship, uploads);
     if (success) {
       addToast(
         `Successfully applied to "${selectedScholarship.title}"!`,

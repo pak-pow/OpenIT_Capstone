@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useScholarships } from '../../context/ScholarshipContext';
 import ApplyModal from './ApplyModal';
 
@@ -39,8 +39,8 @@ const SmartMatchSection = ({ onApply, onSeeAll, disabled }) => {
 
   const filtered = scholarships.filter(s => matchesFilter(s.type, activeFilter));
 
-  const handleConfirmApply = async () => {
-    const success = await applyToScholarship(selectedScholarship);
+  const handleConfirmApply = async (uploads) => {
+    const success = await applyToScholarship(selectedScholarship, uploads);
     setSelectedScholarship(null);
     if (onApply) onApply(selectedScholarship, success);
   };

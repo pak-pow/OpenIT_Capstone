@@ -18,6 +18,7 @@ public class BarangaysController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<BarangayDto>>> GetAll()
     {
         var barangays = await _service.GetAllAsync();
@@ -25,6 +26,7 @@ public class BarangaysController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
+    [AllowAnonymous]
     public async Task<ActionResult<BarangayDto>> GetById(int id)
     {
         var barangay = await _service.GetByIdAsync(id);

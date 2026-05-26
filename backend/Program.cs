@@ -10,15 +10,7 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
+
 
 builder.Services.AddDbContext<KaagapayContext>(options =>
 {
@@ -111,8 +103,9 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
-app.UseCors("AllowAll");
+app.UseCors("DevCors");
 
 app.UseAuthentication();
 app.UseAuthorization();

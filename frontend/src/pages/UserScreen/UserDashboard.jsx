@@ -175,8 +175,8 @@ const FeaturedScholarshipsWidget = ({ onApply }) => {
 
   if (featured.length === 0) return null;
 
-  const handleConfirm = async () => {
-    const success = await applyToScholarship(selected);
+  const handleConfirm = async (uploads) => {
+    const success = await applyToScholarship(selected, uploads);
     if (onApply) onApply(selected, success);
     setSelected(null);
   };
