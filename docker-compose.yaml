@@ -32,7 +32,7 @@ services:
       ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=kaagapay;Username=postgres;Password=ccms
       Jwt__Issuer: Kaagapay
       Jwt__Audience: KaagapayUsers
-      Jwt__Key: KaagapayDevKey_ChangeThis12345
+      Jwt__Key: KaagapayDevKey_ChangeThisToA33ByteSecretKey!
       Jwt__ExpiresMinutes: 120
     ports:
       - "8080:8080"

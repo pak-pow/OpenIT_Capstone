@@ -38,6 +38,11 @@ if (string.IsNullOrWhiteSpace(jwtKey))
     throw new InvalidOperationException("Jwt:Key is required.");
 }
 
+if (Encoding.UTF8.GetByteCount(jwtKey) <= 32)
+{
+    throw new InvalidOperationException("Jwt:Key must be longer than 32 bytes for HS256 signing.");
+}
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -57,6 +62,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DevCors", policy =>
+    {
+        policy.WithOrigins(
+                "http://localhost:5173",
+                "http://127.0.0.1:5173",
+                "http://localhost:3000",
+                "http://127.0.0.1:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
