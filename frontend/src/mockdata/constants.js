@@ -1,8 +1,3 @@
-/* ============================================
-   CONSTANTS — Dropdown options for registration
-   and the Smart Matching Engine
-   ============================================ */
-
 // ── Education Levels ──────────────────────────────────────────────
 export const EDUCATION_LEVELS = [
   { value: "jhs", label: "Junior High School (Grade 7–10)" },
