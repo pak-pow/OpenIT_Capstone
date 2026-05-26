@@ -6,6 +6,7 @@ import AllScholarshipsView from '../../components/scholarships/AllScholarshipsVi
 import PaldoModal from '../../components/scholarships/PaldoModal';
 import NotPaldoModal from '../../components/scholarships/NotPaldoModal';
 import ApplyModal from '../../components/scholarships/ApplyModal';
+import EndedModal from '../../components/scholarships/EndedModal';
 import { useScholarships } from '../../context/ScholarshipContext';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -389,10 +390,11 @@ const DashboardSidebar = () => {
 const UserDashboard = ({ addToast }) => {
   const [view, setView] = useState('dashboard');
   const statusRef = useRef(null);
-  const { applications, activeScholarship, simulateApproval, simulateRejection, clearJustApproved, clearJustRejected } = useScholarships();
+  const { applications, activeScholarship, simulateApproval, simulateRejection, simulateEnded, clearJustApproved, clearJustRejected, clearJustEnded } = useScholarships();
 
   const approvedApp = applications.find(a => a.justApproved);
   const rejectedApp = applications.find(a => a.justRejected);
+  const endedApp = applications.find(a => a.justEnded);
   const hasNoApplications = applications.length === 0;
 
   useEffect(() => {
@@ -400,11 +402,12 @@ const UserDashboard = ({ addToast }) => {
       if (e.shiftKey) {
         if (e.key === '3' || e.key === '#') simulateApproval();
         else if (e.key === '4' || e.key === '$') simulateRejection();
+        else if (e.key === '5' || e.key === '%') simulateEnded();
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [simulateApproval, simulateRejection]);
+  }, [simulateApproval, simulateRejection, simulateEnded]);
 
   const handleApply = (scholarship, result) => {
     if (result === 'active_scholar') {
@@ -428,6 +431,9 @@ const UserDashboard = ({ addToast }) => {
       )}
       {rejectedApp && (
         <NotPaldoModal application={rejectedApp} onClose={() => clearJustRejected(rejectedApp.id)} />
+      )}
+      {endedApp && (
+        <EndedModal application={endedApp} onClose={() => clearJustEnded(endedApp.id)} />
       )}
 
       {view === 'dashboard' ? (

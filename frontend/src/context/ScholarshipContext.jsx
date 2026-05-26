@@ -45,6 +45,7 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
       status: "Pending",
       justApproved: false,
       justRejected: false,
+      justEnded: false,
     };
     setApplications((prev) => [newApp, ...prev]);
     return true;
@@ -84,6 +85,18 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
     });
   };
 
+  // ── Simulate end: changes the active scholarship to Ended ────────────────
+  const simulateEnded = () => {
+    setApplications((prev) => {
+      const idx = prev.findIndex((a) => a.status === "Approved");
+      if (idx === -1) return prev;
+
+      const next = [...prev];
+      next[idx] = { ...next[idx], status: "Ended", justEnded: true };
+      return next;
+    });
+  };
+
   const clearJustApproved = (appId) => {
     setApplications((prev) =>
       prev.map((a) => (a.id === appId ? { ...a, justApproved: false } : a))
@@ -93,6 +106,12 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
   const clearJustRejected = (appId) => {
     setApplications((prev) =>
       prev.map((a) => (a.id === appId ? { ...a, justRejected: false } : a))
+    );
+  };
+
+  const clearJustEnded = (appId) => {
+    setApplications((prev) =>
+      prev.map((a) => (a.id === appId ? { ...a, justEnded: false } : a))
     );
   };
 
@@ -106,8 +125,10 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
         hasApplied,
         simulateApproval,
         simulateRejection,
+        simulateEnded,
         clearJustApproved,
         clearJustRejected,
+        clearJustEnded,
       }}
     >
       {children}
