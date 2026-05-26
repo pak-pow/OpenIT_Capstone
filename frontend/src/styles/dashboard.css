@@ -315,6 +315,16 @@
   line-height: 1.5;
 }
 
+.payment-inline-note {
+  margin: 12px 0 0 0;
+  font-size: 0.82rem;
+  color: #4b5563;
+  line-height: 1.6;
+  font-style: italic;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 12px;
+}
+
 /* =========================================
    FEATURED SCHOLARSHIPS (NO ACTIVE SCHOLAR)
    ========================================= */

@@ -1,61 +1,192 @@
-import React, { createContext, useContext, useState, useMemo } from "react";
-import { scholarships as allScholarships } from "../mockdata";
+import React, { createContext, useContext, useEffect, useState, useMemo } from "react";
 import { computeMatch } from "../utils/matchEngine";
+import { apiRequest } from "../api/client";
+import { useAuth } from "./AuthContext";
 
 const ScholarshipContext = createContext(null);
 
+const USE_MOCK = import.meta.env.VITE_USE_MOCK_DATA === 'true';
+
 export const ScholarshipProvider = ({ children, userProfile }) => {
+  const { token } = useAuth();
   const [applications, setApplications] = useState([]);
+  const [scholarshipsData, setScholarshipsData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Fetch scholarships from backend and map to frontend shape
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await apiRequest("/api/scholarships", { token });
+        // backend returns ScholarshipDto[]; map to frontend expected shape
+        const mapped = data.map((s) => ({
+          id: s.id,
+          title: s.title,
+          provider: s.provider || (s.type ? s.type : "Provider"),
+          type: (() => {
+            // normalize type strings used in frontend
+            if (!s.type) return "Government";
+            const t = String(s.type);
+            if (t.toLowerCase().includes("ngo") || t.toLowerCase().includes("private")) return "Private/NGO";
+            if (t.toLowerCase().includes("barangay")) return "Barangay";
+            if (t.toLowerCase().includes("sk")) return "SK";
+            if (t.toLowerCase().includes("ched")) return "CHED";
+            return t;
+          })(),
+          amount: s.amount || s.maxAmount || `₱${(s.maxHouseholdIncome || 0).toString()}`,
+          amountRaw: s.amountRaw || 0,
+          deadline: s.deadline ? new Date(s.deadline).toISOString().split("T")[0] : null,
+          slots: s.availableSlots ?? s.slots ?? 0,
+          slotsFilled: s.slotsFilled ?? 0,
+          status: (() => {
+            if (!s.status) return "Active";
+            // map backend enum to frontend-friendly
+            const st = String(s.status);
+            if (st === "Open") return "Active";
+            if (st === "Closed") return "Closed";
+            return st;
+          })(),
+          description: s.description,
+          requirements: s.requirements || [],
+          eligibility: {
+            minGwa: s.requiredGwa ?? s.minGwa ?? 0,
+            maxIncomeRank: s.maxIncomeRank ?? 5,
+            eligibleBarangays: s.eligibleBarangays || [],
+            eligibleCourses: s.eligibleCourses ? s.eligibleCourses.split(",").map((c) => c.trim()) : [],
+            specialConditions: s.specialConditions || [],
+          },
+        }));
+
+        if (mounted) setScholarshipsData(mapped);
+      } catch (err) {
+        setError(err?.message || String(err));
+        // fallback to empty list
+        if (mounted) setScholarshipsData([]);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, [token]);
 
   // ── Compute match percentages for all scholarships ───────────────
   const scholarshipsWithMatch = useMemo(() => {
     if (!userProfile) {
-      return allScholarships.map((s) => ({ ...s, matchPercentage: 0 }));
+      return scholarshipsData.map((s) => ({ ...s, matchPercentage: 0 }));
     }
-    return allScholarships
+    return scholarshipsData
       .map((s) => ({ ...s, matchPercentage: computeMatch(userProfile, s) }))
       .sort((a, b) => b.matchPercentage - a.matchPercentage);
-  }, [userProfile]);
+  }, [userProfile, scholarshipsData]);
 
-  const hasApplied = (scholarshipId) =>
-    applications.some((a) => a.scholarshipId === scholarshipId);
+  // ── Derived: the single active (Approved) scholarship, if any ────
+  // Uses the most recently approved one (highest id = Date.now())
+  const activeScholarship = useMemo(() => {
+    const approved = applications.filter((a) => a.status === "Approved");
+    if (approved.length === 0) return null;
+    return approved.reduce((latest, a) => (a.id > latest.id ? a : latest));
+  }, [applications]);
 
-  const applyToScholarship = (scholarship) => {
+  const hasApplied = (scholarshipId) => applications.some((a) => a.scholarshipId === scholarshipId);
+
+  // ── Apply: blocked if user already has an active (Approved) scholarship ──
+  const applyToScholarship = async (scholarship) => {
+    // Guard 1: already an active scholar
+    if (activeScholarship) return "active_scholar";
+    // Guard 2: already applied to this specific scholarship
     if (hasApplied(scholarship.id)) return false;
-    const newApp = {
-      id: Date.now(),
-      scholarshipId: scholarship.id,
-      scholarshipName: scholarship.title,
-      provider: scholarship.provider,
-      amount: scholarship.amount,
-      dateApplied: new Date().toISOString().split("T")[0],
-      status: "Pending",
-      justApproved: false,
-      justRejected: false,
-    };
-    setApplications((prev) => [newApp, ...prev]);
-    return true;
+
+    // Try to create application via backend; if it fails, fall back to local simulation
+    try {
+      await apiRequest("/api/applications", {
+        method: "POST",
+        token: token,
+        body: { scholarshipId: scholarship.id },
+      });
+      // optimistically add to local state
+      const newApp = {
+        id: Date.now(),
+        scholarshipId: scholarship.id,
+        scholarshipName: scholarship.title,
+        provider: scholarship.provider,
+        amount: scholarship.amount,
+        dateApplied: new Date().toISOString().split("T")[0],
+        status: "Pending",
+        justApproved: false,
+        justRejected: false,
+        justEnded: false,
+      };
+      setApplications((prev) => [newApp, ...prev]);
+      return true;
+    } catch (err) {
+      // fallback to local: keep previous behavior
+      const newApp = {
+        id: Date.now(),
+        scholarshipId: scholarship.id,
+        scholarshipName: scholarship.title,
+        provider: scholarship.provider,
+        amount: scholarship.amount,
+        dateApplied: new Date().toISOString().split("T")[0],
+        status: "Pending",
+        justApproved: false,
+        justRejected: false,
+        justEnded: false,
+      };
+      setApplications((prev) => [newApp, ...prev]);
+      return true;
+    }
   };
 
+  // ── Simulate approval: only approves ONE at a time ────────────────
+  // If an approved scholarship already exists, this is a no-op.
   const simulateApproval = () => {
-    setApplications((prev) => {
-      // Find the first Pending or Under Review application
-      const idx = prev.findIndex(
-        (a) => a.status === "Pending" || a.status === "Under Review",
-      );
-      if (idx === -1) return prev;
+    // Block if any scholarship is already Approved
+    const alreadyHasActive = applications.some((a) => a.status === "Approved");
+    if (alreadyHasActive) return;
 
-      const next = [...prev];
-      next[idx] = { ...next[idx], status: "Approved", justApproved: true };
-      return next;
+    // Find the first Pending or Under Review application
+    const idx = applications.findIndex(
+      (a) => a.status === "Pending" || a.status === "Under Review"
+    );
+    if (idx === -1) return;
+    
+    const approvedApp = applications[idx];
+
+    // Decrease the available slots for this scholarship
+    setScholarshipsData((currentData) => 
+      currentData.map((s) => 
+        s.id === approvedApp.scholarshipId 
+          ? { ...s, slots: Math.max(0, s.slots - 1) } 
+          : s
+      )
+    );
+
+    setApplications((prev) => {
+      // Make the selected one Approved, and change all other Pending/Under Review to Withdrawn
+      return prev.map((app, index) => {
+        if (index === idx) {
+          return { ...app, status: "Approved", justApproved: true };
+        }
+        if (app.status === "Pending" || app.status === "Under Review") {
+          return { ...app, status: "Withdrawn" };
+        }
+        return app;
+      });
     });
   };
 
+  // ── Simulate rejection: only rejects ONE at a time ────────────────
   const simulateRejection = () => {
     setApplications((prev) => {
-      // Find the first Pending or Under Review application
       const idx = prev.findIndex(
-        (a) => a.status === "Pending" || a.status === "Under Review",
+        (a) => a.status === "Pending" || a.status === "Under Review"
       );
       if (idx === -1) return prev;
 
@@ -65,15 +196,44 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
     });
   };
 
+  // ── Simulate end: changes the active scholarship to Ended ────────────────
+  const simulateEnded = () => {
+    const idx = applications.findIndex((a) => a.status === "Approved");
+    if (idx === -1) return;
+    
+    const endedApp = applications[idx];
+
+    // Increase the available slots back for this scholarship
+    setScholarshipsData((currentData) => 
+      currentData.map((s) => 
+        s.id === endedApp.scholarshipId 
+          ? { ...s, slots: s.slots + 1 } 
+          : s
+      )
+    );
+
+    setApplications((prev) => {
+      const next = [...prev];
+      next[idx] = { ...next[idx], status: "Ended", justEnded: true };
+      return next;
+    });
+  };
+
   const clearJustApproved = (appId) => {
     setApplications((prev) =>
-      prev.map((a) => (a.id === appId ? { ...a, justApproved: false } : a)),
+      prev.map((a) => (a.id === appId ? { ...a, justApproved: false } : a))
     );
   };
 
   const clearJustRejected = (appId) => {
     setApplications((prev) =>
-      prev.map((a) => (a.id === appId ? { ...a, justRejected: false } : a)),
+      prev.map((a) => (a.id === appId ? { ...a, justRejected: false } : a))
+    );
+  };
+
+  const clearJustEnded = (appId) => {
+    setApplications((prev) =>
+      prev.map((a) => (a.id === appId ? { ...a, justEnded: false } : a))
     );
   };
 
@@ -82,12 +242,17 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
       value={{
         scholarships: scholarshipsWithMatch,
         applications,
+        activeScholarship,
+        isLoading,
+        error,
         applyToScholarship,
         hasApplied,
         simulateApproval,
         simulateRejection,
+        simulateEnded,
         clearJustApproved,
         clearJustRejected,
+        clearJustEnded,
       }}
     >
       {children}

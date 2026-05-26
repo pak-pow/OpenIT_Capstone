@@ -6,45 +6,49 @@ using Microsoft.AspNetCore.Mvc;
 namespace Kaagapay.Api.Controllers;
 
 [ApiController]
-[Route("api/barangays")]
-[Authorize(Roles = "Admin")]
-public class BarangaysController : ControllerBase
+[Route("api/scholarships")]
+[Authorize]
+public class ScholarshipsController : ControllerBase
 {
-    private readonly BarangayService _service;
+    private readonly ScholarshipService _service;
 
-    public BarangaysController(BarangayService service)
+    public ScholarshipsController(ScholarshipService service)
     {
         _service = service;
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<BarangayDto>>> GetAll()
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<ScholarshipDto>>> GetAll()
     {
-        var barangays = await _service.GetAllAsync();
-        return Ok(barangays.Select(b => b.ToDto()));
+        var scholarships = await _service.GetAllAsync();
+        return Ok(scholarships.Select(s => s.ToDto()));
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<BarangayDto>> GetById(int id)
+    [AllowAnonymous]
+    public async Task<ActionResult<ScholarshipDto>> GetById(int id)
     {
-        var barangay = await _service.GetByIdAsync(id);
-        if (barangay is null)
+        var scholarship = await _service.GetByIdAsync(id);
+        if (scholarship is null)
         {
             return NotFound();
         }
 
-        return Ok(barangay.ToDto());
+        return Ok(scholarship.ToDto());
     }
 
     [HttpPost]
-    public async Task<ActionResult<BarangayDto>> Create([FromBody] BarangayCreateDto dto)
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<ScholarshipDto>> Create([FromBody] ScholarshipCreateDto dto)
     {
         var created = await _service.CreateAsync(dto);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created.ToDto());
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, [FromBody] BarangayUpdateDto dto)
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Update(int id, [FromBody] ScholarshipUpdateDto dto)
     {
         var updated = await _service.UpdateAsync(id, dto);
         if (!updated)
@@ -56,6 +60,7 @@ public class BarangaysController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var removed = await _service.DeleteAsync(id);

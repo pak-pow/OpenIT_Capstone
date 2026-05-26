@@ -1,25 +1,32 @@
 import React, { useState } from "react";
-import { FileText } from "lucide-react";
+import { FileText, Award } from "lucide-react";
 import { useScholarships } from "../../context/ScholarshipContext";
 
 const getBadgeClass = (status) => {
   switch (status) {
-    case "Approved":
-      return "badge badge-success";
-    case "Pending":
-      return "badge badge-warning";
-    case "Under Review":
-      return "badge badge-info";
-    case "Rejected":
-      return "badge badge-danger";
-    default:
-      return "badge";
+    case "Approved":    return "badge badge-success";
+    case "Pending":     return "badge badge-warning";
+    case "Under Review":return "badge badge-info";
+    case "Rejected":    return "badge badge-danger";
+    case "Ended":       return "badge badge-neutral";
+    case "Withdrawn":   return "badge badge-neutral";
+    default:            return "badge";
   }
 };
 
 const ApplicationStatusList = () => {
-  const { applications } = useScholarships();
+  const { applications, activeScholarship } = useScholarships();
   const [activeTab, setActiveTab] = useState("All");
+
+  // Count per tab for the badges
+  const counts = {
+    All:      applications.length,
+    Pending:  applications.filter(a => a.status === "Pending" || a.status === "Under Review").length,
+    Approved: applications.filter(a => a.status === "Approved").length,
+    Ended:    applications.filter(a => a.status === "Ended").length,
+    Rejected: applications.filter(a => a.status === "Rejected").length,
+    Withdrawn: applications.filter(a => a.status === "Withdrawn").length,
+  };
 
   const filteredApps = applications.filter((app) => {
     if (activeTab === "All") return true;
@@ -32,18 +39,34 @@ const ApplicationStatusList = () => {
     <section className="application-status-section">
       <div className="section-header-row status-list-header">
         <h3 className="section-title">My Applications</h3>
-        <div className="status-tabs">
-          {["All", "Pending", "Approved", "Rejected"].map((tab) => (
+        <div className="status-tabs" style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+          {["All", "Pending", "Approved", "Ended", "Rejected", "Withdrawn"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`status-tab-btn ${activeTab === tab ? "active" : ""}`}
             >
               {tab}
+              {counts[tab] > 0 && (
+                <span className="tab-count-badge">{counts[tab]}</span>
+              )}
             </button>
           ))}
         </div>
       </div>
+
+      {/* Active scholar notice */}
+      {activeScholarship && (
+        <div className="active-scholar-notice">
+          <Award size={16} />
+          <span>
+            You are currently an active scholar for{" "}
+            <strong>{activeScholarship.scholarshipName}</strong>.
+            New applications are locked until your scholarship ends.
+          </span>
+        </div>
+      )}
+
       <div className="card list-card">
         {filteredApps.length === 0 ? (
           <div className="no-applications">
@@ -52,9 +75,14 @@ const ApplicationStatusList = () => {
           </div>
         ) : (
           filteredApps.map((app) => (
-            <div key={app.id} className="list-item">
+            <div key={app.id} className={`list-item ${app.status === "Approved" ? "list-item-approved" : ""}`}>
               <div className="item-info">
-                <h4 className="item-title">{app.scholarshipName}</h4>
+                <h4 className="item-title">
+                  {app.scholarshipName}
+                  {app.status === "Approved" && activeScholarship?.id === app.id && (
+                    <span className="active-scholar-tag">● Active</span>
+                  )}
+                </h4>
                 <span className="item-subtitle">
                   Applied on {app.dateApplied} · {app.amount}
                 </span>

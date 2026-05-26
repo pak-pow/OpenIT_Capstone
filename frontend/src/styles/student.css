@@ -201,6 +201,15 @@
   background-color: var(--light-gray);
 }
 
+.list-item-approved {
+  background-color: rgba(5, 150, 105, 0.03);
+  border-left: 3px solid var(--success-text);
+}
+
+.list-item-approved:hover {
+  background-color: rgba(5, 150, 105, 0.06);
+}
+
 .list-item + .list-item {
   border-top: 1px solid var(--border-color);
 }
@@ -220,6 +229,20 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.active-scholar-tag {
+  font-size: 0.65rem;
+  background-color: var(--success-text);
+  color: white;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .item-subtitle {
@@ -241,6 +264,44 @@
 .no-applications svg {
   margin: 0 auto var(--spacing-md);
   opacity: 0.3;
+}
+
+.active-scholar-notice {
+  background: linear-gradient(135deg, var(--navy-blue), #142848);
+  border: 1px solid rgba(255, 192, 0, 0.2);
+  color: rgba(255, 255, 255, 0.85);
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  box-shadow: 0 4px 15px rgba(10, 25, 49, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.active-scholar-notice::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background-color: var(--golden-yellow);
+}
+
+.active-scholar-notice svg {
+  color: var(--golden-yellow);
+  flex-shrink: 0;
+}
+
+.active-scholar-notice strong {
+  color: var(--white);
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
 @media (max-width: 640px) {
@@ -292,6 +353,25 @@
   color: var(--golden-yellow);
   border-color: var(--navy-blue);
   box-shadow: 0 2px 6px rgba(10, 25, 49, 0.2);
+}
+
+.tab-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.08);
+  color: inherit;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 6px;
+  min-width: 20px;
+}
+
+.status-tab-btn.active .tab-count-badge {
+  background-color: rgba(255, 192, 0, 0.2);
+  color: var(--white);
 }
 
 /* =========================================

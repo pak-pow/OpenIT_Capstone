@@ -1,8 +1,3 @@
-/* ============================================
-   CONSTANTS — Dropdown options for registration
-   and the Smart Matching Engine
-   ============================================ */
-
 // ── Education Levels ──────────────────────────────────────────────
 export const EDUCATION_LEVELS = [
   { value: "jhs", label: "Junior High School (Grade 7–10)" },
@@ -246,6 +241,48 @@ export const BARANGAYS_BY_CITY = {
     "Tagbakin",
     "Tanum",
     "Tiaong",
+  ],
+};
+
+// ── Schools by City ───────────────────────────────────────────────
+export const SCHOOLS_BY_CITY = {
+  "Quezon City": [
+    "University of the Philippines Diliman",
+    "Ateneo de Manila University",
+    "Miriam College",
+    "University of the East – Caloocan",
+    "New Era University",
+    "Philippine School of Business Administration – QC",
+    "St. Paul University Quezon City",
+    "AMA Computer University – QC",
+    "FEU Institute of Technology",
+    "Quezon City University (QCU)",
+    "Polytechnic University of the Philippines – QC Branch",
+    "St. Joseph's College – QC",
+    "San Beda University – Alabang (QC Campus)",
+    "Trinity University of Asia",
+    "University of Santo Tomas (UST)",
+    "Far Eastern University (FEU) – QC",
+    "National Teachers College",
+    "Bestlink College of the Philippines",
+    "Eulogio 'Amang' Rodriguez Institute of Science and Technology",
+  ],
+  "Lucena City, Quezon": [
+    "Quezon National High School",
+    "Kolehiyo ng Lungsod ng Lucena",
+    "Manuel S. Enverga University Foundation",
+    "Lucena City Community College",
+    "EARIST – Lucena Campus",
+    "St. Ferdinand College",
+    "Laguna State Polytechnic University – Sta. Cruz Campus",
+    "Southern Luzon State University (SLSU)",
+  ],
+  "Pagbilao, Quezon": [
+    "Pagbilao National High School",
+    "Southern Luzon State University – Pagbilao Campus",
+    "Palawan State University – Pagbilao Satellite Campus",
+    "Tayabas Western Academy",
+    "Sacred Heart College – Lucena",
   ],
 };
 

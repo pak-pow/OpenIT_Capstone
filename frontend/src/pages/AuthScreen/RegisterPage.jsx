@@ -5,18 +5,20 @@ import {
   Eye,
   EyeOff,
   User,
-  Shield,
+  GraduationCap,
   BookOpen,
   Home,
   TrendingUp,
-  GraduationCap,
   Heart,
   Banknote,
+  CheckCircle,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { authService } from "../../services/authService";
 import {
   CITIES,
   BARANGAYS_BY_CITY,
+  SCHOOLS_BY_CITY,
   COURSES,
   INCOME_BRACKETS,
   EDUCATION_LEVELS,
@@ -77,6 +79,7 @@ const RegisterPage = ({ onNavigateLogin }) => {
   const [step, setStep] = useState(1);
   const [showPwd, setShowPwd] = useState(false);
   const [errors, setErrors] = useState({});
+  const [isRegistering, setIsRegistering] = useState(false);
 
   const [form, setForm] = useState({
     // Step 1 — Account
@@ -139,6 +142,7 @@ const RegisterPage = ({ onNavigateLogin }) => {
       errs.password = "Password must be at least 6 characters.";
     if (form.password !== form.confirmPassword)
       errs.confirmPassword = "Passwords do not match.";
+    if (!form.gender) errs.gender = "Please select your gender identity.";
     return errs;
   };
 
@@ -156,8 +160,7 @@ const RegisterPage = ({ onNavigateLogin }) => {
     if (!form.barangay) errs.barangay = "Please select your barangay.";
     if (!form.incomeBracket)
       errs.incomeBracket = "Please select a household income bracket.";
-    if (!form.gender) errs.gender = "Please select your gender.";
-    if (!form.schoolName.trim())
+    if (!form.schoolName.trim() || form.schoolName === '__other__')
       errs.schoolName = "Please enter your school or institution name.";
     return errs;
   };
@@ -172,17 +175,21 @@ const RegisterPage = ({ onNavigateLogin }) => {
     setStep(2);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errs = validateStep2();
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       return;
     }
-    loginAsStudent({
+
+    setIsRegistering(true);
+
+    const payload = {
       firstName: form.firstName,
       lastName: form.lastName,
       email: form.email,
+      password: form.password,
       profile: {
         educationLevel: form.educationLevel,
         gwa: form.gwa,
@@ -201,7 +208,18 @@ const RegisterPage = ({ onNavigateLogin }) => {
           schoolAccount: form.schoolAccount,
         },
       },
-    });
+    };
+
+    try {
+      const response = await authService.registerStudent(payload);
+      if (response && response.user) {
+        loginAsStudent(response.user);
+      }
+    } catch (err) {
+      setErrors({ form: err.message || "Registration failed. Please try again." });
+    } finally {
+      setIsRegistering(false);
+    }
   };
 
   const courseOptions = getCourseOptions(form.educationLevel);
@@ -220,7 +238,7 @@ const RegisterPage = ({ onNavigateLogin }) => {
         {/* Brand */}
         <div className="auth-logo">
           <div className="auth-logo-icon">
-            <Shield size={28} color="#FFC000" />
+            <GraduationCap size={28} color="#FFC000" />
           </div>
           <h1 className="auth-title">Create Account</h1>
           <p className="auth-subtitle">
@@ -281,6 +299,31 @@ const RegisterPage = ({ onNavigateLogin }) => {
                   <span className="form-error">{errors.lastName}</span>
                 )}
               </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label" htmlFor="gender">
+                Gender Identity
+              </label>
+              <div className="input-wrapper">
+                <User size={18} className="input-icon" />
+                <select
+                  id="gender"
+                  className="form-input form-select"
+                  name="gender"
+                  value={form.gender}
+                  onChange={handleChange}
+                >
+                  <option value="">Select gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="non-binary">Non-binary / Third Gender</option>
+                  <option value="prefer-not">Prefer not to say</option>
+                </select>
+              </div>
+              {errors.gender && (
+                <span className="form-error">{errors.gender}</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -470,18 +513,50 @@ const RegisterPage = ({ onNavigateLogin }) => {
               <label className="form-label" htmlFor="schoolName">
                 School / Institution Name <span style={{ color: 'var(--danger-text)' }}>*</span>
               </label>
-              <div className="input-wrapper">
-                <GraduationCap size={18} className="input-icon" />
-                <input
-                  id="schoolName"
-                  className="form-input"
-                  type="text"
-                  name="schoolName"
-                  placeholder="e.g. Bataan Peninsula State University"
-                  value={form.schoolName}
-                  onChange={handleChange}
-                />
-              </div>
+              {form.city && SCHOOLS_BY_CITY[form.city] ? (
+                <div className="input-wrapper">
+                  <GraduationCap size={18} className="input-icon" />
+                  <select
+                    id="schoolName"
+                    className="form-input form-select"
+                    name="schoolName"
+                    value={form.schoolName}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select your school</option>
+                    {SCHOOLS_BY_CITY[form.city].map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                    <option value="__other__">Other / Not listed</option>
+                  </select>
+                </div>
+              ) : (
+                <div className="input-wrapper">
+                  <GraduationCap size={18} className="input-icon" />
+                  <input
+                    id="schoolName"
+                    className="form-input"
+                    type="text"
+                    name="schoolName"
+                    placeholder={form.city ? "Type your school name" : "Select city first to see schools"}
+                    value={form.schoolName === '__other__' ? '' : form.schoolName}
+                    onChange={handleChange}
+                    disabled={!form.city}
+                  />
+                </div>
+              )}
+              {form.schoolName === '__other__' && (
+                <div className="input-wrapper" style={{ marginTop: '8px' }}>
+                  <GraduationCap size={18} className="input-icon" />
+                  <input
+                    className="form-input"
+                    type="text"
+                    placeholder="Type your school name"
+                    onChange={(e) => setForm(prev => ({ ...prev, schoolName: e.target.value }))}
+                  />
+                </div>
+              )}
+              <span className="form-hint">Select your city first to see schools in your area.</span>
               {errors.schoolName && (
                 <span className="form-error">{errors.schoolName}</span>
               )}
@@ -597,42 +672,70 @@ const RegisterPage = ({ onNavigateLogin }) => {
               )}
             </div>
 
-            {/* ── 3. Additional Eligibility ── */}
+            {/* ── 3. Grant Disbursement Info ── */}
+            <div className="form-section-label">
+              <Banknote size={14} />
+              3. Grant Disbursement Info
+            </div>
+
+            <div className="profile-hint" style={{ marginBottom: '12px' }}>
+              <Banknote size={16} />
+              <span>
+                This tells us <strong>where to send your scholarship grant</strong> once approved.
+                Your grant will be released within 30 working days after approval.
+              </span>
+            </div>
+
+            <div className="name-row">
+              <div className="form-group">
+                <label className="form-label" htmlFor="schoolEmail">
+                  School Email <span className="form-optional">(optional)</span>
+                </label>
+                <div className="input-wrapper">
+                  <Mail size={18} className="input-icon" />
+                  <input
+                    id="schoolEmail"
+                    className="form-input"
+                    type="email"
+                    name="schoolEmail"
+                    placeholder="you@school.edu.ph"
+                    value={form.schoolEmail}
+                    onChange={handleChange}
+                  />
+                </div>
+                <span className="form-hint">For registrar notifications</span>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label" htmlFor="schoolAccount">
+                  School Account No. <span className="form-optional">(optional)</span>
+                </label>
+                <div className="input-wrapper">
+                  <Banknote size={18} className="input-icon" />
+                  <input
+                    id="schoolAccount"
+                    className="form-input"
+                    type="text"
+                    name="schoolAccount"
+                    placeholder="e.g. 1234-5678-90"
+                    value={form.schoolAccount}
+                    onChange={handleChange}
+                  />
+                </div>
+                <span className="form-hint">Landbank / UnionBank school account</span>
+              </div>
+            </div>
+
+            {/* ── 4. Additional Eligibility ── */}
             <div className="form-section-label">
               <Heart size={14} />
-              3. Additional Eligibility
+              4. Additional Eligibility
             </div>
 
             <p className="form-hint">
               Check all circumstances that apply to you. Some scholarships have
               specific matching criteria based on these.
             </p>
-
-            {/* Gender */}
-            <div className="form-group">
-              <label className="form-label" htmlFor="gender">
-                Gender Identity
-              </label>
-              <div className="input-wrapper">
-                <User size={18} className="input-icon" />
-                <select
-                  id="gender"
-                  className="form-input form-select"
-                  name="gender"
-                  value={form.gender}
-                  onChange={handleChange}
-                >
-                  <option value="">Select gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="non-binary">Non-binary / Third Gender</option>
-                  <option value="prefer-not">Prefer not to say</option>
-                </select>
-              </div>
-              {errors.gender && (
-                <span className="form-error">{errors.gender}</span>
-              )}
-            </div>
 
             {/* Special Condition Checkboxes */}
             <div className="eligibility-checks">
@@ -689,60 +792,6 @@ const RegisterPage = ({ onNavigateLogin }) => {
               </label>
             </div>
 
-            {/* ── 4. Grant Disbursement Info ── */}
-            <div className="form-section-label">
-              <Banknote size={14} />
-              4. Grant Disbursement Info
-            </div>
-
-            <div className="profile-hint" style={{ marginBottom: '12px' }}>
-              <Banknote size={16} />
-              <span>
-                This tells us <strong>where to send your scholarship grant</strong> once approved.
-                Your grant will be released within 30 working days after approval.
-              </span>
-            </div>
-
-            <div className="name-row">
-              <div className="form-group">
-                <label className="form-label" htmlFor="schoolEmail">
-                  School Email <span className="form-optional">(optional)</span>
-                </label>
-                <div className="input-wrapper">
-                  <Mail size={18} className="input-icon" />
-                  <input
-                    id="schoolEmail"
-                    className="form-input"
-                    type="email"
-                    name="schoolEmail"
-                    placeholder="you@school.edu.ph"
-                    value={form.schoolEmail}
-                    onChange={handleChange}
-                  />
-                </div>
-                <span className="form-hint">For registrar notifications</span>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label" htmlFor="schoolAccount">
-                  School Account No. <span className="form-optional">(optional)</span>
-                </label>
-                <div className="input-wrapper">
-                  <Banknote size={18} className="input-icon" />
-                  <input
-                    id="schoolAccount"
-                    className="form-input"
-                    type="text"
-                    name="schoolAccount"
-                    placeholder="e.g. 1234-5678-90"
-                    value={form.schoolAccount}
-                    onChange={handleChange}
-                  />
-                </div>
-                <span className="form-hint">Landbank / UnionBank school account</span>
-              </div>
-            </div>
-
             {/* Actions */}
             <div className="form-actions-row">
               <button
@@ -755,8 +804,9 @@ const RegisterPage = ({ onNavigateLogin }) => {
               <button
                 type="submit"
                 className="btn btn-primary form-action-btn-primary"
+                disabled={isRegistering}
               >
-                Register & Match
+                {isRegistering ? "Creating Account..." : "Register & Match"}
               </button>
             </div>
           </form>
