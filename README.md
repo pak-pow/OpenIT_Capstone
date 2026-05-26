@@ -1,8 +1,6 @@
 # Paldo: Barangay Scholarship System
 
-Paldo is a comprehensive web application designed to streamline the scholarship application and management process for Local Government Units (LGUs) and Barangays. Developed as a Capstone Project, it bridges the gap between students seeking financial assistance and the organizations providing educational grants. 
-
-The system provides an intuitive, automated platform that reduces paperwork and manual processing while offering a premium user experience.
+Paldo is a comprehensive web application designed to streamline the scholarship application and management process for Local Government Units (LGUs) and Barangays. Developed as a Capstone Project, it bridges the gap between students seeking financial assistance and the organizations providing educational grants.
 
 ---
 
@@ -45,6 +43,35 @@ The project is structured as a full-stack application divided into two primary c
 * **ORM**: Entity Framework Core
 * **Database**: PostgreSQL
 * **Architecture**: MVC Pattern (Models, Views/DTOs, Controllers)
+
+---
+
+## Project Structure
+
+```text
+OpenIT_Capstone/
+├── backend/                       # ASP.NET Core Web API
+│   ├── Controllers/               # API endpoint definitions
+│   ├── Data/                      # Entity Framework DbContext & Migrations
+│   ├── Dtos/                      # Data Transfer Objects for API requests/responses
+│   ├── Models/                    # Database Domain Models
+│   ├── appsettings.json           # Environment variables and DB connection strings
+│   └── Program.cs                 # Application entry point and DI configuration
+│
+└── frontend/                      # React SPA (Vite)
+    ├── public/                    # Static assets
+    └── src/
+        ├── assets/                # Images and local static files
+        ├── components/            # Reusable UI components (layout, common, scholarships)
+        ├── context/               # Global state management (AuthContext, ScholarshipContext)
+        ├── mockdata/              # Local JSON files for decoupled API simulation
+        ├── pages/                 # Full-page views (UserScreen, AdminDashboard, Login)
+        ├── services/              # API and third-party service integrations
+        ├── styles/                # Vanilla CSS modules and design tokens
+        ├── utils/                 # Helper functions and formatters
+        ├── App.jsx                # Root routing component
+        └── main.jsx               # React DOM entry point
+```
 
 ---
 
