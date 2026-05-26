@@ -24,6 +24,23 @@ public class StudentProfileService
 
     public async Task<StudentProfile> CreateAsync(StudentProfileCreateDto dto)
     {
+        var barangayExists = await _context.Barangays.AnyAsync(b => b.Id == dto.BarangayId);
+        if (!barangayExists)
+        {
+            var firstBarangay = await _context.Barangays.FirstOrDefaultAsync();
+            if (firstBarangay != null)
+            {
+                dto.BarangayId = firstBarangay.Id;
+            }
+            else
+            {
+                var defaultBarangay = new Barangay { Name = "Default Barangay" };
+                _context.Barangays.Add(defaultBarangay);
+                await _context.SaveChangesAsync();
+                dto.BarangayId = defaultBarangay.Id;
+            }
+        }
+
         var student = new StudentProfile
         {
             UserId = dto.UserId,
@@ -48,6 +65,16 @@ public class StudentProfileService
         if (student is null)
         {
             return false;
+        }
+
+        var barangayExists = await _context.Barangays.AnyAsync(b => b.Id == dto.BarangayId);
+        if (!barangayExists)
+        {
+            var firstBarangay = await _context.Barangays.FirstOrDefaultAsync();
+            if (firstBarangay != null)
+            {
+                dto.BarangayId = firstBarangay.Id;
+            }
         }
 
         student.UserId = dto.UserId;
