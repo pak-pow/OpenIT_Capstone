@@ -39,8 +39,8 @@ const SmartMatchSection = ({ onApply, onSeeAll, disabled }) => {
 
   const filtered = scholarships.filter(s => matchesFilter(s.type, activeFilter));
 
-  const handleConfirmApply = () => {
-    const success = applyToScholarship(selectedScholarship);
+  const handleConfirmApply = async () => {
+    const success = await applyToScholarship(selectedScholarship);
     setSelectedScholarship(null);
     if (onApply) onApply(selectedScholarship, success);
   };

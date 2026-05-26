@@ -4,6 +4,7 @@ using Kaagapay.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql;
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
@@ -92,7 +93,20 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<KaagapayContext>();
-    await context.Database.MigrateAsync();
+    try
+    {
+        await context.Database.MigrateAsync();
+    }
+    catch (PostgresException ex) when (ex.SqlState == "42P07")
+    {
+        // The table already exists but migration history is missing/out-of-sync.
+        app.Logger.LogWarning("Skipping migration due to existing relation: {Message}", ex.MessageText);
+
+        // Ensure newer columns exist for legacy databases whose migration history was lost.
+        await context.Database.ExecuteSqlRawAsync(
+            "ALTER TABLE \"Scholarships\" ADD COLUMN IF NOT EXISTS \"Requirements\" text NOT NULL DEFAULT '';"
+        );
+    }
     await SeedData.EnsureSeededAsync(context);
 }
 

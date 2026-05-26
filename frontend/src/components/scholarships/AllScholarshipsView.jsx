@@ -30,12 +30,17 @@ const AllScholarshipsView = ({ onBack, addToast, disabled }) => {
     });
   }, [scholarships, searchTerm, filterType]);
 
-  const handleConfirmApply = () => {
-    const success = applyToScholarship(selectedScholarship);
+  const handleConfirmApply = async () => {
+    const success = await applyToScholarship(selectedScholarship);
     if (success) {
       addToast(
         `Successfully applied to "${selectedScholarship.title}"!`,
         "success",
+      );
+    } else if (success === "missing_profile") {
+      addToast(
+        "Complete your student profile before applying for a scholarship.",
+        "error",
       );
     } else if (success === "failed") {
       addToast(

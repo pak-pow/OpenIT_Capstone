@@ -7,16 +7,26 @@ const ReviewApplicantModal = ({ applicant, onClose, addToast }) => {
 
   if (!applicant) return null;
 
-  const handleApprove = () => {
-    approveApplicant(applicant.id);
-    addToast(`${applicant.name} has been approved!`, "success");
-    onClose();
+  const handleApprove = async () => {
+    const ok = await approveApplicant(applicant.id);
+    if (ok) {
+      addToast(`${applicant.name} has been approved!`, "success");
+      onClose();
+      return;
+    }
+
+    addToast("Unable to approve applicant right now.", "error");
   };
 
-  const handleReject = () => {
-    rejectApplicant(applicant.id);
-    addToast(`${applicant.name} has been rejected.`, "error");
-    onClose();
+  const handleReject = async () => {
+    const ok = await rejectApplicant(applicant.id);
+    if (ok) {
+      addToast(`${applicant.name} has been rejected.`, "error");
+      onClose();
+      return;
+    }
+
+    addToast("Unable to reject applicant right now.", "error");
   };
 
   return (
