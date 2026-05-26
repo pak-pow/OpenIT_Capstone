@@ -85,7 +85,11 @@ public static class MappingExtensions
             ? (application.Scholarship.MaxHouseholdIncome > 0 ? $"₱{application.Scholarship.MaxHouseholdIncome:N0}" : string.Empty)
             : null,
         DateApplied = application.SubmittedAt.ToString("yyyy-MM-dd"),
-        Gpa = application.Student?.Gwa.ToString("0.00") ?? "N/A"
+        Gpa = application.Student?.Gwa.ToString("0.00") ?? "N/A",
+        Course = application.Student?.Course ?? string.Empty,
+        Requirements = application.Scholarship != null && !string.IsNullOrWhiteSpace(application.Scholarship.Requirements) 
+            ? application.Scholarship.Requirements.Split('|').Select(r => r.Trim()).ToArray() 
+            : Array.Empty<string>()
     };
 
     public static DocumentDto ToDto(this Document document) => new()

@@ -80,7 +80,7 @@ const ReviewApplicantModal = ({ applicant, onClose, addToast }) => {
                   color: "var(--text-medium)",
                 }}
               >
-                {applicant.course || "Bachelor of Science"}
+                {applicant.course || "No course specified"}
               </p>
             </div>
             <div
@@ -163,7 +163,7 @@ const ReviewApplicantModal = ({ applicant, onClose, addToast }) => {
                 gap: "0.5rem",
               }}
             >
-              {["Certificate of Grades", "Barangay Indigency", "Valid ID"].map(
+              {(applicant.documents || ["Certificate of Grades", "Barangay Indigency", "Valid ID"]).map(
                 (doc, idx) => (
                   <div
                     key={idx}

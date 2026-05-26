@@ -94,6 +94,8 @@ export const AdminProvider = ({ children }) => {
           name: a.studentName || "Unknown",
           program: a.scholarshipName || "Unknown",
           gpa: a.gpa || "N/A",
+          course: a.course || "",
+          documents: a.requirements || ["Certificate of Grades", "Barangay Indigency", "Valid ID"],
           matchScore: 0,
           appliedDate: a.dateApplied,
           status: normalizeAppStatus(a.status)

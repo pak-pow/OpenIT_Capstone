@@ -18,6 +18,8 @@ public class ApplicationDto
     public string? Amount { get; set; }
     public string? DateApplied { get; set; }
     public string? Gpa { get; set; }
+    public string? Course { get; set; }
+    public string[]? Requirements { get; set; }
 }
 
 public class ApplicationCreateDto
