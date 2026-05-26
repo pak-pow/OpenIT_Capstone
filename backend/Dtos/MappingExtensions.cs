@@ -63,7 +63,15 @@ public static class MappingExtensions
         Status = application.Status,
         SubmittedAt = application.SubmittedAt,
         ReviewedAt = application.ReviewedAt,
-        Remarks = application.Remarks
+        Remarks = application.Remarks,
+        ScholarshipName = application.Scholarship?.Title,
+        Provider = application.Scholarship != null 
+            ? (application.Scholarship.Barangay != null ? application.Scholarship.Barangay.Name : application.Scholarship.Type.ToString())
+            : null,
+        Amount = application.Scholarship != null
+            ? (application.Scholarship.MaxHouseholdIncome > 0 ? $"₱{application.Scholarship.MaxHouseholdIncome:N0}" : string.Empty)
+            : null,
+        DateApplied = application.SubmittedAt.ToString("yyyy-MM-dd")
     };
 
     public static DocumentDto ToDto(this Document document) => new()

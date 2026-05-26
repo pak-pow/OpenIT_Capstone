@@ -1,11 +1,10 @@
-import React, { createContext, useContext, useEffect, useState, useMemo } from "react";
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import { computeMatch } from "../utils/matchEngine";
 import { apiRequest } from "../api/client";
 import { useAuth } from "./AuthContext";
 
 const ScholarshipContext = createContext(null);
-
-const USE_MOCK = import.meta.env.VITE_USE_MOCK_DATA === 'true';
 
 export const ScholarshipProvider = ({ children, userProfile }) => {
   const { token } = useAuth();
@@ -14,16 +13,19 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Fetch scholarships from backend and map to frontend shape
+  // Fetch scholarships and applications from backend and map to frontend shape
   useEffect(() => {
     let mounted = true;
     const load = async () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await apiRequest("/api/scholarships", { token });
-        // backend returns ScholarshipDto[]; map to frontend expected shape
-        const mapped = data.map((s) => ({
+        const [scholarshipsRes, applicationsRes] = await Promise.all([
+          apiRequest("/api/scholarships", { token }),
+          token ? apiRequest("/api/applications", { token }) : Promise.resolve([]),
+        ]);
+
+        const mappedScholarships = scholarshipsRes.map((s) => ({
           id: s.id,
           title: s.title,
           provider: s.provider || (s.type ? s.type : "Provider"),
@@ -61,11 +63,38 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
           },
         }));
 
-        if (mounted) setScholarshipsData(mapped);
+        const mappedApplications = (applicationsRes || []).map((app) => ({
+          id: app.id,
+          scholarshipId: app.scholarshipId,
+          scholarshipName: app.scholarshipName || "Scholarship",
+          provider: app.provider || "Provider",
+          amount: app.amount || "₱0",
+          dateApplied: app.dateApplied || (app.submittedAt ? app.submittedAt.split("T")[0] : ""),
+          status: (() => {
+            const s = String(app.status);
+            if (s === "Submitted" || s === "0") return "Pending";
+            if (s === "UnderReview" || s === "1") return "Under Review";
+            if (s === "Approved" || s === "2") return "Approved";
+            if (s === "Rejected" || s === "3") return "Rejected";
+            if (s === "NeedsInfo" || s === "4") return "Under Review";
+            return s;
+          })(),
+          justApproved: false,
+          justRejected: false,
+          justEnded: false,
+        }));
+
+        if (mounted) {
+          setScholarshipsData(mappedScholarships);
+          setApplications(mappedApplications);
+        }
       } catch (err) {
         setError(err?.message || String(err));
-        // fallback to empty list
-        if (mounted) setScholarshipsData([]);
+        // fallback to empty lists
+        if (mounted) {
+          setScholarshipsData([]);
+          setApplications([]);
+        }
       } finally {
         if (mounted) setLoading(false);
       }
@@ -125,7 +154,7 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
       };
       setApplications((prev) => [newApp, ...prev]);
       return true;
-    } catch (err) {
+    } catch {
       // fallback to local: keep previous behavior
       const newApp = {
         id: Date.now(),

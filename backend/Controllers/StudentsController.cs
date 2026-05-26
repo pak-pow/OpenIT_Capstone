@@ -64,9 +64,21 @@ public class StudentsController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<StudentProfileDto>> Create([FromBody] StudentProfileCreateDto dto)
     {
+        var isAdmin = User.IsInRole("Admin");
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+        if (!isAdmin && dto.UserId != userId)
+        {
+            return Forbid();
+        }
+
+        var existing = await _service.GetByUserIdAsync(dto.UserId);
+        if (existing is not null)
+        {
+            return Conflict(new { message = "A student profile already exists for this user." });
+        }
+
         var created = await _service.CreateAsync(dto);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created.ToDto());
     }

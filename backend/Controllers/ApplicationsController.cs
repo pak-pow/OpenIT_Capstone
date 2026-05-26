@@ -21,9 +21,20 @@ public class ApplicationsController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<IEnumerable<ApplicationDto>>> GetAll([FromQuery] int? studentId, [FromQuery] int? scholarshipId)
     {
+        var isAdmin = User.IsInRole("Admin");
+        if (!isAdmin)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+            var student = await _students.GetByUserIdAsync(userId);
+            if (student is null)
+            {
+                return Ok(Enumerable.Empty<ApplicationDto>());
+            }
+            studentId = student.Id;
+        }
+
         var applications = await _service.GetAllAsync(studentId, scholarshipId);
         return Ok(applications.Select(a => a.ToDto()));
     }

@@ -16,7 +16,11 @@ public class ApplicationService
 
     public async Task<List<Application>> GetAllAsync(int? studentId, int? scholarshipId)
     {
-        var query = _context.Applications.AsNoTracking().AsQueryable();
+        var query = _context.Applications
+            .Include(a => a.Scholarship)
+                .ThenInclude(s => s!.Barangay)
+            .AsNoTracking()
+            .AsQueryable();
 
         if (studentId.HasValue)
         {
@@ -32,7 +36,11 @@ public class ApplicationService
     }
 
     public Task<Application?> GetByIdAsync(int id) =>
-        _context.Applications.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id);
+        _context.Applications
+            .Include(a => a.Scholarship)
+                .ThenInclude(s => s!.Barangay)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(a => a.Id == id);
 
     public async Task<Application?> CreateAsync(ApplicationCreateDto dto)
     {

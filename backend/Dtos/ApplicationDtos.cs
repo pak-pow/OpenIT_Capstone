@@ -12,6 +12,10 @@ public class ApplicationDto
     public DateTime SubmittedAt { get; set; }
     public DateTime? ReviewedAt { get; set; }
     public string? Remarks { get; set; }
+    public string? ScholarshipName { get; set; }
+    public string? Provider { get; set; }
+    public string? Amount { get; set; }
+    public string? DateApplied { get; set; }
 }
 
 public class ApplicationCreateDto

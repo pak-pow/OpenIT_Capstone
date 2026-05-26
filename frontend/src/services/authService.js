@@ -1,6 +1,5 @@
 import { apiClient } from './apiClient';
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const USE_MOCK = import.meta.env.VITE_USE_MOCK_DATA === 'true';
 
 export const authService = {
