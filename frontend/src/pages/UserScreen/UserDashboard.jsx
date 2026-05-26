@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from 'react';
 import StudentLayout from '../../components/layout/StudentLayout';
 import SmartMatchSection from '../../components/scholarships/SmartMatchSection';

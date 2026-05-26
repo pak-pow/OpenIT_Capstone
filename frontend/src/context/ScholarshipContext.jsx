@@ -243,7 +243,7 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
         scholarships: scholarshipsWithMatch,
         applications,
         activeScholarship,
-        isLoading,
+        loading,
         error,
         applyToScholarship,
         hasApplied,
