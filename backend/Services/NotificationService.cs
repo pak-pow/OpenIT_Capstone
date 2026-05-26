@@ -15,7 +15,7 @@ public class NotificationService
     }
 
     public Task<List<Notification>> GetByUserAsync(string userId) =>
-        _context.Notifications.AsNoTracking().Where(n => n.UserId == userId).ToListAsync();
+        _context.Notifications.AsNoTracking().Where(n => n.UserId == userId).OrderByDescending(n => n.CreatedAt).ToListAsync();
 
     public Task<Notification?> GetByIdAsync(int id) =>
         _context.Notifications.AsNoTracking().FirstOrDefaultAsync(n => n.Id == id);

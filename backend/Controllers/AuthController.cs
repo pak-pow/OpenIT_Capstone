@@ -21,6 +21,11 @@ public class AuthController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<AuthResponse>> Register([FromBody] RegisterRequest dto)
     {
+        if (dto.Role?.Equals("Admin", StringComparison.OrdinalIgnoreCase) == true && !User.IsInRole("Admin"))
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = "Only admins can create other admin accounts." });
+        }
+
         try
         {
             var user = await _service.RegisterAsync(dto);

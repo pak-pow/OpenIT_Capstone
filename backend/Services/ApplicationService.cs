@@ -19,6 +19,7 @@ public class ApplicationService
         var query = _context.Applications
             .Include(a => a.Scholarship)
                 .ThenInclude(s => s!.Barangay)
+            .Include(a => a.Student)
             .AsNoTracking()
             .AsQueryable();
 
@@ -39,17 +40,36 @@ public class ApplicationService
         _context.Applications
             .Include(a => a.Scholarship)
                 .ThenInclude(s => s!.Barangay)
+            .Include(a => a.Student)
             .AsNoTracking()
             .FirstOrDefaultAsync(a => a.Id == id);
 
     public async Task<Application?> CreateAsync(ApplicationCreateDto dto)
     {
         var studentExists = await _context.Students.AnyAsync(s => s.Id == dto.StudentId);
-        var scholarshipExists = await _context.Scholarships.AnyAsync(s => s.Id == dto.ScholarshipId);
+        var scholarship = await _context.Scholarships
+            .Include(s => s.Applications)
+            .FirstOrDefaultAsync(s => s.Id == dto.ScholarshipId);
 
-        if (!studentExists || !scholarshipExists)
+        if (!studentExists || scholarship is null)
         {
             return null;
+        }
+
+        var hasActive = await _context.Applications.AnyAsync(a => 
+            a.StudentId == dto.StudentId && 
+            a.ScholarshipId == dto.ScholarshipId && 
+            a.Status != ApplicationStatus.Rejected);
+            
+        if (hasActive)
+        {
+            throw new InvalidOperationException("You already have an active application for this scholarship.");
+        }
+
+        var slotsFilled = scholarship.Applications.Count(a => a.Status == ApplicationStatus.Approved);
+        if (scholarship.AvailableSlots <= slotsFilled)
+        {
+            throw new ArgumentException("This scholarship has no available slots left.");
         }
 
         var application = new Application
@@ -79,7 +99,14 @@ public class ApplicationService
         application.ReviewedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
-        return application;
+
+        // Reload with includes for complete DTO mapping
+        return await _context.Applications
+            .Include(a => a.Scholarship)
+                .ThenInclude(s => s!.Barangay)
+            .Include(a => a.Student)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(a => a.Id == id);
     }
 
     public async Task<bool> DeleteAsync(int id)

@@ -30,8 +30,8 @@ const AllScholarshipsView = ({ onBack, addToast, disabled }) => {
     });
   }, [scholarships, searchTerm, filterType]);
 
-  const handleConfirmApply = () => {
-    const success = applyToScholarship(selectedScholarship);
+  const handleConfirmApply = async (uploads) => {
+    const success = await applyToScholarship(selectedScholarship, uploads);
     if (success) {
       addToast(
         `Successfully applied to "${selectedScholarship.title}"!`,

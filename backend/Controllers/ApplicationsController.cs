@@ -3,6 +3,7 @@ using Kaagapay.Api.Dtos;
 using Kaagapay.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Kaagapay.Api.Models;
 
 namespace Kaagapay.Api.Controllers;
 
@@ -40,13 +41,22 @@ public class ApplicationsController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ApplicationDto>> GetById(int id)
     {
         var application = await _service.GetByIdAsync(id);
         if (application is null)
         {
             return NotFound();
+        }
+
+        if (!User.IsInRole("Admin"))
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+            var student = await _students.GetByUserIdAsync(userId);
+            if (student is null || application.StudentId != student.Id)
+            {
+                return Forbid();
+            }
         }
 
         return Ok(application.ToDto());
@@ -68,7 +78,20 @@ public class ApplicationsController : ControllerBase
             dto.StudentId = student.Id;
         }
 
-        var created = await _service.CreateAsync(dto);
+        Application? created;
+        try
+        {
+            created = await _service.CreateAsync(dto);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+
         if (created is null)
         {
             return NotFound(new { message = "Student or scholarship not found." });

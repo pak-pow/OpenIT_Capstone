@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import { computeMatch } from "../utils/matchEngine";
 import { apiRequest } from "../api/client";
 import { useAuth } from "./AuthContext";
-import mockScholarships from "../mockdata/scholarships.json";
+
 
 const ScholarshipContext = createContext(null);
 
@@ -79,7 +79,7 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
           description: s.description,
           requirements: (Array.isArray(s.requirements) && s.requirements.length > 0)
             ? s.requirements
-            : (mockScholarships.find((m) => m.id === s.id)?.requirements || []),
+            : [],
           eligibility: {
             minGwa: s.eligibility?.minGwa ?? s.requiredGwa ?? s.minGwa ?? 0,
             maxIncomeRank: (s.eligibility?.maxIncomeRank ?? s.maxIncomeRank ?? 0) > 0
@@ -191,6 +191,7 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
   // ── Simulate approval: only approves ONE at a time ────────────────
   // If an approved scholarship already exists, this is a no-op.
   const simulateApproval = () => {
+    if (!import.meta.env.DEV) return;
     // Block if any scholarship is already Approved
     const alreadyHasActive = applications.some((a) => a.status === "Approved");
     if (alreadyHasActive) return;
@@ -228,6 +229,7 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
 
   // ── Simulate rejection: only rejects ONE at a time ────────────────
   const simulateRejection = () => {
+    if (!import.meta.env.DEV) return;
     setApplications((prev) => {
       const idx = prev.findIndex(
         (a) => a.status === "Pending" || a.status === "Under Review"
@@ -242,6 +244,7 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
 
   // ── Simulate end: changes the active scholarship to Ended ────────────────
   const simulateEnded = () => {
+    if (!import.meta.env.DEV) return;
     const idx = applications.findIndex((a) => a.status === "Approved");
     if (idx === -1) return;
     

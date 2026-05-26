@@ -246,7 +246,7 @@ const UploadStep = ({
         </button>
         <button
           className="btn btn-primary"
-          onClick={onConfirm}
+          onClick={() => onConfirm(uploads)}
           disabled={!allUploaded || isSubmitting}
         >
           {isSubmitting ? (
@@ -266,6 +266,7 @@ const UploadStep = ({
 const ApplyModal = ({ scholarship, onConfirm, onClose }) => {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const uploadsRef = useRef([]);
 
   // Close on Escape
   useEffect(() => {
@@ -283,7 +284,7 @@ const ApplyModal = ({ scholarship, onConfirm, onClose }) => {
     // Simulate async submission (in real app: POST to backend)
     setTimeout(() => {
       setIsSubmitting(false);
-      onConfirm();
+      onConfirm(uploadsRef.current);
     }, 1200);
   };
 
@@ -327,7 +328,10 @@ const ApplyModal = ({ scholarship, onConfirm, onClose }) => {
         {step === 2 && (
           <UploadStep
             scholarship={scholarship}
-            onConfirm={handleConfirm}
+            onConfirm={(uploads) => {
+              uploadsRef.current = uploads;
+              handleConfirm();
+            }}
             onBack={() => setStep(1)}
             onClose={onClose}
             isSubmitting={isSubmitting}
