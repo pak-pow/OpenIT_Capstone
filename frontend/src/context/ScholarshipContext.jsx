@@ -1,12 +1,78 @@
-import React, { createContext, useContext, useState, useMemo } from "react";
-import { scholarships as allScholarships } from "../mockdata";
+import React, { createContext, useContext, useEffect, useState, useMemo } from "react";
 import { computeMatch } from "../utils/matchEngine";
+import { apiRequest } from "../api/client";
+import { useAuth } from "./AuthContext";
 
 const ScholarshipContext = createContext(null);
 
 export const ScholarshipProvider = ({ children, userProfile }) => {
+  const { token } = useAuth();
   const [applications, setApplications] = useState([]);
-  const [scholarshipsData, setScholarshipsData] = useState(allScholarships);
+  const [scholarshipsData, setScholarshipsData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Fetch scholarships from backend and map to frontend shape
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await apiRequest("/api/scholarships", { token });
+        // backend returns ScholarshipDto[]; map to frontend expected shape
+        const mapped = data.map((s) => ({
+          id: s.id,
+          title: s.title,
+          provider: s.provider || (s.type ? s.type : "Provider"),
+          type: (() => {
+            // normalize type strings used in frontend
+            if (!s.type) return "Government";
+            const t = String(s.type);
+            if (t.toLowerCase().includes("ngo") || t.toLowerCase().includes("private")) return "Private/NGO";
+            if (t.toLowerCase().includes("barangay")) return "Barangay";
+            if (t.toLowerCase().includes("sk")) return "SK";
+            if (t.toLowerCase().includes("ched")) return "CHED";
+            return t;
+          })(),
+          amount: s.amount || s.maxAmount || `₱${(s.maxHouseholdIncome || 0).toString()}`,
+          amountRaw: s.amountRaw || 0,
+          deadline: s.deadline ? new Date(s.deadline).toISOString().split("T")[0] : null,
+          slots: s.availableSlots ?? s.slots ?? 0,
+          slotsFilled: s.slotsFilled ?? 0,
+          status: (() => {
+            if (!s.status) return "Active";
+            // map backend enum to frontend-friendly
+            const st = String(s.status);
+            if (st === "Open") return "Active";
+            if (st === "Closed") return "Closed";
+            return st;
+          })(),
+          description: s.description,
+          requirements: s.requirements || [],
+          eligibility: {
+            minGwa: s.requiredGwa ?? s.minGwa ?? 0,
+            maxIncomeRank: s.maxIncomeRank ?? 5,
+            eligibleBarangays: s.eligibleBarangays || [],
+            eligibleCourses: s.eligibleCourses ? s.eligibleCourses.split(",").map((c) => c.trim()) : [],
+            specialConditions: s.specialConditions || [],
+          },
+        }));
+
+        if (mounted) setScholarshipsData(mapped);
+      } catch (err) {
+        setError(err?.message || String(err));
+        // fallback to empty list
+        if (mounted) setScholarshipsData([]);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, [token]);
 
   // ── Compute match percentages for all scholarships ───────────────
   const scholarshipsWithMatch = useMemo(() => {
@@ -26,30 +92,54 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
     return approved.reduce((latest, a) => (a.id > latest.id ? a : latest));
   }, [applications]);
 
-  const hasApplied = (scholarshipId) =>
-    applications.some((a) => a.scholarshipId === scholarshipId);
+  const hasApplied = (scholarshipId) => applications.some((a) => a.scholarshipId === scholarshipId);
 
   // ── Apply: blocked if user already has an active (Approved) scholarship ──
-  const applyToScholarship = (scholarship) => {
+  const applyToScholarship = async (scholarship) => {
     // Guard 1: already an active scholar
     if (activeScholarship) return "active_scholar";
     // Guard 2: already applied to this specific scholarship
     if (hasApplied(scholarship.id)) return false;
 
-    const newApp = {
-      id: Date.now(),
-      scholarshipId: scholarship.id,
-      scholarshipName: scholarship.title,
-      provider: scholarship.provider,
-      amount: scholarship.amount,
-      dateApplied: new Date().toISOString().split("T")[0],
-      status: "Pending",
-      justApproved: false,
-      justRejected: false,
-      justEnded: false,
-    };
-    setApplications((prev) => [newApp, ...prev]);
-    return true;
+    // Try to create application via backend; if it fails, fall back to local simulation
+    try {
+      await apiRequest("/api/applications", {
+        method: "POST",
+        token: token,
+        body: { scholarshipId: scholarship.id },
+      });
+      // optimistically add to local state
+      const newApp = {
+        id: Date.now(),
+        scholarshipId: scholarship.id,
+        scholarshipName: scholarship.title,
+        provider: scholarship.provider,
+        amount: scholarship.amount,
+        dateApplied: new Date().toISOString().split("T")[0],
+        status: "Pending",
+        justApproved: false,
+        justRejected: false,
+        justEnded: false,
+      };
+      setApplications((prev) => [newApp, ...prev]);
+      return true;
+    } catch (err) {
+      // fallback to local: keep previous behavior
+      const newApp = {
+        id: Date.now(),
+        scholarshipId: scholarship.id,
+        scholarshipName: scholarship.title,
+        provider: scholarship.provider,
+        amount: scholarship.amount,
+        dateApplied: new Date().toISOString().split("T")[0],
+        status: "Pending",
+        justApproved: false,
+        justRejected: false,
+        justEnded: false,
+      };
+      setApplications((prev) => [newApp, ...prev]);
+      return true;
+    }
   };
 
   // ── Simulate approval: only approves ONE at a time ────────────────
