@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using Kaagapay.Api.Models;
 
 namespace Kaagapay.Api.Dtos;
@@ -36,7 +38,21 @@ public static class MappingExtensions
         AvailableSlots = scholarship.AvailableSlots,
         Status = scholarship.Status,
         Type = scholarship.Type,
-        BarangayId = scholarship.BarangayId
+        BarangayId = scholarship.BarangayId,
+        // frontend-friendly
+        Provider = scholarship.Barangay != null ? scholarship.Barangay.Name : scholarship.Type.ToString(),
+        Amount = scholarship.MaxHouseholdIncome > 0 ? $"₱{scholarship.MaxHouseholdIncome:N0}" : string.Empty,
+        AmountRaw = scholarship.MaxHouseholdIncome,
+        Requirements = Array.Empty<string>(),
+        Eligibility = new ScholarshipEligibilityDto
+        {
+            MinGwa = scholarship.RequiredGwa,
+            MaxIncomeRank = 0,
+            EligibleBarangays = Array.Empty<string>(),
+            EligibleCourses = !string.IsNullOrWhiteSpace(scholarship.EligibleCourses) ? scholarship.EligibleCourses.Split(',').Select(c => c.Trim()).ToArray() : Array.Empty<string>(),
+            SpecialConditions = Array.Empty<string>()
+        },
+        SlotsFilled = scholarship.Applications?.Count(a => a.Status == Models.ApplicationStatus.Approved) ?? 0
     };
 
     public static ApplicationDto ToDto(this Application application) => new()
