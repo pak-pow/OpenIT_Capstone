@@ -62,7 +62,7 @@ public class ApplicationsController : ControllerBase
             var student = await _students.GetByUserIdAsync(userId);
             if (student is null)
             {
-                return Forbid();
+                return BadRequest(new { message = "Student profile is missing. Please complete your profile before applying." });
             }
 
             dto.StudentId = student.Id;

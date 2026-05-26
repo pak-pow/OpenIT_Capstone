@@ -10,7 +10,7 @@ import { INCOME_RANK } from "../mockdata/constants";
 //    Barangay          → 20 pts
 //    Course            → 15 pts
 // ============================================================
-export function computeMatch(profile, scholarship) {
+export function computeMatch(profile = {}, scholarship) {
   const {
     gwa,
     incomeBracket,

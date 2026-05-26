@@ -13,6 +13,41 @@ import { apiRequest } from '../api/client';
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK_DATA === 'true';
 
+const normalizeScholarshipType = (rawType) => {
+  if (rawType === undefined || rawType === null) return 'Government';
+  if (typeof rawType === 'number') {
+    if (rawType === 0) return 'Government';
+    if (rawType === 1) return 'Private/NGO';
+    if (rawType === 2) return 'Private/NGO';
+    return String(rawType);
+  }
+
+  const t = String(rawType).trim();
+  const lower = t.toLowerCase();
+  if (lower.includes('ngo') || lower.includes('private')) return 'Private/NGO';
+  if (lower.includes('barangay')) return 'Barangay';
+  if (lower === 'lgu') return 'LGU';
+  if (lower.includes('sk')) return 'SK';
+  if (lower.includes('ched')) return 'CHED';
+  if (lower.includes('government')) return 'Government';
+  return t;
+};
+
+const normalizeScholarshipStatus = (rawStatus) => {
+  if (rawStatus === undefined || rawStatus === null) return 'Active';
+  if (typeof rawStatus === 'number') {
+    if (rawStatus === 0) return 'Active';
+    if (rawStatus === 1) return 'Closed';
+    if (rawStatus === 2) return 'Archived';
+    return String(rawStatus);
+  }
+
+  const s = String(rawStatus);
+  if (s === 'Open') return 'Active';
+  if (s === 'Closed') return 'Closed';
+  return s;
+};
+
 export const AdminProvider = ({ children }) => {
   const { token } = useAuth();
   const getMockScholarships = () => {
@@ -41,17 +76,13 @@ export const AdminProvider = ({ children }) => {
           id: s.id,
           title: s.title,
           name: s.title,
-          type: s.type ?? (s.type === 0 ? 'Government' : String(s.type)),
+          type: normalizeScholarshipType(s.type),
           amount: s.amount || (s.amountRaw ? `₱${s.amountRaw}` : ''),
           amountRaw: s.amountRaw || s.maxHouseholdIncome || 0,
           slots: s.availableSlots ?? s.slots ?? 0,
           slotsFilled: s.slotsFilled ?? 0,
           deadline: s.deadline ? new Date(s.deadline).toISOString().split('T')[0] : null,
-          status: (() => {
-            if (s.status === undefined || s.status === null) return 'Active';
-            if (typeof s.status === 'number') return s.status === 0 ? 'Active' : String(s.status);
-            return String(s.status);
-          })(),
+          status: normalizeScholarshipStatus(s.status),
         }));
         setAdminScholarships(mapped);
       } catch (err) {

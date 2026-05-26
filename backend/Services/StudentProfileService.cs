@@ -14,13 +14,23 @@ public class StudentProfileService
         _context = context;
     }
 
-    public Task<List<StudentProfile>> GetAllAsync() => _context.Students.AsNoTracking().ToListAsync();
+    public Task<List<StudentProfile>> GetAllAsync() =>
+        _context.Students
+            .AsNoTracking()
+            .Include(s => s.Barangay)
+            .ToListAsync();
 
     public Task<StudentProfile?> GetByIdAsync(int id) =>
-        _context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
+        _context.Students
+            .AsNoTracking()
+            .Include(s => s.Barangay)
+            .FirstOrDefaultAsync(s => s.Id == id);
 
     public Task<StudentProfile?> GetByUserIdAsync(string userId) =>
-        _context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.UserId == userId);
+        _context.Students
+            .AsNoTracking()
+            .Include(s => s.Barangay)
+            .FirstOrDefaultAsync(s => s.UserId == userId);
 
     public async Task<StudentProfile> CreateAsync(StudentProfileCreateDto dto)
     {

@@ -6,6 +6,15 @@ namespace Kaagapay.Api.Dtos;
 
 public static class MappingExtensions
 {
+    private static int GetIncomeRank(decimal maxHouseholdIncome)
+    {
+        if (maxHouseholdIncome <= 10000m) return 1;
+        if (maxHouseholdIncome <= 20000m) return 2;
+        if (maxHouseholdIncome <= 40000m) return 3;
+        if (maxHouseholdIncome <= 60000m) return 4;
+        return 5;
+    }
+
     public static BarangayDto ToDto(this Barangay barangay) => new()
     {
         Id = barangay.Id,
@@ -23,7 +32,8 @@ public static class MappingExtensions
         YearLevel = student.YearLevel,
         School = student.School,
         PreferredScholarshipType = student.PreferredScholarshipType,
-        BarangayId = student.BarangayId
+        BarangayId = student.BarangayId,
+        BarangayName = student.Barangay?.Name ?? string.Empty
     };
 
     public static ScholarshipDto ToDto(this Scholarship scholarship) => new()
@@ -47,8 +57,8 @@ public static class MappingExtensions
         Eligibility = new ScholarshipEligibilityDto
         {
             MinGwa = scholarship.RequiredGwa,
-            MaxIncomeRank = 0,
-            EligibleBarangays = Array.Empty<string>(),
+            MaxIncomeRank = GetIncomeRank(scholarship.MaxHouseholdIncome),
+            EligibleBarangays = scholarship.Barangay != null ? new[] { scholarship.Barangay.Name } : Array.Empty<string>(),
             EligibleCourses = !string.IsNullOrWhiteSpace(scholarship.EligibleCourses) ? scholarship.EligibleCourses.Split(',').Select(c => c.Trim()).ToArray() : Array.Empty<string>(),
             SpecialConditions = Array.Empty<string>()
         },

@@ -7,6 +7,41 @@ import mockScholarships from "../mockdata/scholarships.json";
 
 const ScholarshipContext = createContext(null);
 
+const normalizeScholarshipType = (rawType) => {
+  if (rawType === undefined || rawType === null) return "Government";
+  if (typeof rawType === "number") {
+    if (rawType === 0) return "Government";
+    if (rawType === 1) return "Private/NGO";
+    if (rawType === 2) return "Private/NGO";
+    return String(rawType);
+  }
+
+  const t = String(rawType).trim();
+  const lower = t.toLowerCase();
+  if (lower.includes("ngo") || lower.includes("private")) return "Private/NGO";
+  if (lower.includes("barangay")) return "Barangay";
+  if (lower === "lgu") return "LGU";
+  if (lower.includes("sk")) return "SK";
+  if (lower.includes("ched")) return "CHED";
+  if (lower.includes("government")) return "Government";
+  return t;
+};
+
+const normalizeScholarshipStatus = (rawStatus) => {
+  if (rawStatus === undefined || rawStatus === null) return "Active";
+  if (typeof rawStatus === "number") {
+    if (rawStatus === 0) return "Active";
+    if (rawStatus === 1) return "Closed";
+    if (rawStatus === 2) return "Archived";
+    return String(rawStatus);
+  }
+
+  const s = String(rawStatus);
+  if (s === "Open") return "Active";
+  if (s === "Closed") return "Closed";
+  return s;
+};
+
 export const ScholarshipProvider = ({ children, userProfile }) => {
   const { token } = useAuth();
   const [applications, setApplications] = useState([]);
@@ -26,43 +61,37 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
           token ? apiRequest("/api/applications", { token }) : Promise.resolve([]),
         ]);
 
-        const mappedScholarships = scholarshipsRes.map((s) => ({
+        const scholarships = Array.isArray(scholarshipsRes)
+          ? scholarshipsRes
+          : (Array.isArray(scholarshipsRes?.value) ? scholarshipsRes.value : []);
+
+        const mappedScholarships = scholarships.map((s) => ({
           id: s.id,
           title: s.title,
-          provider: s.provider || (s.type ? s.type : "Provider"),
-          type: (() => {
-            // normalize type strings used in frontend
-            if (!s.type) return "Government";
-            const t = String(s.type);
-            if (t.toLowerCase().includes("ngo") || t.toLowerCase().includes("private")) return "Private/NGO";
-            if (t.toLowerCase().includes("barangay")) return "Barangay";
-            if (t.toLowerCase().includes("sk")) return "SK";
-            if (t.toLowerCase().includes("ched")) return "CHED";
-            return t;
-          })(),
+          provider: s.provider || normalizeScholarshipType(s.type),
+          type: normalizeScholarshipType(s.type),
           amount: s.amount || s.maxAmount || `₱${(s.maxHouseholdIncome || 0).toString()}`,
           amountRaw: s.amountRaw || 0,
           deadline: s.deadline ? new Date(s.deadline).toISOString().split("T")[0] : null,
           slots: s.availableSlots ?? s.slots ?? 0,
           slotsFilled: s.slotsFilled ?? 0,
-          status: (() => {
-            if (!s.status) return "Active";
-            // map backend enum to frontend-friendly
-            const st = String(s.status);
-            if (st === "Open") return "Active";
-            if (st === "Closed") return "Closed";
-            return st;
-          })(),
+          status: normalizeScholarshipStatus(s.status),
           description: s.description,
           requirements: (Array.isArray(s.requirements) && s.requirements.length > 0)
             ? s.requirements
             : (mockScholarships.find((m) => m.id === s.id)?.requirements || []),
           eligibility: {
-            minGwa: s.requiredGwa ?? s.minGwa ?? 0,
-            maxIncomeRank: s.maxIncomeRank ?? 5,
-            eligibleBarangays: s.eligibleBarangays || [],
-            eligibleCourses: s.eligibleCourses ? s.eligibleCourses.split(",").map((c) => c.trim()) : [],
-            specialConditions: s.specialConditions || [],
+            minGwa: s.eligibility?.minGwa ?? s.requiredGwa ?? s.minGwa ?? 0,
+            maxIncomeRank: (s.eligibility?.maxIncomeRank ?? s.maxIncomeRank ?? 0) > 0
+              ? (s.eligibility?.maxIncomeRank ?? s.maxIncomeRank)
+              : 5,
+            eligibleBarangays: s.eligibility?.eligibleBarangays ?? s.eligibleBarangays ?? [],
+            eligibleCourses: Array.isArray(s.eligibility?.eligibleCourses)
+              ? s.eligibility.eligibleCourses
+              : (Array.isArray(s.eligibleCourses)
+                ? s.eligibleCourses
+                : (s.eligibleCourses ? String(s.eligibleCourses).split(",").map((c) => c.trim()) : [])),
+            specialConditions: s.eligibility?.specialConditions ?? s.specialConditions ?? [],
           },
         }));
 
@@ -110,11 +139,8 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
 
   // ── Compute match percentages for all scholarships ───────────────
   const scholarshipsWithMatch = useMemo(() => {
-    if (!userProfile) {
-      return scholarshipsData.map((s) => ({ ...s, matchPercentage: 0 }));
-    }
     return scholarshipsData
-      .map((s) => ({ ...s, matchPercentage: computeMatch(userProfile, s) }))
+      .map((s) => ({ ...s, matchPercentage: computeMatch(userProfile || {}, s) }))
       .sort((a, b) => b.matchPercentage - a.matchPercentage);
   }, [userProfile, scholarshipsData]);
 
@@ -158,21 +184,7 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
       setApplications((prev) => [newApp, ...prev]);
       return true;
     } catch {
-      // fallback to local: keep previous behavior
-      const newApp = {
-        id: Date.now(),
-        scholarshipId: scholarship.id,
-        scholarshipName: scholarship.title,
-        provider: scholarship.provider,
-        amount: scholarship.amount,
-        dateApplied: new Date().toISOString().split("T")[0],
-        status: "Pending",
-        justApproved: false,
-        justRejected: false,
-        justEnded: false,
-      };
-      setApplications((prev) => [newApp, ...prev]);
-      return true;
+      return "failed";
     }
   };
 

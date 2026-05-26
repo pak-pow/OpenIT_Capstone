@@ -52,7 +52,7 @@ const buildProfileFromStudent = (student) => ({
   yearLevel: student?.yearLevel ?? "",
   course: student?.course ?? "",
   city: "",
-  barangay: "",
+  barangay: student?.barangayName ?? "",
   incomeBracket: incomeValueToBracket(student?.householdIncome ?? 0),
   gender: "",
   isPwd: false,

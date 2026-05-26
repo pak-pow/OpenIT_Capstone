@@ -15,6 +15,7 @@ public class StudentProfileDto
     public string School { get; set; } = string.Empty;
     public ScholarshipType? PreferredScholarshipType { get; set; }
     public int BarangayId { get; set; }
+    public string BarangayName { get; set; } = string.Empty;
 }
 
 public class StudentProfileCreateDto

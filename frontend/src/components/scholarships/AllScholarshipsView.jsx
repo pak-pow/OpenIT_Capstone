@@ -37,6 +37,11 @@ const AllScholarshipsView = ({ onBack, addToast, disabled }) => {
         `Successfully applied to "${selectedScholarship.title}"!`,
         "success",
       );
+    } else if (success === "failed") {
+      addToast(
+        `Unable to submit your application right now. Please check your profile details and try again.`,
+        "error",
+      );
     } else {
       addToast(
         `You already applied to "${selectedScholarship.title}".`,

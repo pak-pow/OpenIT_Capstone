@@ -415,6 +415,10 @@ const UserDashboard = ({ addToast }) => {
       addToast(`You already have an active scholarship (${activeScholarship?.scholarshipName}). Only one is allowed at a time.`, 'error');
       return;
     }
+    if (result === 'failed') {
+      addToast('Unable to submit your application right now. Please check your profile details and try again.', 'error');
+      return;
+    }
     if (result === true) addToast(`Successfully applied to "${scholarship.title}"!`, 'success');
     else addToast(`You already applied to "${scholarship.title}".`, 'error');
   };
