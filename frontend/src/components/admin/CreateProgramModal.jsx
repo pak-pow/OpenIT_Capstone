@@ -15,6 +15,7 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
     amount: editData?.amountRaw || editData?.amount?.replace(/\D/g, "") || "",
     slots: editData?.slots || "",
     deadline: editData?.deadline || "",
+    termEndDate: editData?.termEndDate || "",
     description: editData?.description || "",
     minGwa: editData?.eligibility?.minGwa || 2.0,
     maxIncomeRank: editData?.eligibility?.maxIncomeRank || 5,
@@ -190,16 +191,28 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
               </div>
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Deadline *</label>
-              <input
-                type="date"
-                name="deadline"
-                className="form-input"
-                value={formData.deadline}
-                onChange={handleChange}
-                required
-              />
+            <div style={{ display: "flex", gap: "1rem" }}>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label className="form-label">Application Deadline *</label>
+                <input
+                  type="date"
+                  name="deadline"
+                  className="form-input"
+                  value={formData.deadline}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label className="form-label">End Term Date (Stipend End)</label>
+                <input
+                  type="date"
+                  name="termEndDate"
+                  className="form-input"
+                  value={formData.termEndDate}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
 
             <div className="form-group">

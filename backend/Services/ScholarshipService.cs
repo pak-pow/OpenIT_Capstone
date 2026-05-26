@@ -33,6 +33,8 @@ public class ScholarshipService
         var scholarship = new Scholarship
         {
             Title = dto.Title,
+            Term = dto.Term ?? string.Empty,
+            TermEndDate = dto.TermEndDate,
             Description = dto.Description,
             RequiredGwa = dto.RequiredGwa,
             MaxHouseholdIncome = dto.MaxHouseholdIncome,
@@ -62,6 +64,8 @@ public class ScholarshipService
         }
 
         scholarship.Title = dto.Title;
+        scholarship.Term = dto.Term ?? string.Empty;
+        scholarship.TermEndDate = dto.TermEndDate;
         scholarship.Description = dto.Description;
         scholarship.RequiredGwa = dto.RequiredGwa;
         scholarship.MaxHouseholdIncome = dto.MaxHouseholdIncome;
@@ -89,6 +93,43 @@ public class ScholarshipService
         }
 
         _context.Scholarships.Remove(scholarship);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> EndScholarshipAsync(int id)
+    {
+        var scholarship = await _context.Scholarships.FindAsync(id);
+        if (scholarship is null)
+        {
+            return false;
+        }
+
+        // Set scholarship to Closed
+        scholarship.Status = ScholarshipStatus.Closed;
+
+        // Find all approved applications
+        var approvedApps = await _context.Applications
+            .Where(a => a.ScholarshipId == id && a.Status == ApplicationStatus.Approved)
+            .ToListAsync();
+
+        var studentIds = approvedApps.Select(a => a.StudentId).Distinct().ToList();
+
+        // Mark them as completed
+        foreach (var app in approvedApps)
+        {
+            app.Status = ApplicationStatus.Completed;
+            app.Remarks = "Completed at the end of the scholarship term.";
+        }
+
+        // Find all withdrawn applications for these students across any scholarship
+        var withdrawnApps = await _context.Applications
+            .Where(a => studentIds.Contains(a.StudentId) && a.Status == ApplicationStatus.Withdrawn)
+            .ToListAsync();
+
+        // Remove the withdrawn applications to allow re-applying
+        _context.Applications.RemoveRange(withdrawnApps);
+
         await _context.SaveChangesAsync();
         return true;
     }

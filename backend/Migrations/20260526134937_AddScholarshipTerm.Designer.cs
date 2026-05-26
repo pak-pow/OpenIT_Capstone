@@ -3,6 +3,7 @@ using System;
 using Kaagapay.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace backend.Migrations
 {
     [DbContext(typeof(KaagapayContext))]
-    partial class KaagapayContextModelSnapshot : ModelSnapshot
+    [Migration("20260526134937_AddScholarshipTerm")]
+    partial class AddScholarshipTerm
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -224,9 +227,6 @@ namespace backend.Migrations
                     b.Property<string>("Term")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<DateTime?>("TermEndDate")
-                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Title")
                         .IsRequired()

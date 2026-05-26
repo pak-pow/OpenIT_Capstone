@@ -40,6 +40,8 @@ public static class MappingExtensions
     {
         Id = scholarship.Id,
         Title = scholarship.Title,
+        Term = scholarship.Term,
+        TermEndDate = scholarship.TermEndDate,
         Description = scholarship.Description,
         RequiredGwa = scholarship.RequiredGwa,
         MaxHouseholdIncome = scholarship.MaxHouseholdIncome,
@@ -82,7 +84,8 @@ public static class MappingExtensions
         Amount = application.Scholarship != null
             ? (application.Scholarship.MaxHouseholdIncome > 0 ? $"₱{application.Scholarship.MaxHouseholdIncome:N0}" : string.Empty)
             : null,
-        DateApplied = application.SubmittedAt.ToString("yyyy-MM-dd")
+        DateApplied = application.SubmittedAt.ToString("yyyy-MM-dd"),
+        Gpa = application.Student?.Gwa.ToString("0.00") ?? "N/A"
     };
 
     public static DocumentDto ToDto(this Document document) => new()

@@ -17,6 +17,7 @@ public class ApplicationDto
     public string? Provider { get; set; }
     public string? Amount { get; set; }
     public string? DateApplied { get; set; }
+    public string? Gpa { get; set; }
 }
 
 public class ApplicationCreateDto

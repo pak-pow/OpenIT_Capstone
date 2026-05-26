@@ -101,7 +101,7 @@ public class ApplicationsController : ControllerBase
     }
 
     [HttpPut("{id:int}/status")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Student")] // Allowed for Student temporarily for simulation hotkeys
     public async Task<ActionResult<ApplicationDto>> UpdateStatus(int id, [FromBody] ApplicationStatusUpdateDto dto)
     {
         Application? updated;

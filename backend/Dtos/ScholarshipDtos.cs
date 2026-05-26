@@ -8,6 +8,8 @@ public class ScholarshipDto
 {
     public int Id { get; set; }
     public string Title { get; set; } = string.Empty;
+    public string Term { get; set; } = string.Empty;
+    public DateTime? TermEndDate { get; set; }
     public string Description { get; set; } = string.Empty;
     public double RequiredGwa { get; set; }
     public decimal MaxHouseholdIncome { get; set; }
@@ -39,6 +41,8 @@ public class ScholarshipCreateDto
 {
     [Required]
     public string Title { get; set; } = string.Empty;
+    public string? Term { get; set; }
+    public DateTime? TermEndDate { get; set; }
     public string Description { get; set; } = string.Empty;
     public double RequiredGwa { get; set; }
     public decimal MaxHouseholdIncome { get; set; }

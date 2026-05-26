@@ -4,7 +4,7 @@ import { useAdminContext } from "../../context/AdminContext";
 import { Users } from "lucide-react";
 
 const AdminScholarships = ({ setShowCreateProgram, onEditProgram, addToast }) => {
-  const { adminScholarships } = useAdminContext();
+  const { adminScholarships, endScholarship } = useAdminContext();
 
   const getStatus = (deadline, currentStatus) => {
     if (currentStatus && currentStatus !== "Active") return currentStatus;
@@ -76,12 +76,14 @@ const AdminScholarships = ({ setShowCreateProgram, onEditProgram, addToast }) =>
                     })()}
                   </td>
                   <td>
-                    <button 
-                      className="btn-review"
-                      onClick={() => onEditProgram(s)}
-                    >
-                      Edit
-                    </button>
+                    <div style={{ display: "flex", gap: "0.5rem" }}>
+                      <button 
+                        className="btn-review"
+                        onClick={() => onEditProgram(s)}
+                      >
+                        Edit
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))

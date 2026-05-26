@@ -71,4 +71,17 @@ public class ScholarshipsController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpPut("{id:int}/end")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> EndScholarship(int id)
+    {
+        var ended = await _service.EndScholarshipAsync(id);
+        if (!ended)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
 }

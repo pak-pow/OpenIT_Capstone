@@ -110,6 +110,7 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
             if (s === "Rejected" || s === "3") return "Rejected";
             if (s === "NeedsInfo" || s === "4") return "Under Review";
             if (s === "Withdrawn" || s === "5") return "Withdrawn";
+            if (s === "Completed" || s === "6") return "Completed";
             return s;
           })(),
           justApproved: false,
@@ -199,81 +200,70 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
   };
 
   // ── Simulate approval: only approves ONE at a time ────────────────
-  // If an approved scholarship already exists, this is a no-op.
-  const simulateApproval = () => {
+  const simulateApproval = async () => {
     if (!import.meta.env.DEV) return;
-    // Block if any scholarship is already Approved
-    const alreadyHasActive = applications.some((a) => a.status === "Approved");
-    if (alreadyHasActive) return;
-
-    // Find the first Pending or Under Review application
-    const idx = applications.findIndex(
-      (a) => a.status === "Pending" || a.status === "Under Review"
-    );
+    const idx = applications.findIndex((a) => a.status === "Pending" || a.status === "Under Review");
     if (idx === -1) return;
     
-    const approvedApp = applications[idx];
-
-    // Decrease the available slots for this scholarship
-    setScholarshipsData((currentData) => 
-      currentData.map((s) => 
-        s.id === approvedApp.scholarshipId 
-          ? { ...s, slots: Math.max(0, s.slots - 1) } 
-          : s
-      )
-    );
-
-    setApplications((prev) => {
-      // Make the selected one Approved, and change all other Pending/Under Review to Withdrawn
-      return prev.map((app, index) => {
-        if (index === idx) {
-          return { ...app, status: "Approved", justApproved: true };
-        }
-        if (app.status === "Pending" || app.status === "Under Review") {
-          return { ...app, status: "Withdrawn" };
-        }
-        return app;
+    const app = applications[idx];
+    try {
+      await apiRequest(`/api/applications/${app.id}/status`, {
+        method: "PUT",
+        token,
+        body: { status: 2 } // Approved
       });
-    });
+      // Refresh applications
+      const apps = await apiRequest("/api/applications", { token });
+      setApplications(prev => {
+        const next = [...prev];
+        next[idx] = { ...next[idx], status: "Approved", justApproved: true };
+        return next;
+      });
+    } catch(e) { console.error("Simulate approval failed", e); }
   };
 
   // ── Simulate rejection: only rejects ONE at a time ────────────────
-  const simulateRejection = () => {
+  const simulateRejection = async () => {
     if (!import.meta.env.DEV) return;
-    setApplications((prev) => {
-      const idx = prev.findIndex(
-        (a) => a.status === "Pending" || a.status === "Under Review"
-      );
-      if (idx === -1) return prev;
+    const idx = applications.findIndex((a) => a.status === "Pending" || a.status === "Under Review");
+    if (idx === -1) return;
 
-      const next = [...prev];
-      next[idx] = { ...next[idx], status: "Rejected", justRejected: true };
-      return next;
-    });
+    const app = applications[idx];
+    try {
+      await apiRequest(`/api/applications/${app.id}/status`, {
+        method: "PUT",
+        token,
+        body: { status: 3 } // Rejected
+      });
+      setApplications(prev => {
+        const next = [...prev];
+        next[idx] = { ...next[idx], status: "Rejected", justRejected: true };
+        return next;
+      });
+    } catch(e) { console.error("Simulate rejection failed", e); }
   };
 
-  // ── Simulate end: changes the active scholarship to Ended ────────────────
-  const simulateEnded = () => {
+  // ── Simulate end: changes the active scholarship to Completed ────────────────
+  const simulateEnded = async () => {
     if (!import.meta.env.DEV) return;
-    const idx = applications.findIndex((a) => a.status === "Approved");
+    const idx = applications.findIndex((a) => 
+      a.status === "Approved" || a.status === "Pending" || a.status === "Under Review"
+    );
     if (idx === -1) return;
     
-    const endedApp = applications[idx];
-
-    // Increase the available slots back for this scholarship
-    setScholarshipsData((currentData) => 
-      currentData.map((s) => 
-        s.id === endedApp.scholarshipId 
-          ? { ...s, slots: s.slots + 1 } 
-          : s
-      )
-    );
-
-    setApplications((prev) => {
-      const next = [...prev];
-      next[idx] = { ...next[idx], status: "Ended", justEnded: true };
-      return next;
-    });
+    const app = applications[idx];
+    try {
+      await apiRequest(`/api/applications/${app.id}/status`, {
+        method: "PUT",
+        token,
+        body: { status: 6 } // Completed
+      });
+      setApplications(prev => {
+        const next = [...prev];
+        next[idx] = { ...next[idx], status: "Completed", justEnded: true };
+        return next;
+      });
+    } catch(e) { console.error("Simulate complete failed", e); }
   };
 
   const clearJustApproved = (appId) => {

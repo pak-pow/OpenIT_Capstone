@@ -36,7 +36,12 @@ const GROUP_COLORS = [
 ];
 
 const DataTable = ({ addToast }) => {
-  const { adminApplicants, approveApplicant, rejectApplicant, completeApplicant } = useAdminContext();
+  const {
+    adminApplicants,
+    approveApplicant,
+    rejectApplicant,
+    completeApplicant,
+  } = useAdminContext();
   const [selectedApplicant, setSelectedApplicant] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
@@ -74,20 +79,25 @@ const DataTable = ({ addToast }) => {
   }, [adminApplicants, searchTerm, filterStatus, appCountsByName]);
 
   // Pagination
-  const totalPages = Math.max(1, Math.ceil(sortedApplicants.length / ROWS_PER_PAGE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(sortedApplicants.length / ROWS_PER_PAGE),
+  );
   const safeCurrentPage = Math.min(currentPage, totalPages);
   const paginatedApplicants = sortedApplicants.slice(
     (safeCurrentPage - 1) * ROWS_PER_PAGE,
-    safeCurrentPage * ROWS_PER_PAGE
+    safeCurrentPage * ROWS_PER_PAGE,
   );
 
   // Assign a consistent color index to each multi-app student name
   const multiAppNames = useMemo(() => {
-    const names = [...new Set(
-      adminApplicants
-        .filter((a) => appCountsByName[a.name] > 1)
-        .map((a) => a.name)
-    )];
+    const names = [
+      ...new Set(
+        adminApplicants
+          .filter((a) => appCountsByName[a.name] > 1)
+          .map((a) => a.name),
+      ),
+    ];
     const map = {};
     names.forEach((name, i) => {
       map[name] = GROUP_COLORS[i % GROUP_COLORS.length];
@@ -104,19 +114,33 @@ const DataTable = ({ addToast }) => {
       const color = multiAppNames[a.name] || null;
 
       if (!isMulti) {
-        info.push({ isGrouped: false, color: null, isFirst: false, isLast: false, groupSize: 1 });
+        info.push({
+          isGrouped: false,
+          color: null,
+          isFirst: false,
+          isLast: false,
+          groupSize: 1,
+        });
         continue;
       }
 
       const prevName = i > 0 ? paginatedApplicants[i - 1].name : null;
-      const nextName = i < paginatedApplicants.length - 1 ? paginatedApplicants[i + 1].name : null;
+      const nextName =
+        i < paginatedApplicants.length - 1
+          ? paginatedApplicants[i + 1].name
+          : null;
       const isFirst = prevName !== a.name;
       const isLast = nextName !== a.name;
 
       // Count consecutive rows in this group on this page
       let groupSize = 0;
       if (isFirst) {
-        for (let j = i; j < paginatedApplicants.length && paginatedApplicants[j].name === a.name; j++) {
+        for (
+          let j = i;
+          j < paginatedApplicants.length &&
+          paginatedApplicants[j].name === a.name;
+          j++
+        ) {
           groupSize++;
         }
       }
@@ -152,6 +176,7 @@ const DataTable = ({ addToast }) => {
           <option value="Pending">Pending</option>
           <option value="Under Review">Under Review</option>
           <option value="Approved">Approved</option>
+          <option value="Completed">Completed</option>
           <option value="Rejected">Rejected</option>
           <option value="Withdrawn">Withdrawn</option>
         </select>
@@ -178,9 +203,7 @@ const DataTable = ({ addToast }) => {
                   <tr
                     key={a.id}
                     style={{
-                      backgroundColor: g.isGrouped
-                        ? `${g.color}08`
-                        : undefined,
+                      backgroundColor: g.isGrouped ? `${g.color}08` : undefined,
                     }}
                   >
                     {/* Grouping sidebar cell */}
@@ -189,9 +212,8 @@ const DataTable = ({ addToast }) => {
                         padding: 0,
                         width: "6px",
                         position: "relative",
-                        borderBottom: g.isGrouped && !g.isLast
-                          ? "none"
-                          : undefined,
+                        borderBottom:
+                          g.isGrouped && !g.isLast ? "none" : undefined,
                       }}
                     >
                       {g.isGrouped && (
@@ -203,19 +225,26 @@ const DataTable = ({ addToast }) => {
                             bottom: g.isLast ? "8px" : 0,
                             width: "4px",
                             backgroundColor: g.color,
-                            borderRadius: g.isFirst && g.isLast
-                              ? "4px"
-                              : g.isFirst
-                              ? "4px 4px 0 0"
-                              : g.isLast
-                              ? "0 0 4px 4px"
-                              : "0",
+                            borderRadius:
+                              g.isFirst && g.isLast
+                                ? "4px"
+                                : g.isFirst
+                                  ? "4px 4px 0 0"
+                                  : g.isLast
+                                    ? "0 0 4px 4px"
+                                    : "0",
                           }}
                         />
                       )}
                     </td>
                     <td className="table-cell-name">
-                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                        }}
+                      >
                         <span>{a.name}</span>
                         {g.isGrouped && g.isFirst && (
                           <span className="badge badge-info">
@@ -228,40 +257,40 @@ const DataTable = ({ addToast }) => {
                     <td>{a.gpa}</td>
                     <td>{a.appliedDate}</td>
                     <td>
-                      <span className={getBadgeClass(a.status)}>{a.status}</span>
+                      <span className={getBadgeClass(a.status)}>
+                        {a.status}
+                      </span>
                     </td>
                     <td>
-                      {a.status === "Approved" ? (
+                      {a.status === "Approved" || a.status === "Completed" ? (
                         <button
                           className="btn-review"
-                          style={{
-                            backgroundColor: "#f3e8ff",
-                            color: "#6b21a8",
-                            borderColor: "#d8b4fe"
-                          }}
-                          onClick={() => {
-                            if (window.confirm(`Mark ${a.name}'s scholarship as Completed? This will allow them to apply for new scholarships.`)) {
-                              completeApplicant(a.id);
-                            }
-                          }}
+                          disabled
+                          style={{ opacity: 0.6, cursor: "not-allowed" }}
                         >
-                          Complete
+                          Reviewed
                         </button>
                       ) : (
                         <button
                           className="btn-review"
                           onClick={() => setSelectedApplicant(a)}
                           disabled={
-                            a.status === "Rejected" || a.status === "Withdrawn" || a.status === "Completed"
+                            a.status === "Rejected" ||
+                            a.status === "Withdrawn" ||
+                            a.status === "Completed"
                           }
                           style={{
                             opacity:
-                              (a.status === "Rejected" || a.status === "Withdrawn" || a.status === "Completed")
+                              a.status === "Rejected" ||
+                              a.status === "Withdrawn" ||
+                              a.status === "Completed"
                                 ? 0.5
                                 : 1,
                           }}
                         >
-                          {(a.status === "Rejected" || a.status === "Withdrawn" || a.status === "Completed")
+                          {a.status === "Rejected" ||
+                          a.status === "Withdrawn" ||
+                          a.status === "Completed"
                             ? "Reviewed"
                             : "Review"}
                         </button>
@@ -301,8 +330,8 @@ const DataTable = ({ addToast }) => {
         >
           <span style={{ fontSize: "0.85rem", color: "var(--text-medium)" }}>
             Showing {(safeCurrentPage - 1) * ROWS_PER_PAGE + 1}–
-            {Math.min(safeCurrentPage * ROWS_PER_PAGE, sortedApplicants.length)} of{" "}
-            {sortedApplicants.length} applicants
+            {Math.min(safeCurrentPage * ROWS_PER_PAGE, sortedApplicants.length)}{" "}
+            of {sortedApplicants.length} applicants
           </span>
           <div style={{ display: "flex", gap: "4px" }}>
             <button
@@ -321,8 +350,7 @@ const DataTable = ({ addToast }) => {
                 style={{
                   backgroundColor:
                     page === safeCurrentPage ? "var(--navy-blue)" : undefined,
-                  color:
-                    page === safeCurrentPage ? "var(--white)" : undefined,
+                  color: page === safeCurrentPage ? "var(--white)" : undefined,
                   minWidth: "36px",
                 }}
               >

@@ -47,13 +47,14 @@ const normalizeScholarshipStatus = (rawStatus) => {
 
 const normalizeAppStatus = (rawStatus) => {
   if (typeof rawStatus === 'number') {
-    const map = { 0: 'Pending', 1: 'Under Review', 2: 'Approved', 3: 'Rejected', 4: 'Needs Info', 5: 'Withdrawn' };
+    const map = { 0: 'Pending', 1: 'Under Review', 2: 'Approved', 3: 'Rejected', 4: 'Needs Info', 5: 'Withdrawn', 6: 'Completed' };
     return map[rawStatus] || 'Pending';
   }
   const s = String(rawStatus);
   if (s === 'Submitted') return 'Pending';
   if (s === 'UnderReview') return 'Under Review';
   if (s === 'Withdrawn') return 'Withdrawn';
+  if (s === 'Completed') return 'Completed';
   return s;
 };
 
@@ -92,7 +93,7 @@ export const AdminProvider = ({ children }) => {
           id: a.id,
           name: a.studentName || "Unknown",
           program: a.scholarshipName || "Unknown",
-          gpa: "N/A",
+          gpa: a.gpa || "N/A",
           matchScore: 0,
           appliedDate: a.dateApplied,
           status: normalizeAppStatus(a.status)
@@ -179,23 +180,37 @@ export const AdminProvider = ({ children }) => {
     }
   };
 
-  const completeApplicant = async (id) => {
+  const endScholarship = async (id) => {
     try {
-      await apiRequest(`/api/applications/${id}/status`, {
-        method: "PUT",
-        token,
-        body: { status: 6 } // 6 is Completed in backend enum
+      await apiRequest(`/api/scholarships/${id}/end`, {
+        method: 'PUT',
+        token
       });
-      setAdminApplicants((prev) => {
-        const completed = prev.find(a => a.id === id);
-        // Remove the student's withdrawn apps from state and mark this one Completed
-        return prev
-          .filter(a => !(a.name === completed?.name && a.status === "Withdrawn"))
-          .map(a => (a.id === id ? { ...a, status: "Completed" } : a));
-      });
-    } catch(e) {
-      console.error(e);
-      alert(e.message || "Failed to complete applicant.");
+
+      // Update local state
+      setAdminScholarships(prev => 
+        prev.map(s => s.id === id ? { ...s, status: "Closed" } : s)
+      );
+
+      // Refresh applications list
+      const appData = await apiRequest('/api/applications', { token });
+      const apps = Array.isArray(appData) ? appData : (Array.isArray(appData?.value) ? appData.value : []);
+      
+      const mappedApp = apps.map(a => ({
+        id: a.id,
+        name: a.studentName || "Unknown",
+        program: a.scholarshipName || "Unknown",
+        gpa: a.gpa || "N/A",
+        matchScore: 0,
+        appliedDate: a.dateApplied,
+        status: normalizeAppStatus(a.status)
+      }));
+      setAdminApplicants(mappedApp);
+
+      return true;
+    } catch (error) {
+      console.error('End scholarship failed', error);
+      return false;
     }
   };
 
@@ -212,6 +227,7 @@ export const AdminProvider = ({ children }) => {
         eligibleCourses: (newScholarship.eligibility?.eligibleCourses || []).join("|"),
         specialConditions: (newScholarship.eligibility?.specialConditions || []).join("|"),
         deadline: newScholarship.deadline || new Date().toISOString(),
+        termEndDate: newScholarship.termEndDate || null,
         availableSlots: newScholarship.slots || 0,
         status: 0, // Open
         type: 0, // Need mapping logic for type if needed
@@ -257,6 +273,7 @@ export const AdminProvider = ({ children }) => {
         eligibleCourses: (updatedScholarship.eligibility?.eligibleCourses || []).join("|"),
         specialConditions: (updatedScholarship.eligibility?.specialConditions || []).join("|"),
         deadline: updatedScholarship.deadline || new Date().toISOString(),
+        termEndDate: updatedScholarship.termEndDate || null,
         availableSlots: updatedScholarship.slots || 0,
         status: 0, 
         type: 0, 
@@ -296,7 +313,7 @@ export const AdminProvider = ({ children }) => {
         adminMetrics,
         approveApplicant,
         rejectApplicant,
-        completeApplicant,
+        endScholarship,
         createScholarship,
         updateScholarship,
       }}

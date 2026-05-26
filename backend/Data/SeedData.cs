@@ -124,6 +124,7 @@ public static class SeedData
                 var s = new Scholarship
                 {
                     Title = fs.Title ?? string.Empty,
+                    Term = "AY 2026-2027",
                     Description = fs.Description ?? string.Empty,
                     RequiredGwa = fs.Eligibility?.MinGwa ?? 0,
                     MaxHouseholdIncome = fs.AmountRaw != 0 ? Convert.ToDecimal(fs.AmountRaw) : 0m,
