@@ -11,8 +11,10 @@ import {
   TrendingUp,
   Heart,
   Banknote,
+  CheckCircle,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { authService } from "../../services/authService";
 import {
   CITIES,
   BARANGAYS_BY_CITY,
@@ -77,6 +79,7 @@ const RegisterPage = ({ onNavigateLogin }) => {
   const [step, setStep] = useState(1);
   const [showPwd, setShowPwd] = useState(false);
   const [errors, setErrors] = useState({});
+  const [isRegistering, setIsRegistering] = useState(false);
 
   const [form, setForm] = useState({
     // Step 1 — Account
@@ -172,17 +175,21 @@ const RegisterPage = ({ onNavigateLogin }) => {
     setStep(2);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errs = validateStep2();
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       return;
     }
-    loginAsStudent({
+
+    setIsRegistering(true);
+
+    const payload = {
       firstName: form.firstName,
       lastName: form.lastName,
       email: form.email,
+      password: form.password,
       profile: {
         educationLevel: form.educationLevel,
         gwa: form.gwa,
@@ -201,7 +208,18 @@ const RegisterPage = ({ onNavigateLogin }) => {
           schoolAccount: form.schoolAccount,
         },
       },
-    });
+    };
+
+    try {
+      const response = await authService.registerStudent(payload);
+      if (response && response.user) {
+        loginAsStudent(response.user);
+      }
+    } catch (err) {
+      setErrors({ form: err.message || "Registration failed. Please try again." });
+    } finally {
+      setIsRegistering(false);
+    }
   };
 
   const courseOptions = getCourseOptions(form.educationLevel);
@@ -786,8 +804,9 @@ const RegisterPage = ({ onNavigateLogin }) => {
               <button
                 type="submit"
                 className="btn btn-primary form-action-btn-primary"
+                disabled={isRegistering}
               >
-                Register & Match
+                {isRegistering ? "Creating Account..." : "Register & Match"}
               </button>
             </div>
           </form>

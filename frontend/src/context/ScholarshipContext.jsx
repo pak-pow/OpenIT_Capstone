@@ -5,6 +5,8 @@ import { useAuth } from "./AuthContext";
 
 const ScholarshipContext = createContext(null);
 
+const USE_MOCK = import.meta.env.VITE_USE_MOCK_DATA === 'true';
+
 export const ScholarshipProvider = ({ children, userProfile }) => {
   const { token } = useAuth();
   const [applications, setApplications] = useState([]);
@@ -240,7 +242,9 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
       value={{
         scholarships: scholarshipsWithMatch,
         applications,
-        activeScholarship,       // ← single source of truth for "am I an active scholar?"
+        activeScholarship,
+        isLoading,
+        error,
         applyToScholarship,
         hasApplied,
         simulateApproval,

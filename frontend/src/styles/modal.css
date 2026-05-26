@@ -511,3 +511,53 @@
 .modal-description-spaced {
   margin-bottom: 1rem;
 }
+
+/* ============================================
+   MODAL � Logout Modal
+   ============================================ */
+
+.logout-modal-overlay {
+  z-index: 9999;
+}
+
+.logout-modal-card {
+  max-width: 400px;
+  padding: 32px 24px;
+  text-align: center;
+  position: relative;
+}
+
+.logout-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.logout-modal-icon {
+  background-color: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+  margin: 0 auto 16px auto;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.logout-modal-title {
+  font-size: 1.25rem;
+  margin-bottom: 8px;
+}
+
+.logout-modal-subtitle {
+  font-size: 0.95rem;
+  margin-bottom: 24px;
+  color: var(--text-medium);
+}
+
+.logout-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 0;
+}
