@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import { computeMatch } from "../utils/matchEngine";
 import { apiRequest } from "../api/client";
 import { useAuth } from "./AuthContext";
+import mockScholarships from "../mockdata/scholarships.json";
 
 const ScholarshipContext = createContext(null);
 
@@ -53,7 +54,9 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
             return st;
           })(),
           description: s.description,
-          requirements: s.requirements || [],
+          requirements: (Array.isArray(s.requirements) && s.requirements.length > 0)
+            ? s.requirements
+            : (mockScholarships.find((m) => m.id === s.id)?.requirements || []),
           eligibility: {
             minGwa: s.requiredGwa ?? s.minGwa ?? 0,
             maxIncomeRank: s.maxIncomeRank ?? 5,
