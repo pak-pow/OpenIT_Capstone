@@ -163,9 +163,11 @@ export const AdminProvider = ({ children }) => {
           return a;
         })
       );
+      return true;
     } catch(e) {
       console.error(e);
       alert(e.message || "Failed to approve applicant. They might already have an active scholarship.");
+      return false;
     }
   };
 
@@ -177,8 +179,10 @@ export const AdminProvider = ({ children }) => {
         body: { status: 3 } // 3 is Rejected in backend enum
       });
       setAdminApplicants((prev) => prev.map((a) => (a.id === id ? { ...a, status: "Rejected" } : a)));
+      return true;
     } catch(e) {
       console.error(e);
+      return false;
     }
   };
 
