@@ -5,11 +5,10 @@ import {
   Eye,
   EyeOff,
   User,
-  Shield,
+  GraduationCap,
   BookOpen,
   Home,
   TrendingUp,
-  GraduationCap,
   Heart,
   Banknote,
 } from "lucide-react";
@@ -17,6 +16,7 @@ import { useAuth } from "../../context/AuthContext";
 import {
   CITIES,
   BARANGAYS_BY_CITY,
+  SCHOOLS_BY_CITY,
   COURSES,
   INCOME_BRACKETS,
   EDUCATION_LEVELS,
@@ -220,7 +220,7 @@ const RegisterPage = ({ onNavigateLogin }) => {
         {/* Brand */}
         <div className="auth-logo">
           <div className="auth-logo-icon">
-            <Shield size={28} color="#FFC000" />
+            <GraduationCap size={28} color="#FFC000" />
           </div>
           <h1 className="auth-title">Create Account</h1>
           <p className="auth-subtitle">
@@ -470,18 +470,50 @@ const RegisterPage = ({ onNavigateLogin }) => {
               <label className="form-label" htmlFor="schoolName">
                 School / Institution Name <span style={{ color: 'var(--danger-text)' }}>*</span>
               </label>
-              <div className="input-wrapper">
-                <GraduationCap size={18} className="input-icon" />
-                <input
-                  id="schoolName"
-                  className="form-input"
-                  type="text"
-                  name="schoolName"
-                  placeholder="e.g. Bataan Peninsula State University"
-                  value={form.schoolName}
-                  onChange={handleChange}
-                />
-              </div>
+              {form.city && SCHOOLS_BY_CITY[form.city] ? (
+                <div className="input-wrapper">
+                  <GraduationCap size={18} className="input-icon" />
+                  <select
+                    id="schoolName"
+                    className="form-input form-select"
+                    name="schoolName"
+                    value={form.schoolName}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select your school</option>
+                    {SCHOOLS_BY_CITY[form.city].map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                    <option value="__other__">Other / Not listed</option>
+                  </select>
+                </div>
+              ) : (
+                <div className="input-wrapper">
+                  <GraduationCap size={18} className="input-icon" />
+                  <input
+                    id="schoolName"
+                    className="form-input"
+                    type="text"
+                    name="schoolName"
+                    placeholder={form.city ? "Type your school name" : "Select city first to see schools"}
+                    value={form.schoolName === '__other__' ? '' : form.schoolName}
+                    onChange={handleChange}
+                    disabled={!form.city}
+                  />
+                </div>
+              )}
+              {form.schoolName === '__other__' && (
+                <div className="input-wrapper" style={{ marginTop: '8px' }}>
+                  <GraduationCap size={18} className="input-icon" />
+                  <input
+                    className="form-input"
+                    type="text"
+                    placeholder="Type your school name"
+                    onChange={(e) => setForm(prev => ({ ...prev, schoolName: e.target.value }))}
+                  />
+                </div>
+              )}
+              <span className="form-hint">Select your city first to see schools in your area.</span>
               {errors.schoolName && (
                 <span className="form-error">{errors.schoolName}</span>
               )}

@@ -143,26 +143,16 @@ const CurrentScholarshipWidget = ({ application }) => {
             <span className="label">Status</span>
             <span className="value" style={{ color: '#059669' }}>Approved</span>
           </div>
-          <div className="meta-item">
-            <span className="label">Renewal Due</span>
-            <span className="value">{renewalStr}</span>
-          </div>
+            <div className="meta-item">
+              <span className="label">Next Renewal</span>
+              <span className="value">{renewalStr}</span>
+            </div>
         </div>
 
-        {/* Payment disbursement notice */}
-        <div className="payment-notice">
-          <div className="payment-notice-icon">
-            <Banknote size={18} />
-          </div>
-          <div className="payment-notice-text">
-            <strong>Grant Disbursement</strong>
-            <p>
-              Your {application.amount} grant will be disbursed within{' '}
-              <strong>30 working days</strong> after approval
-              {application.schoolName ? ` to your registered account at ${application.schoolName}` : ' to your registered school account'}.
-            </p>
-          </div>
-        </div>
+        <p className="payment-inline-note">
+          💡 Your {application.amount} grant will be disbursed within <strong>30 working days</strong> after approval
+          {application.schoolName ? ` to your registered account at ${application.schoolName}` : ' to your registered school account'}.
+        </p>
       </div>
     </div>
   );
