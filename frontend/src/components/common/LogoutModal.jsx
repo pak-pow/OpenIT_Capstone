@@ -19,11 +19,15 @@ const LogoutModal = ({ onConfirm, onCancel }) => {
   return (
     <div className={`modal-overlay ${show ? "visible" : ""}`} onClick={handleClose} style={{ zIndex: 9999 }}>
       <div 
-        className="modal-content paldo-modal" 
+        className="modal-card" 
         onClick={(e) => e.stopPropagation()}
-        style={{ maxWidth: "400px", padding: "24px", textAlign: "center" }}
+        style={{ maxWidth: "400px", padding: "32px 24px", textAlign: "center", position: "relative" }}
       >
-        <button className="modal-close" onClick={handleClose}>
+        <button 
+          className="modal-close-btn" 
+          onClick={handleClose}
+          style={{ position: "absolute", top: "12px", right: "12px" }}
+        >
           <X size={20} />
         </button>
 
