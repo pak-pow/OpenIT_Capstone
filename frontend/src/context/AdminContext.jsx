@@ -8,10 +8,11 @@ import {
 
 const AdminContext = createContext(null);
 
+const USE_MOCK = import.meta.env.VITE_USE_MOCK_DATA === 'true';
+
 export const AdminProvider = ({ children }) => {
-  const [adminApplicants, setAdminApplicants] = useState(initialApplicants);
-  const [adminScholarships, setAdminScholarships] =
-    useState(initialScholarships);
+  const [adminApplicants, setAdminApplicants] = useState(USE_MOCK ? initialApplicants : []);
+  const [adminScholarships, setAdminScholarships] = useState(USE_MOCK ? initialScholarships : []);
 
   // Computed metrics
   const adminMetrics = useMemo(() => {
