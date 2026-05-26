@@ -284,6 +284,31 @@ const RegisterPage = ({ onNavigateLogin }) => {
             </div>
 
             <div className="form-group">
+              <label className="form-label" htmlFor="gender">
+                Gender Identity
+              </label>
+              <div className="input-wrapper">
+                <User size={18} className="input-icon" />
+                <select
+                  id="gender"
+                  className="form-input form-select"
+                  name="gender"
+                  value={form.gender}
+                  onChange={handleChange}
+                >
+                  <option value="">Select gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="non-binary">Non-binary / Third Gender</option>
+                  <option value="prefer-not">Prefer not to say</option>
+                </select>
+              </div>
+              {errors.gender && (
+                <span className="form-error">{errors.gender}</span>
+              )}
+            </div>
+
+            <div className="form-group">
               <label className="form-label" htmlFor="reg-email">
                 Email Address
               </label>
@@ -350,31 +375,6 @@ const RegisterPage = ({ onNavigateLogin }) => {
               </div>
               {errors.confirmPassword && (
                 <span className="form-error">{errors.confirmPassword}</span>
-              )}
-            </div>
-
-            <div className="form-group">
-              <label className="form-label" htmlFor="gender">
-                Gender Identity
-              </label>
-              <div className="input-wrapper">
-                <User size={18} className="input-icon" />
-                <select
-                  id="gender"
-                  className="form-input form-select"
-                  name="gender"
-                  value={form.gender}
-                  onChange={handleChange}
-                >
-                  <option value="">Select gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="non-binary">Non-binary / Third Gender</option>
-                  <option value="prefer-not">Prefer not to say</option>
-                </select>
-              </div>
-              {errors.gender && (
-                <span className="form-error">{errors.gender}</span>
               )}
             </div>
 
