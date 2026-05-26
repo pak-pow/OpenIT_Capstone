@@ -1,0 +1,54 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: kaagapay-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: kaagapay
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ccms
+    ports:
+      - "5432:5432"
+    volumes:
+      - kaagapay_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d kaagapay"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kaagapay-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=kaagapay;Username=postgres;Password=ccms
+      Jwt__Issuer: Kaagapay
+      Jwt__Audience: KaagapayUsers
+      Jwt__Key: KaagapayDevKey_ChangeThis12345
+      Jwt__ExpiresMinutes: 120
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:3000
+    container_name: kaagapay-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+
+volumes:
+  kaagapay_db_data:
