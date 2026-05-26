@@ -12,7 +12,11 @@ const USE_MOCK = import.meta.env.VITE_USE_MOCK_DATA === 'true';
 
 export const AdminProvider = ({ children }) => {
   const [adminApplicants, setAdminApplicants] = useState(USE_MOCK ? initialApplicants : []);
-  const [adminScholarships, setAdminScholarships] = useState(USE_MOCK ? initialScholarships : []);
+  const [adminScholarships, setAdminScholarships] = useState(() => {
+    if (!USE_MOCK) return [];
+    const cached = localStorage.getItem("mock_scholarships");
+    return cached ? JSON.parse(cached) : initialScholarships;
+  });
 
   // Computed metrics
   const adminMetrics = useMemo(() => {
@@ -68,12 +72,18 @@ export const AdminProvider = ({ children }) => {
         specialConditions: [],
       },
     };
-    setAdminScholarships((prev) => [newEntry, ...prev]);
+    setAdminScholarships((prev) => {
+      const updated = [newEntry, ...prev];
+      if (USE_MOCK) {
+        localStorage.setItem("mock_scholarships", JSON.stringify(updated));
+      }
+      return updated;
+    });
   };
 
   const updateScholarship = (updatedScholarship) => {
-    setAdminScholarships((prev) =>
-      prev.map((s) =>
+    setAdminScholarships((prev) => {
+      const updated = prev.map((s) =>
         s.id === updatedScholarship.id
           ? {
               ...s,
@@ -81,8 +91,12 @@ export const AdminProvider = ({ children }) => {
               amountRaw: parseInt(updatedScholarship.amount.replace(/\D/g, ""), 10) || 0,
             }
           : s
-      )
-    );
+      );
+      if (USE_MOCK) {
+        localStorage.setItem("mock_scholarships", JSON.stringify(updated));
+      }
+      return updated;
+    });
   };
 
   return (

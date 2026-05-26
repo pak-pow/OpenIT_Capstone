@@ -13,6 +13,8 @@ export const scholarshipService = {
   getAllScholarships: async () => {
     if (USE_MOCK) {
       await delay(400); // Simulate network delay
+      const cached = localStorage.getItem("mock_scholarships");
+      if (cached) return JSON.parse(cached);
       return mockScholarships;
     }
     return await apiClient.get('/scholarships');
