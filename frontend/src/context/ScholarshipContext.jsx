@@ -1,12 +1,37 @@
-import React, { createContext, useContext, useState, useMemo } from "react";
+import React, { createContext, useContext, useState, useMemo, useEffect } from "react";
 import { scholarships as allScholarships } from "../mockdata";
 import { computeMatch } from "../utils/matchEngine";
+import { scholarshipService } from "../services/scholarshipService";
+import { applicationService } from "../services/applicationService";
 
 const ScholarshipContext = createContext(null);
 
 export const ScholarshipProvider = ({ children, userProfile }) => {
   const [applications, setApplications] = useState([]);
   const [scholarshipsData, setScholarshipsData] = useState(allScholarships);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // ── API Placeholder: Fetch data on mount ───────────────────────────
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      setIsLoading(true);
+      try {
+        // If VITE_USE_MOCK_DATA=true, this simulates a delay and returns mock data.
+        // If false, it hits the ASP.NET Core backend.
+        const data = await scholarshipService.getAllScholarships();
+        if (data && data.length > 0) {
+          setScholarshipsData(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch scholarships", err);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchInitialData();
+  }, []);
 
   // ── Compute match percentages for all scholarships ───────────────
   const scholarshipsWithMatch = useMemo(() => {
@@ -150,7 +175,9 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
       value={{
         scholarships: scholarshipsWithMatch,
         applications,
-        activeScholarship,       // ← single source of truth for "am I an active scholar?"
+        activeScholarship,
+        isLoading,
+        error,
         applyToScholarship,
         hasApplied,
         simulateApproval,
