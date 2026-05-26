@@ -22,7 +22,8 @@ The project is structured as a full-stack application divided into two primary c
 * **Active Scholar Hub**: A dedicated view for approved scholars highlighting active grants and expected stipends.
 
 ### Administrator Portal
-* **Centralized Dashboard**: Provides administrators with a high-level overview of active scholarships, disbursed funds, and application queues.
+* **Centralized Dashboard**: Provides administrators with a high-level overview of active scholarships, pending applications, disbursed funds, and approved scholars.
+* **Program Management**: Create and configure new scholarships with a "Term End Date" that automatically dictates when an approved scholar's stipend concludes.
 * **Application Processing**: Administrators can review, approve, or reject applications. (Note: Approving an application automatically withdraws the student's other pending applications to free up community slots).
 * **Metrics and Analytics**: Built-in data visualization for monitoring approval rates and demographic distributions.
 
@@ -106,11 +107,11 @@ The REST API will boot up and listen for requests from the frontend client.
 
 ## Frontend Simulation Hotkeys
 
-For demonstration and development purposes, the frontend currently supports hotkeys to simulate backend state transitions without requiring a live database connection. These can be executed from the Student Dashboard:
+For demonstration and development purposes, the frontend supports hidden developer hotkeys that allow you to simulate application lifecycle changes. These hotkeys trigger live authenticated API requests to the PostgreSQL database, perfectly synchronizing the Student and Admin dashboards:
 
-* `Shift + 3`: **Simulate Approval**. Approves the first pending application, decrements global available slots, and withdraws other pending applications.
-* `Shift + 4`: **Simulate Rejection**. Rejects the oldest pending application.
-* `Shift + 5`: **Simulate Scholarship End**. Concludes an active scholarship, moving it to the 'Ended' state and freeing up a slot.
+* `Shift + 3` (or `#`): **Simulate Approval**. Approves the first pending application on the backend, decrements global available slots, and auto-withdraws the student's other pending applications.
+* `Shift + 4` (or `$`): **Simulate Rejection**. Rejects the oldest pending application.
+* `Shift + 5` (or `%`): **Simulate Application Completed**. Forcefully concludes an active (or pending) application by marking it as "Completed" (Status 6), mimicking the natural end of a term.
 
 ---
 
