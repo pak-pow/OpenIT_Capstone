@@ -6,9 +6,11 @@ import { applicationService } from "../services/applicationService";
 
 const ScholarshipContext = createContext(null);
 
+const USE_MOCK = import.meta.env.VITE_USE_MOCK_DATA === 'true';
+
 export const ScholarshipProvider = ({ children, userProfile }) => {
   const [applications, setApplications] = useState([]);
-  const [scholarshipsData, setScholarshipsData] = useState(allScholarships);
+  const [scholarshipsData, setScholarshipsData] = useState(USE_MOCK ? allScholarships : []);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
