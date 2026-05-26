@@ -139,6 +139,7 @@ const RegisterPage = ({ onNavigateLogin }) => {
       errs.password = "Password must be at least 6 characters.";
     if (form.password !== form.confirmPassword)
       errs.confirmPassword = "Passwords do not match.";
+    if (!form.gender) errs.gender = "Please select your gender identity.";
     return errs;
   };
 
@@ -156,8 +157,7 @@ const RegisterPage = ({ onNavigateLogin }) => {
     if (!form.barangay) errs.barangay = "Please select your barangay.";
     if (!form.incomeBracket)
       errs.incomeBracket = "Please select a household income bracket.";
-    if (!form.gender) errs.gender = "Please select your gender.";
-    if (!form.schoolName.trim())
+    if (!form.schoolName.trim() || form.schoolName === '__other__')
       errs.schoolName = "Please enter your school or institution name.";
     return errs;
   };
@@ -350,6 +350,31 @@ const RegisterPage = ({ onNavigateLogin }) => {
               </div>
               {errors.confirmPassword && (
                 <span className="form-error">{errors.confirmPassword}</span>
+              )}
+            </div>
+
+            <div className="form-group">
+              <label className="form-label" htmlFor="gender">
+                Gender Identity
+              </label>
+              <div className="input-wrapper">
+                <User size={18} className="input-icon" />
+                <select
+                  id="gender"
+                  className="form-input form-select"
+                  name="gender"
+                  value={form.gender}
+                  onChange={handleChange}
+                >
+                  <option value="">Select gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="non-binary">Non-binary / Third Gender</option>
+                  <option value="prefer-not">Prefer not to say</option>
+                </select>
+              </div>
+              {errors.gender && (
+                <span className="form-error">{errors.gender}</span>
               )}
             </div>
 
@@ -629,42 +654,70 @@ const RegisterPage = ({ onNavigateLogin }) => {
               )}
             </div>
 
-            {/* ── 3. Additional Eligibility ── */}
+            {/* ── 3. Grant Disbursement Info ── */}
+            <div className="form-section-label">
+              <Banknote size={14} />
+              3. Grant Disbursement Info
+            </div>
+
+            <div className="profile-hint" style={{ marginBottom: '12px' }}>
+              <Banknote size={16} />
+              <span>
+                This tells us <strong>where to send your scholarship grant</strong> once approved.
+                Your grant will be released within 30 working days after approval.
+              </span>
+            </div>
+
+            <div className="name-row">
+              <div className="form-group">
+                <label className="form-label" htmlFor="schoolEmail">
+                  School Email <span className="form-optional">(optional)</span>
+                </label>
+                <div className="input-wrapper">
+                  <Mail size={18} className="input-icon" />
+                  <input
+                    id="schoolEmail"
+                    className="form-input"
+                    type="email"
+                    name="schoolEmail"
+                    placeholder="you@school.edu.ph"
+                    value={form.schoolEmail}
+                    onChange={handleChange}
+                  />
+                </div>
+                <span className="form-hint">For registrar notifications</span>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label" htmlFor="schoolAccount">
+                  School Account No. <span className="form-optional">(optional)</span>
+                </label>
+                <div className="input-wrapper">
+                  <Banknote size={18} className="input-icon" />
+                  <input
+                    id="schoolAccount"
+                    className="form-input"
+                    type="text"
+                    name="schoolAccount"
+                    placeholder="e.g. 1234-5678-90"
+                    value={form.schoolAccount}
+                    onChange={handleChange}
+                  />
+                </div>
+                <span className="form-hint">Landbank / UnionBank school account</span>
+              </div>
+            </div>
+
+            {/* ── 4. Additional Eligibility ── */}
             <div className="form-section-label">
               <Heart size={14} />
-              3. Additional Eligibility
+              4. Additional Eligibility
             </div>
 
             <p className="form-hint">
               Check all circumstances that apply to you. Some scholarships have
               specific matching criteria based on these.
             </p>
-
-            {/* Gender */}
-            <div className="form-group">
-              <label className="form-label" htmlFor="gender">
-                Gender Identity
-              </label>
-              <div className="input-wrapper">
-                <User size={18} className="input-icon" />
-                <select
-                  id="gender"
-                  className="form-input form-select"
-                  name="gender"
-                  value={form.gender}
-                  onChange={handleChange}
-                >
-                  <option value="">Select gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="non-binary">Non-binary / Third Gender</option>
-                  <option value="prefer-not">Prefer not to say</option>
-                </select>
-              </div>
-              {errors.gender && (
-                <span className="form-error">{errors.gender}</span>
-              )}
-            </div>
 
             {/* Special Condition Checkboxes */}
             <div className="eligibility-checks">
@@ -719,60 +772,6 @@ const RegisterPage = ({ onNavigateLogin }) => {
                   </span>
                 </div>
               </label>
-            </div>
-
-            {/* ── 4. Grant Disbursement Info ── */}
-            <div className="form-section-label">
-              <Banknote size={14} />
-              4. Grant Disbursement Info
-            </div>
-
-            <div className="profile-hint" style={{ marginBottom: '12px' }}>
-              <Banknote size={16} />
-              <span>
-                This tells us <strong>where to send your scholarship grant</strong> once approved.
-                Your grant will be released within 30 working days after approval.
-              </span>
-            </div>
-
-            <div className="name-row">
-              <div className="form-group">
-                <label className="form-label" htmlFor="schoolEmail">
-                  School Email <span className="form-optional">(optional)</span>
-                </label>
-                <div className="input-wrapper">
-                  <Mail size={18} className="input-icon" />
-                  <input
-                    id="schoolEmail"
-                    className="form-input"
-                    type="email"
-                    name="schoolEmail"
-                    placeholder="you@school.edu.ph"
-                    value={form.schoolEmail}
-                    onChange={handleChange}
-                  />
-                </div>
-                <span className="form-hint">For registrar notifications</span>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label" htmlFor="schoolAccount">
-                  School Account No. <span className="form-optional">(optional)</span>
-                </label>
-                <div className="input-wrapper">
-                  <Banknote size={18} className="input-icon" />
-                  <input
-                    id="schoolAccount"
-                    className="form-input"
-                    type="text"
-                    name="schoolAccount"
-                    placeholder="e.g. 1234-5678-90"
-                    value={form.schoolAccount}
-                    onChange={handleChange}
-                  />
-                </div>
-                <span className="form-hint">Landbank / UnionBank school account</span>
-              </div>
             </div>
 
             {/* Actions */}

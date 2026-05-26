@@ -150,7 +150,7 @@ const CurrentScholarshipWidget = ({ application }) => {
         </div>
 
         <p className="payment-inline-note">
-          💡 Your {application.amount} grant will be disbursed within <strong>30 working days</strong> after approval
+          Your {application.amount} grant will be disbursed within <strong>30 working days</strong> after approval
           {application.schoolName ? ` to your registered account at ${application.schoolName}` : ' to your registered school account'}.
         </p>
       </div>
@@ -160,11 +160,14 @@ const CurrentScholarshipWidget = ({ application }) => {
 
 // ─── Featured Scholarships (no active scholar) ────────────────────────────────────
 const FeaturedScholarshipsWidget = ({ onApply }) => {
-  const { scholarships, applyToScholarship } = useScholarships();
+  const { scholarships, applications, applyToScholarship } = useScholarships();
   const [selected, setSelected] = useState(null);
 
+  // IDs of scholarships the user already interacted with (any status)
+  const appliedIds = new Set(applications.map(a => a.scholarshipId));
+
   const featured = scholarships
-    .filter(s => new Date(s.deadline) > new Date())
+    .filter(s => new Date(s.deadline) > new Date() && !appliedIds.has(s.id))
     .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
     .slice(0, 2);
 
