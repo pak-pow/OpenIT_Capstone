@@ -1,77 +1,92 @@
-# 🎓 Paldo: Barangay Scholarship System
+# Paldo: Barangay Scholarship System
 
-**Paldo** is a modern, premium web application designed to streamline the scholarship application and management process for Local Government Units (LGUs) and Barangays. Built as a Capstone Project, it bridges the gap between deserving students and life-changing educational grants through an intuitive, automated, and beautifully designed platform.
+Paldo is a comprehensive web application designed to streamline the scholarship application and management process for Local Government Units (LGUs) and Barangays. Developed as a Capstone Project, it bridges the gap between students seeking financial assistance and the organizations providing educational grants. 
 
----
-
-## ✨ Key Features
-
-### For Students
-* **Smart Match Engine**: Automatically matches students with the best scholarship opportunities based on their GWA, income rank, and profile.
-* **One-Click Applications**: Apply to matched or urgent opportunities seamlessly without filling out redundant paperwork.
-* **Real-time Status Tracking**: Monitor your application status across multiple tabs (Pending, Approved, Withdrawn, Ended, Rejected).
-* **Active Scholar Hub**: Once approved, students get an exclusive dashboard view highlighting their active grant and expected stipends.
-
-### For Administrators
-* **Centralized Dashboard**: A bird's-eye view of all active scholarships, total funds disbursed, and pending applications.
-* **Applicant Processing**: Easily approve or reject applications. (Approving a student automatically withdraws their other pending applications to free up slots!).
-* **Real-time Analytics**: Built-in mock metrics to visualize approval rates and demographic distributions.
+The system provides an intuitive, automated platform that reduces paperwork and manual processing while offering a premium user experience.
 
 ---
 
-## 🛠️ Technology Stack
+## Architecture Overview
 
-* **Frontend**: React.js (built with Vite for lightning-fast HMR)
-* **Styling**: Vanilla CSS with premium design aesthetics (Glassmorphism, dark/light modes, CSS variables, Lucide React icons)
-* **Backend**: .NET / C# Web API (Configured for both Server Mode and Console Mode)
-* **Database**: PostgreSQL (via Entity Framework Core)
-* **Mock Data Architecture**: Decoupled JSON data structures (`scholarships.json`, `applicants.json`, `metrics.json`) for easy i18n support and API simulation.
+The project is structured as a full-stack application divided into two primary components:
+
+* **frontend/**: A Single Page Application (SPA) built with React and Vite.
+* **backend/**: A RESTful Web API built with ASP.NET Core and Entity Framework Core.
 
 ---
 
-## 🚀 Getting Started
+## Core Features
+
+### Student Portal
+* **Smart Match Engine**: Evaluates a student's profile (General Weighted Average, income rank, etc.) and automatically matches them with eligible scholarship opportunities.
+* **Streamlined Applications**: Enables students to apply for matched scholarships seamlessly without redundant data entry.
+* **Status Tracking**: Provides real-time visibility into application statuses across multiple categories (Pending, Approved, Withdrawn, Ended, Rejected).
+* **Active Scholar Hub**: A dedicated view for approved scholars highlighting active grants and expected stipends.
+
+### Administrator Portal
+* **Centralized Dashboard**: Provides administrators with a high-level overview of active scholarships, disbursed funds, and application queues.
+* **Application Processing**: Administrators can review, approve, or reject applications. (Note: Approving an application automatically withdraws the student's other pending applications to free up community slots).
+* **Metrics and Analytics**: Built-in data visualization for monitoring approval rates and demographic distributions.
+
+---
+
+## Technology Stack
+
+### Frontend
+* **Framework**: React.js 18
+* **Build Tool**: Vite (for optimized bundling and Fast Refresh)
+* **Styling**: Vanilla CSS (implementing modern design aesthetics including Glassmorphism, CSS variables for theming, and responsive layouts)
+* **Icons**: Lucide React
+* **Data Management**: Context API with decoupled JSON mock data (scholarships, applicants, metrics) for localization and API simulation.
+
+### Backend
+* **Framework**: ASP.NET Core 8.0 Web API
+* **Language**: C#
+* **ORM**: Entity Framework Core
+* **Database**: PostgreSQL
+* **Architecture**: MVC Pattern (Models, Views/DTOs, Controllers)
+
+---
+
+## Getting Started
 
 ### Prerequisites
-* Node.js (v18+)
+* Node.js (v18 or higher)
 * .NET 8.0 SDK
-* PostgreSQL
+* PostgreSQL Server
 
-### 1. Frontend Setup
+### Frontend Configuration
+The frontend can be run locally using the Vite development server.
+
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-*The frontend will launch locally, usually at `http://localhost:5173`.*
+The application will be accessible at http://localhost:5173.
 
-### 2. Backend Setup
+### Backend Configuration
+The backend requires setting up a PostgreSQL connection string inside `appsettings.json` or `appsettings.Development.json`.
+
 ```bash
 cd backend
 dotnet restore
 dotnet run
 ```
-*You will be prompted to run in either Console Mode (1) or Server Web API Mode (2).*
+The REST API will boot up and listen for requests from the frontend client.
 
 ---
 
-## 🎨 Design Philosophy
+## Frontend Simulation Hotkeys
 
-Paldo strictly adheres to a premium, modern design language:
-* **"Paldo" Aesthetics**: Deep navy blues (`#0a1931`), vibrant golden yellows (`#ffc000`), and smooth transitions.
-* **Attention to Detail**: Features like glowing shadows, custom animated celebration modals (e.g., "UY PALDO!! 💸"), and intuitive typography using standard modern web fonts.
-* **UX First**: Every interaction, from simulating an approval (`Shift+3`) to logging out, includes micro-animations and safety confirmations.
+For demonstration and development purposes, the frontend currently supports hotkeys to simulate backend state transitions without requiring a live database connection. These can be executed from the Student Dashboard:
 
----
-
-## ⌨️ Development Shortcuts (Simulation Hotkeys)
-
-Since the frontend currently simulates backend state for demonstration purposes, use the following hotkeys on the Student Dashboard:
-* `Shift + 3`: **Simulate Approval** (Approves a pending application, decrements available slots, and withdraws other pending apps).
-* `Shift + 4`: **Simulate Rejection** (Rejects the oldest pending application).
-* `Shift + 5`: **Simulate Scholarship End** (Concludes your active scholarship and frees up a slot for the community).
+* `Shift + 3`: **Simulate Approval**. Approves the first pending application, decrements global available slots, and withdraws other pending applications.
+* `Shift + 4`: **Simulate Rejection**. Rejects the oldest pending application.
+* `Shift + 5`: **Simulate Scholarship End**. Concludes an active scholarship, moving it to the 'Ended' state and freeing up a slot.
 
 ---
 
-## 📄 License
+## License
 
-This project was developed as a Capstone Project and is intended for academic and demonstration purposes.
+This project was developed as a Capstone Project and is intended for academic, evaluation, and demonstration purposes.
