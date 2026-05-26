@@ -20,6 +20,7 @@ public static class MappingExtensions
         Course = student.Course,
         YearLevel = student.YearLevel,
         School = student.School,
+        PreferredScholarshipType = student.PreferredScholarshipType,
         BarangayId = student.BarangayId
     };
 
@@ -34,6 +35,7 @@ public static class MappingExtensions
         Deadline = scholarship.Deadline,
         AvailableSlots = scholarship.AvailableSlots,
         Status = scholarship.Status,
+        Type = scholarship.Type,
         BarangayId = scholarship.BarangayId
     };
 

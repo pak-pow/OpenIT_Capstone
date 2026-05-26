@@ -12,7 +12,7 @@ const LoginPage = ({ onNavigateRegister, onNavigateAdminLogin }) => {
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -23,15 +23,13 @@ const LoginPage = ({ onNavigateRegister, onNavigateAdminLogin }) => {
 
     setIsLoading(true);
 
-    // Mock login — accepts any email/password after a delay
-    setTimeout(() => {
-      const name = form.email.split("@")[0];
-      loginAsStudent({
-        firstName: name.charAt(0).toUpperCase() + name.slice(1),
-        email: form.email,
-      });
+    try {
+      await loginAsStudent({ userName: form.email, password: form.password });
+    } catch (err) {
+      setError(err?.message || "Unable to sign in.");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
