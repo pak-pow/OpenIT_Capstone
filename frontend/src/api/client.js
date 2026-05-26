@@ -5,7 +5,14 @@ const buildUrl = (path) => {
   if (path.startsWith("http://") || path.startsWith("https://")) {
     return path;
   }
-  return `${API_BASE_URL}${path}`;
+
+  const normalizedBaseUrl = API_BASE_URL.replace(/\/$/, "");
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  if (normalizedBaseUrl.endsWith("/api") && normalizedPath.startsWith("/api/")) {
+    return `${normalizedBaseUrl}${normalizedPath.slice(4)}`;
+  }
+
+  return `${normalizedBaseUrl}${normalizedPath}`;
 };
 
 const parseResponseBody = async (response) => {

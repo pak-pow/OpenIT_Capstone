@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Mail,
   Lock,
@@ -11,10 +11,8 @@ import {
   TrendingUp,
   Heart,
   Banknote,
-  CheckCircle,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-import { authService } from "../../services/authService";
 import {
   CITIES,
   BARANGAYS_BY_CITY,
