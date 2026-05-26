@@ -17,31 +17,29 @@ const LogoutModal = ({ onConfirm, onCancel }) => {
   };
 
   return (
-    <div className={`modal-overlay ${show ? "visible" : ""}`} onClick={handleClose} style={{ zIndex: 9999 }}>
+    <div className={`modal-overlay logout-modal-overlay ${show ? "visible" : ""}`} onClick={handleClose}>
       <div 
-        className="modal-card" 
+        className="modal-card logout-modal-card" 
         onClick={(e) => e.stopPropagation()}
-        style={{ maxWidth: "400px", padding: "32px 24px", textAlign: "center", position: "relative" }}
       >
         <button 
-          className="modal-close-btn" 
+          className="modal-close-btn logout-modal-close" 
           onClick={handleClose}
-          style={{ position: "absolute", top: "12px", right: "12px" }}
         >
           <X size={20} />
         </button>
 
-        <div className="modal-header-icon info-icon" style={{ backgroundColor: "rgba(220, 38, 38, 0.1)", color: "#dc2626", margin: "0 auto 16px auto" }}>
+        <div className="modal-header-icon info-icon logout-modal-icon">
           <LogOut size={32} />
         </div>
 
-        <h2 className="modal-title" style={{ fontSize: "1.25rem", marginBottom: "8px" }}>Sign Out</h2>
+        <h2 className="modal-title logout-modal-title">Sign Out</h2>
         
-        <p className="modal-subtitle" style={{ fontSize: "0.95rem", marginBottom: "24px" }}>
-          Are you sure you want to log out of your account? You will need to sign in again to access your dashboard.
+        <p className="modal-subtitle logout-modal-subtitle">
+          Are you sure you want to log out of your account?
         </p>
 
-        <div className="modal-actions" style={{ display: "flex", gap: "12px", marginTop: "0" }}>
+        <div className="modal-actions logout-modal-actions">
           <button className="btn btn-ghost btn-full" onClick={handleClose}>
             Cancel
           </button>
