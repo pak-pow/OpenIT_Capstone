@@ -6,16 +6,17 @@ const ScholarshipContext = createContext(null);
 
 export const ScholarshipProvider = ({ children, userProfile }) => {
   const [applications, setApplications] = useState([]);
+  const [scholarshipsData, setScholarshipsData] = useState(allScholarships);
 
   // ── Compute match percentages for all scholarships ───────────────
   const scholarshipsWithMatch = useMemo(() => {
     if (!userProfile) {
-      return allScholarships.map((s) => ({ ...s, matchPercentage: 0 }));
+      return scholarshipsData.map((s) => ({ ...s, matchPercentage: 0 }));
     }
-    return allScholarships
+    return scholarshipsData
       .map((s) => ({ ...s, matchPercentage: computeMatch(userProfile, s) }))
       .sort((a, b) => b.matchPercentage - a.matchPercentage);
-  }, [userProfile]);
+  }, [userProfile, scholarshipsData]);
 
   // ── Derived: the single active (Approved) scholarship, if any ────
   // Uses the most recently approved one (highest id = Date.now())
@@ -64,6 +65,17 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
         (a) => a.status === "Pending" || a.status === "Under Review"
       );
       if (idx === -1) return prev;
+      
+      const approvedApp = prev[idx];
+
+      // Decrease the available slots for this scholarship
+      setScholarshipsData((currentData) => 
+        currentData.map((s) => 
+          s.id === approvedApp.scholarshipId 
+            ? { ...s, slots: Math.max(0, s.slots - 1) } 
+            : s
+        )
+      );
 
       // Make the selected one Approved, and change all other Pending/Under Review to Withdrawn
       return prev.map((app, index) => {
@@ -97,6 +109,17 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
     setApplications((prev) => {
       const idx = prev.findIndex((a) => a.status === "Approved");
       if (idx === -1) return prev;
+      
+      const endedApp = prev[idx];
+
+      // Increase the available slots back for this scholarship
+      setScholarshipsData((currentData) => 
+        currentData.map((s) => 
+          s.id === endedApp.scholarshipId 
+            ? { ...s, slots: s.slots + 1 } 
+            : s
+        )
+      );
 
       const next = [...prev];
       next[idx] = { ...next[idx], status: "Ended", justEnded: true };
