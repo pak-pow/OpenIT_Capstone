@@ -65,9 +65,16 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
       );
       if (idx === -1) return prev;
 
-      const next = [...prev];
-      next[idx] = { ...next[idx], status: "Approved", justApproved: true };
-      return next;
+      // Make the selected one Approved, and change all other Pending/Under Review to Withdrawn
+      return prev.map((app, index) => {
+        if (index === idx) {
+          return { ...app, status: "Approved", justApproved: true };
+        }
+        if (app.status === "Pending" || app.status === "Under Review") {
+          return { ...app, status: "Withdrawn" };
+        }
+        return app;
+      });
     });
   };
 

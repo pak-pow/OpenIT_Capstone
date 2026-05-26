@@ -9,6 +9,7 @@ const getBadgeClass = (status) => {
     case "Under Review":return "badge badge-info";
     case "Rejected":    return "badge badge-danger";
     case "Ended":       return "badge badge-neutral";
+    case "Withdrawn":   return "badge badge-neutral";
     default:            return "badge";
   }
 };
@@ -24,6 +25,7 @@ const ApplicationStatusList = () => {
     Approved: applications.filter(a => a.status === "Approved").length,
     Ended:    applications.filter(a => a.status === "Ended").length,
     Rejected: applications.filter(a => a.status === "Rejected").length,
+    Withdrawn: applications.filter(a => a.status === "Withdrawn").length,
   };
 
   const filteredApps = applications.filter((app) => {
@@ -37,8 +39,8 @@ const ApplicationStatusList = () => {
     <section className="application-status-section">
       <div className="section-header-row status-list-header">
         <h3 className="section-title">My Applications</h3>
-        <div className="status-tabs">
-          {["All", "Pending", "Approved", "Ended", "Rejected"].map((tab) => (
+        <div className="status-tabs" style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+          {["All", "Pending", "Approved", "Ended", "Rejected", "Withdrawn"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
