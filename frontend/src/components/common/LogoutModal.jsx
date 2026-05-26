@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { LogOut, X } from "lucide-react";
-import "../../styles/modal.css"; // We can reuse standard modal styling
+import "../../styles/modal.css"; 
 
 const LogoutModal = ({ onConfirm, onCancel }) => {
   const [show, setShow] = useState(false);
@@ -13,7 +13,7 @@ const LogoutModal = ({ onConfirm, onCancel }) => {
 
   const handleClose = () => {
     setShow(false);
-    setTimeout(onCancel, 300); // wait for fade out
+    setTimeout(onCancel, 300);
   };
 
   return (
