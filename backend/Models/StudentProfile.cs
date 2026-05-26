@@ -12,6 +12,7 @@ public class StudentProfile
     public string Course { get; set; } = string.Empty;
     public int YearLevel { get; set; }
     public string School { get; set; } = string.Empty;
+    public ScholarshipType? PreferredScholarshipType { get; set; }
 
     public int BarangayId { get; set; }
     public Barangay? Barangay { get; set; }

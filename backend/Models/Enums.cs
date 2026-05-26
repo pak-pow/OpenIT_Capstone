@@ -7,6 +7,13 @@ public enum ScholarshipStatus
     Archived
 }
 
+public enum ScholarshipType
+{
+    Government,
+    Private,
+    Ngo
+}
+
 public enum ApplicationStatus
 {
     Submitted,

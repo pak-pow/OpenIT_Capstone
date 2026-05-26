@@ -14,10 +14,19 @@ public class ScholarshipService
         _context = context;
     }
 
-    public Task<List<Scholarship>> GetAllAsync() => _context.Scholarships.AsNoTracking().ToListAsync();
+    public Task<List<Scholarship>> GetAllAsync() =>
+        _context.Scholarships
+            .AsNoTracking()
+            .Include(s => s.Barangay)
+            .Include(s => s.Applications)
+            .ToListAsync();
 
     public Task<Scholarship?> GetByIdAsync(int id) =>
-        _context.Scholarships.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
+        _context.Scholarships
+            .AsNoTracking()
+            .Include(s => s.Barangay)
+            .Include(s => s.Applications)
+            .FirstOrDefaultAsync(s => s.Id == id);
 
     public async Task<Scholarship> CreateAsync(ScholarshipCreateDto dto)
     {

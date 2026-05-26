@@ -13,21 +13,19 @@ const AdminLoginPage = ({ onNavigateLogin }) => {
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     setIsLoading(true);
 
-    // Mock admin credentials after delay
-    setTimeout(() => {
-      if (form.username === "admin" && form.password === "admin123") {
-        loginAsAdmin({ firstName: "Admin", username: form.username });
-      } else {
-        setError("Invalid administrator credentials.");
-      }
+    try {
+      await loginAsAdmin({ userName: form.username, password: form.password });
+    } catch (err) {
+      setError(err?.message || "Invalid administrator credentials.");
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (

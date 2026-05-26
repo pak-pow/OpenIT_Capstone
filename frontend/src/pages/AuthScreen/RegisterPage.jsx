@@ -74,12 +74,13 @@ const getYearLabel = (educationLevel) => {
 
 // ──────────────────────────────────────────────────────────────────
 const RegisterPage = ({ onNavigateLogin }) => {
-  const { loginAsStudent } = useAuth();
+  const { registerStudent } = useAuth();
 
   const [step, setStep] = useState(1);
   const [showPwd, setShowPwd] = useState(false);
   const [errors, setErrors] = useState({});
-  const [isRegistering, setIsRegistering] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const [form, setForm] = useState({
     // Step 1 — Account
@@ -182,43 +183,15 @@ const RegisterPage = ({ onNavigateLogin }) => {
       setErrors(errs);
       return;
     }
-
-    setIsRegistering(true);
-
-    const payload = {
-      firstName: form.firstName,
-      lastName: form.lastName,
-      email: form.email,
-      password: form.password,
-      profile: {
-        educationLevel: form.educationLevel,
-        gwa: form.gwa,
-        yearLevel: form.yearLevel,
-        course: form.course,
-        city: form.city,
-        barangay: form.barangay,
-        incomeBracket: form.incomeBracket,
-        gender: form.gender,
-        isPwd: form.isPwd,
-        isSoloParent: form.isSoloParent,
-        isIndigenous: form.isIndigenous,
-        payment: {
-          schoolName: form.schoolName,
-          schoolEmail: form.schoolEmail,
-          schoolAccount: form.schoolAccount,
-        },
-      },
-    };
+    setIsSubmitting(true);
+    setSubmitError("");
 
     try {
-      const response = await authService.registerStudent(payload);
-      if (response && response.user) {
-        loginAsStudent(response.user);
-      }
+      await registerStudent(form);
     } catch (err) {
-      setErrors({ form: err.message || "Registration failed. Please try again." });
+      setSubmitError(err?.message || "Registration failed.");
     } finally {
-      setIsRegistering(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -793,20 +766,24 @@ const RegisterPage = ({ onNavigateLogin }) => {
             </div>
 
             {/* Actions */}
+            {submitError && (
+              <p className="form-error auth-error-msg">{submitError}</p>
+            )}
             <div className="form-actions-row">
               <button
                 type="button"
                 className="btn btn-ghost form-action-btn-secondary"
                 onClick={() => setStep(1)}
+                disabled={isSubmitting}
               >
                 Back
               </button>
               <button
                 type="submit"
                 className="btn btn-primary form-action-btn-primary"
-                disabled={isRegistering}
+                disabled={isSubmitting}
               >
-                {isRegistering ? "Creating Account..." : "Register & Match"}
+                {isSubmitting ? "Creating account..." : "Register & Match"}
               </button>
             </div>
           </form>

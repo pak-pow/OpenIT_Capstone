@@ -33,18 +33,18 @@ public static class SeedData
             // create default barangay
             var barangay = new Barangay { Name = "Seed Barangay" };
 
-            var users = new List<AuthUser>
+            var seededUsers = new List<AuthUser>
             {
                 new() { Id = "admin-01", UserName = "admin", Role = "Admin", CreatedAt = DateTime.UtcNow }
             };
-            users[0].PasswordHash = passwordHasher.HashPassword(users[0], "Admin123!");
+            seededUsers[0].PasswordHash = passwordHasher.HashPassword(seededUsers[0], "Admin123!");
 
             var scholarships = new List<Scholarship>();
             foreach (var fs in frontendScholarships)
             {
                 var s = new Scholarship
                 {
-                    Title = fs.Title,
+                    Title = fs.Title ?? string.Empty,
                     Description = fs.Description ?? string.Empty,
                     RequiredGwa = fs.Eligibility?.MinGwa ?? 0,
                     MaxHouseholdIncome = fs.AmountRaw != 0 ? Convert.ToDecimal(fs.AmountRaw) : 0m,
@@ -58,7 +58,7 @@ public static class SeedData
                 scholarships.Add(s);
             }
 
-            context.Users.AddRange(users);
+            context.Users.AddRange(seededUsers);
             context.Barangays.Add(barangay);
             context.Scholarships.AddRange(scholarships);
             await context.SaveChangesAsync();
@@ -76,14 +76,16 @@ public static class SeedData
                 var idx = 1;
                 foreach (var fa in frontendApplicants)
                 {
-                    var user = new AuthUser { Id = $"applicant-{idx}", UserName = fa.Name.Replace(' ', '.').ToLowerInvariant(), Role = "Student", CreatedAt = DateTime.UtcNow };
+                    var applicantName = fa.Name ?? $"applicant-{idx}";
+                    var userName = applicantName.Replace(' ', '.').ToLowerInvariant();
+                    var user = new AuthUser { Id = $"applicant-{idx}", UserName = userName, Role = "Student", CreatedAt = DateTime.UtcNow };
                     user.PasswordHash = passwordHasher.HashPassword(user, "Student123!");
                     studentUsers.Add(user);
 
                     var student = new StudentProfile
                     {
                         UserId = user.Id,
-                        FullName = fa.Name,
+                        FullName = applicantName,
                         Gwa = double.TryParse(fa.Gpa, out var g) ? g : 0,
                         HouseholdIncome = 20000m,
                         Course = "",
@@ -102,8 +104,8 @@ public static class SeedData
                 // create applications by matching program title to scholarship title
                 foreach (var fa in frontendApplicants)
                 {
-                    var student = students.FirstOrDefault(s => s.FullName == fa.Name);
-                    var scholarship = context.Scholarships.FirstOrDefault(s => s.Title == fa.Program);
+                    var student = students.FirstOrDefault(s => s.FullName == (fa.Name ?? string.Empty));
+                    var scholarship = context.Scholarships.FirstOrDefault(s => s.Title == (fa.Program ?? string.Empty));
                     if (student is null || scholarship is null) continue;
 
                     var app = new Application
