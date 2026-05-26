@@ -9,6 +9,18 @@ const getMatchClass = (pct) => {
   return "match-badge-low"; // gray
 };
 
+const getTypeTagClass = (type) => {
+  switch (type) {
+    case 'Government': return 'type-tag type-government';
+    case 'LGU':        return 'type-tag type-lgu';
+    case 'Barangay':   return 'type-tag type-barangay';
+    case 'SK':         return 'type-tag type-sk';
+    case 'Private/NGO':return 'type-tag type-private';
+    case 'CHED':       return 'type-tag type-government';
+    default:           return 'type-tag type-default';
+  }
+};
+
 const AllScholarshipsView = ({ onBack, addToast, disabled }) => {
   const { scholarships, hasApplied, applyToScholarship } = useScholarships();
 
@@ -111,7 +123,7 @@ const AllScholarshipsView = ({ onBack, addToast, disabled }) => {
                   <span className={`match-badge ${getMatchClass(match)}`}>
                     {match}% Match
                   </span>
-                  <span className="scholarship-type-tag">{s.type}</span>
+                  <span className={getTypeTagClass(s.type)}>{s.type}</span>
                 </div>
                 <h4 className="scholarship-title">{s.title}</h4>
                 <p className="scholarship-provider">{s.provider}</p>

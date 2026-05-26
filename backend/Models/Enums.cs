@@ -20,7 +20,9 @@ public enum ApplicationStatus
     UnderReview,
     Approved,
     Rejected,
-    NeedsInfo
+    NeedsInfo,
+    Withdrawn,
+    Completed
 }
 
 public enum DocumentType

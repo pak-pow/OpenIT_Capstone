@@ -94,6 +94,47 @@ public class ApplicationService
             return null;
         }
 
+        if (dto.Status == ApplicationStatus.Approved)
+        {
+            var hasActive = await _context.Applications.AnyAsync(a => 
+                a.StudentId == application.StudentId && 
+                a.Status == ApplicationStatus.Approved && 
+                a.Id != id);
+                
+            if (hasActive)
+            {
+                throw new InvalidOperationException("Student already has an active Approved scholarship.");
+            }
+
+            // Auto-withdraw other pending/under-review applications
+            var pendingApps = await _context.Applications
+                .Where(a => a.StudentId == application.StudentId && a.Id != id && 
+                           (a.Status == ApplicationStatus.Submitted || 
+                            a.Status == ApplicationStatus.UnderReview || 
+                            a.Status == ApplicationStatus.NeedsInfo))
+                .ToListAsync();
+
+            foreach (var app in pendingApps)
+            {
+                app.Status = ApplicationStatus.Withdrawn;
+                app.Remarks = "Auto-withdrawn because another scholarship was approved.";
+                app.ReviewedAt = DateTime.UtcNow;
+            }
+        }
+        else if (dto.Status == ApplicationStatus.Completed)
+        {
+            // When a student completes a scholarship, delete their previously Withdrawn applications
+            // so they can apply for those scholarships again if they are still open.
+            var withdrawnApps = await _context.Applications
+                .Where(a => a.StudentId == application.StudentId && a.Status == ApplicationStatus.Withdrawn)
+                .ToListAsync();
+
+            if (withdrawnApps.Any())
+            {
+                _context.Applications.RemoveRange(withdrawnApps);
+            }
+        }
+
         application.Status = dto.Status;
         application.Remarks = dto.Remarks;
         application.ReviewedAt = DateTime.UtcNow;

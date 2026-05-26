@@ -42,7 +42,10 @@ public class ScholarshipService
             Status = dto.Status,
             Type = dto.Type,
             BarangayId = dto.BarangayId,
-            Requirements = dto.Requirements
+            Requirements = dto.Requirements,
+            Provider = dto.Provider,
+            EligibleBarangays = dto.EligibleBarangays,
+            SpecialConditions = dto.SpecialConditions
         };
 
         _context.Scholarships.Add(scholarship);
@@ -69,6 +72,9 @@ public class ScholarshipService
         scholarship.Type = dto.Type;
         scholarship.BarangayId = dto.BarangayId;
         scholarship.Requirements = dto.Requirements;
+        scholarship.Provider = dto.Provider;
+        scholarship.EligibleBarangays = dto.EligibleBarangays;
+        scholarship.SpecialConditions = dto.SpecialConditions;
 
         await _context.SaveChangesAsync();
         return true;

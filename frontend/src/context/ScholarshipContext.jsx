@@ -109,6 +109,7 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
             if (s === "Approved" || s === "2") return "Approved";
             if (s === "Rejected" || s === "3") return "Rejected";
             if (s === "NeedsInfo" || s === "4") return "Under Review";
+            if (s === "Withdrawn" || s === "5") return "Withdrawn";
             return s;
           })(),
           justApproved: false,

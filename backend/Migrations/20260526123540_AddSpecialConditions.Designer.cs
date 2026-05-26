@@ -3,6 +3,7 @@ using System;
 using Kaagapay.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace backend.Migrations
 {
     [DbContext(typeof(KaagapayContext))]
-    partial class KaagapayContextModelSnapshot : ModelSnapshot
+    [Migration("20260526123540_AddSpecialConditions")]
+    partial class AddSpecialConditions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -192,20 +195,12 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("EligibleBarangays")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("EligibleCourses")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<decimal>("MaxHouseholdIncome")
                         .HasColumnType("numeric");
-
-                    b.Property<string>("Provider")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<double>("RequiredGwa")
                         .HasColumnType("double precision");

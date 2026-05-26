@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Save } from "lucide-react";
+import { X, Save, Plus, Trash2 } from "lucide-react";
 import { useAdminContext } from "../../context/AdminContext";
 import { BARANGAYS_BY_CITY, COURSES, VOCATIONAL_COURSES, SHS_STRANDS, JHS_TRACKS } from "../../mockdata/constants";
 
@@ -22,6 +22,18 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
     eligibleCourse: editData?.eligibility?.eligibleCourses?.[0] || "All",
   });
 
+  const [requirements, setRequirements] = useState(
+    editData?.requirements?.length > 0
+      ? editData.requirements
+      : [""]
+  );
+
+  const addRequirement = () => setRequirements((prev) => [...prev, ""]);
+  const removeRequirement = (idx) =>
+    setRequirements((prev) => prev.filter((_, i) => i !== idx));
+  const updateRequirement = (idx, value) =>
+    setRequirements((prev) => prev.map((r, i) => (i === idx ? value : r)));
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -34,11 +46,14 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
       return;
     }
 
+    const cleanedRequirements = requirements.map((r) => r.trim()).filter(Boolean);
+
     // Convert to the required format
     const newProgram = {
       ...formData,
       amount: `₱${formData.amount}`,
       slots: parseInt(formData.slots, 10) || 0,
+      requirements: cleanedRequirements,
       eligibility: {
         minGwa: parseFloat(formData.minGwa) || 2.0,
         maxIncomeRank: parseInt(formData.maxIncomeRank, 10) || 5,
@@ -259,6 +274,94 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
                 </select>
               </div>
             </div>
+
+            <hr style={{ margin: "1rem 0", borderColor: "var(--border-light)" }} />
+            <h4 style={{ marginBottom: "0.5rem", color: "var(--navy-blue)" }}>Required Documents</h4>
+            <p style={{ fontSize: "var(--font-size-xs)", color: "var(--text-medium)", marginBottom: "0.75rem" }}>
+              Add the documents that applicants must submit. Each entry becomes a required document in the application form.
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+              {requirements.map((req, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
+                >
+                  <span
+                    style={{
+                      minWidth: "24px",
+                      height: "24px",
+                      borderRadius: "50%",
+                      backgroundColor: "var(--info-bg)",
+                      color: "var(--info-text)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "0.7rem",
+                      fontWeight: 700,
+                      flexShrink: 0,
+                    }}
+                  >
+                    {idx + 1}
+                  </span>
+                  <input
+                    type="text"
+                    className="form-input"
+                    style={{ flex: 1 }}
+                    value={req}
+                    onChange={(e) => updateRequirement(idx, e.target.value)}
+                    placeholder={`e.g. Certified true copy of grades`}
+                  />
+                  {requirements.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeRequirement(idx)}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        color: "var(--danger-text)",
+                        padding: "4px",
+                        borderRadius: "var(--radius-sm)",
+                        display: "flex",
+                        alignItems: "center",
+                        transition: "background var(--transition-fast)",
+                      }}
+                      title="Remove this document"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={addRequirement}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.4rem",
+                marginTop: "0.5rem",
+                background: "none",
+                border: "1.5px dashed var(--border-color)",
+                borderRadius: "var(--radius-sm)",
+                padding: "0.5rem 1rem",
+                cursor: "pointer",
+                color: "var(--primary)",
+                fontWeight: 600,
+                fontSize: "var(--font-size-sm)",
+                transition: "all var(--transition-fast)",
+                width: "100%",
+                justifyContent: "center",
+              }}
+            >
+              <Plus size={16} /> Add Document Requirement
+            </button>
 
             <div
               className="form-actions"

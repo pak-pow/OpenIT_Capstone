@@ -50,17 +50,17 @@ public static class MappingExtensions
         Type = scholarship.Type,
         BarangayId = scholarship.BarangayId,
         // frontend-friendly
-        Provider = scholarship.Barangay != null ? scholarship.Barangay.Name : scholarship.Type.ToString(),
+        Provider = !string.IsNullOrWhiteSpace(scholarship.Provider) ? scholarship.Provider : (scholarship.Barangay != null ? scholarship.Barangay.Name : scholarship.Type.ToString()),
         Amount = scholarship.MaxHouseholdIncome > 0 ? $"₱{scholarship.MaxHouseholdIncome:N0}" : string.Empty,
         AmountRaw = scholarship.MaxHouseholdIncome,
-        Requirements = !string.IsNullOrWhiteSpace(scholarship.Requirements) ? scholarship.Requirements.Split(',').Select(r => r.Trim()).ToArray() : Array.Empty<string>(),
+        Requirements = !string.IsNullOrWhiteSpace(scholarship.Requirements) ? scholarship.Requirements.Split('|').Select(r => r.Trim()).ToArray() : Array.Empty<string>(),
         Eligibility = new ScholarshipEligibilityDto
         {
             MinGwa = scholarship.RequiredGwa,
             MaxIncomeRank = GetIncomeRank(scholarship.MaxHouseholdIncome),
-            EligibleBarangays = scholarship.Barangay != null ? new[] { scholarship.Barangay.Name } : Array.Empty<string>(),
-            EligibleCourses = !string.IsNullOrWhiteSpace(scholarship.EligibleCourses) ? scholarship.EligibleCourses.Split(',').Select(c => c.Trim()).ToArray() : Array.Empty<string>(),
-            SpecialConditions = Array.Empty<string>()
+            EligibleBarangays = !string.IsNullOrWhiteSpace(scholarship.EligibleBarangays) ? scholarship.EligibleBarangays.Split('|').Select(b => b.Trim()).ToArray() : Array.Empty<string>(),
+            EligibleCourses = !string.IsNullOrWhiteSpace(scholarship.EligibleCourses) ? scholarship.EligibleCourses.Split('|').Select(c => c.Trim()).ToArray() : Array.Empty<string>(),
+            SpecialConditions = !string.IsNullOrWhiteSpace(scholarship.SpecialConditions) ? scholarship.SpecialConditions.Split('|').Select(s => s.Trim()).ToArray() : Array.Empty<string>()
         },
         SlotsFilled = scholarship.Applications?.Count(a => a.Status == Models.ApplicationStatus.Approved) ?? 0
     };
@@ -77,7 +77,7 @@ public static class MappingExtensions
         StudentName = application.Student?.FullName,
         ScholarshipName = application.Scholarship?.Title,
         Provider = application.Scholarship != null 
-            ? (application.Scholarship.Barangay != null ? application.Scholarship.Barangay.Name : application.Scholarship.Type.ToString())
+            ? (!string.IsNullOrWhiteSpace(application.Scholarship.Provider) ? application.Scholarship.Provider : (application.Scholarship.Barangay != null ? application.Scholarship.Barangay.Name : application.Scholarship.Type.ToString()))
             : null,
         Amount = application.Scholarship != null
             ? (application.Scholarship.MaxHouseholdIncome > 0 ? $"₱{application.Scholarship.MaxHouseholdIncome:N0}" : string.Empty)

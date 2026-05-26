@@ -104,7 +104,16 @@ public class ApplicationsController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ApplicationDto>> UpdateStatus(int id, [FromBody] ApplicationStatusUpdateDto dto)
     {
-        var updated = await _service.UpdateStatusAsync(id, dto);
+        Application? updated;
+        try
+        {
+            updated = await _service.UpdateStatusAsync(id, dto);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+
         if (updated is null)
         {
             return NotFound();

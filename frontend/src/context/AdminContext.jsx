@@ -47,12 +47,13 @@ const normalizeScholarshipStatus = (rawStatus) => {
 
 const normalizeAppStatus = (rawStatus) => {
   if (typeof rawStatus === 'number') {
-    const map = { 0: 'Pending', 1: 'Under Review', 2: 'Approved', 3: 'Rejected', 4: 'Needs Info' };
+    const map = { 0: 'Pending', 1: 'Under Review', 2: 'Approved', 3: 'Rejected', 4: 'Needs Info', 5: 'Withdrawn' };
     return map[rawStatus] || 'Pending';
   }
   const s = String(rawStatus);
   if (s === 'Submitted') return 'Pending';
   if (s === 'UnderReview') return 'Under Review';
+  if (s === 'Withdrawn') return 'Withdrawn';
   return s;
 };
 
@@ -143,9 +144,25 @@ export const AdminProvider = ({ children }) => {
         token,
         body: { status: 2 } // 2 is Approved in backend enum
       });
-      setAdminApplicants((prev) => prev.map((a) => (a.id === id ? { ...a, status: "Approved" } : a)));
+      // Find the approved applicant to get their name
+      const approved = adminApplicants.find((a) => a.id === id);
+      setAdminApplicants((prev) =>
+        prev.map((a) => {
+          if (a.id === id) return { ...a, status: "Approved" };
+          // Auto-withdraw other pending/under-review apps for the same student
+          if (
+            approved &&
+            a.name === approved.name &&
+            (a.status === "Pending" || a.status === "Under Review")
+          ) {
+            return { ...a, status: "Withdrawn" };
+          }
+          return a;
+        })
+      );
     } catch(e) {
       console.error(e);
+      alert(e.message || "Failed to approve applicant. They might already have an active scholarship.");
     }
   };
 
@@ -162,6 +179,26 @@ export const AdminProvider = ({ children }) => {
     }
   };
 
+  const completeApplicant = async (id) => {
+    try {
+      await apiRequest(`/api/applications/${id}/status`, {
+        method: "PUT",
+        token,
+        body: { status: 6 } // 6 is Completed in backend enum
+      });
+      setAdminApplicants((prev) => {
+        const completed = prev.find(a => a.id === id);
+        // Remove the student's withdrawn apps from state and mark this one Completed
+        return prev
+          .filter(a => !(a.name === completed?.name && a.status === "Withdrawn"))
+          .map(a => (a.id === id ? { ...a, status: "Completed" } : a));
+      });
+    } catch(e) {
+      console.error(e);
+      alert(e.message || "Failed to complete applicant.");
+    }
+  };
+
   const createScholarship = async (newScholarship) => {
     try {
       const dto = {
@@ -169,7 +206,11 @@ export const AdminProvider = ({ children }) => {
         description: newScholarship.description || "",
         requiredGwa: newScholarship.eligibility?.minGwa || 0,
         maxHouseholdIncome: parseInt(newScholarship.amount?.replace(/\D/g, ""), 10) || 0,
-        requirements: (newScholarship.requirements || []).join(", "),
+        requirements: (newScholarship.requirements || []).join("|"),
+        provider: newScholarship.provider || "",
+        eligibleBarangays: (newScholarship.eligibility?.eligibleBarangays || []).join("|"),
+        eligibleCourses: (newScholarship.eligibility?.eligibleCourses || []).join("|"),
+        specialConditions: (newScholarship.eligibility?.specialConditions || []).join("|"),
         deadline: newScholarship.deadline || new Date().toISOString(),
         availableSlots: newScholarship.slots || 0,
         status: 0, // Open
@@ -210,7 +251,11 @@ export const AdminProvider = ({ children }) => {
         description: updatedScholarship.description || "",
         requiredGwa: updatedScholarship.eligibility?.minGwa || 0,
         maxHouseholdIncome: parseInt(updatedScholarship.amount?.replace(/\D/g, ""), 10) || 0,
-        requirements: (updatedScholarship.requirements || []).join(", "),
+        requirements: (updatedScholarship.requirements || []).join("|"),
+        provider: updatedScholarship.provider || "",
+        eligibleBarangays: (updatedScholarship.eligibility?.eligibleBarangays || []).join("|"),
+        eligibleCourses: (updatedScholarship.eligibility?.eligibleCourses || []).join("|"),
+        specialConditions: (updatedScholarship.eligibility?.specialConditions || []).join("|"),
         deadline: updatedScholarship.deadline || new Date().toISOString(),
         availableSlots: updatedScholarship.slots || 0,
         status: 0, 
@@ -251,6 +296,7 @@ export const AdminProvider = ({ children }) => {
         adminMetrics,
         approveApplicant,
         rejectApplicant,
+        completeApplicant,
         createScholarship,
         updateScholarship,
       }}

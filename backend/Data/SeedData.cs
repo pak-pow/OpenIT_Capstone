@@ -14,10 +14,9 @@ public static class SeedData
     {
         if (await context.Scholarships.AnyAsync())
         {
-            var frontendScholarshipsPathAuto = Path.Combine(Directory.GetCurrentDirectory(), "..", "frontend", "src", "mockdata", "scholarships.json");
-            if (File.Exists(frontendScholarshipsPathAuto))
+            var raw = MockDataJson.ScholarshipsJson;
+            if (!string.IsNullOrWhiteSpace(raw))
             {
-                var raw = await File.ReadAllTextAsync(frontendScholarshipsPathAuto);
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                 var frontendScholarships = JsonSerializer.Deserialize<List<FrontendScholarship>>(raw, options) ?? new List<FrontendScholarship>();
 
@@ -26,12 +25,47 @@ public static class SeedData
                 foreach (var s in allScholarships)
                 {
                     var fs = frontendScholarships.FirstOrDefault(x => x.Title == s.Title);
-                    if (fs != null && fs.Requirements != null)
+                    if (fs != null)
                     {
-                        var expectedReqs = string.Join(',', fs.Requirements);
-                        if (s.Requirements != expectedReqs)
+                        if (fs.Requirements != null)
                         {
-                            s.Requirements = expectedReqs;
+                            var expectedReqs = string.Join('|', fs.Requirements);
+                            if (s.Requirements != expectedReqs)
+                            {
+                                s.Requirements = expectedReqs;
+                                changed = true;
+                            }
+                        }
+                        if (fs.Eligibility?.SpecialConditions != null)
+                        {
+                            var expectedSpec = string.Join('|', fs.Eligibility.SpecialConditions);
+                            if (s.SpecialConditions != expectedSpec)
+                            {
+                                s.SpecialConditions = expectedSpec;
+                                changed = true;
+                            }
+                        }
+                        if (fs.Eligibility?.EligibleCourses != null)
+                        {
+                            var expectedCourses = string.Join('|', fs.Eligibility.EligibleCourses);
+                            if (s.EligibleCourses != expectedCourses)
+                            {
+                                s.EligibleCourses = expectedCourses;
+                                changed = true;
+                            }
+                        }
+                        if (fs.Eligibility?.EligibleBarangays != null)
+                        {
+                            var expectedBarangays = string.Join('|', fs.Eligibility.EligibleBarangays);
+                            if (s.EligibleBarangays != expectedBarangays)
+                            {
+                                s.EligibleBarangays = expectedBarangays;
+                                changed = true;
+                            }
+                        }
+                        if (fs.Provider != null && s.Provider != fs.Provider)
+                        {
+                            s.Provider = fs.Provider;
                             changed = true;
                         }
                     }
@@ -41,18 +75,39 @@ public static class SeedData
                     await context.SaveChangesAsync();
                 }
             }
+            
+            // Cleanup: Auto-withdraw pending apps if student has an approved app
+            var studentsWithApproved = await context.Applications
+                .Where(a => a.Status == ApplicationStatus.Approved)
+                .Select(a => a.StudentId)
+                .Distinct()
+                .ToListAsync();
+
+            foreach (var studentId in studentsWithApproved)
+            {
+                var pendingApps = await context.Applications
+                    .Where(a => a.StudentId == studentId && 
+                                (a.Status == ApplicationStatus.Submitted || 
+                                 a.Status == ApplicationStatus.UnderReview || 
+                                 a.Status == ApplicationStatus.NeedsInfo))
+                    .ToListAsync();
+                    
+                foreach(var app in pendingApps) {
+                    app.Status = ApplicationStatus.Withdrawn;
+                    app.Remarks = "Auto-withdrawn because another scholarship was approved.";
+                }
+            }
+            await context.SaveChangesAsync();
+
             return;
         }
-        // Try to seed from frontend mockdata if available
-        var frontendScholarshipsPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "frontend", "src", "mockdata", "scholarships.json");
-        var frontendApplicantsPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "frontend", "src", "mockdata", "applicants.json");
-
-        if (File.Exists(frontendScholarshipsPath))
+        // Try to seed from MockDataJson
+        var rawNew = MockDataJson.ScholarshipsJson;
+        if (!string.IsNullOrWhiteSpace(rawNew))
         {
             var passwordHasher = new PasswordHasher<AuthUser>();
-            var raw = await File.ReadAllTextAsync(frontendScholarshipsPath);
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var frontendScholarships = JsonSerializer.Deserialize<List<FrontendScholarship>>(raw, options) ?? new List<FrontendScholarship>();
+            var frontendScholarships = JsonSerializer.Deserialize<List<FrontendScholarship>>(rawNew, options) ?? new List<FrontendScholarship>();
 
             // create default barangay
             var barangay = new Barangay { Name = "Seed Barangay" };
@@ -72,8 +127,11 @@ public static class SeedData
                     Description = fs.Description ?? string.Empty,
                     RequiredGwa = fs.Eligibility?.MinGwa ?? 0,
                     MaxHouseholdIncome = fs.AmountRaw != 0 ? Convert.ToDecimal(fs.AmountRaw) : 0m,
-                    EligibleCourses = fs.Eligibility?.EligibleCourses != null ? string.Join(',', fs.Eligibility.EligibleCourses) : string.Empty,
-                    Requirements = fs.Requirements != null ? string.Join(',', fs.Requirements) : string.Empty,
+                    EligibleCourses = fs.Eligibility?.EligibleCourses != null ? string.Join('|', fs.Eligibility.EligibleCourses) : string.Empty,
+                    Requirements = fs.Requirements != null ? string.Join('|', fs.Requirements) : string.Empty,
+                    SpecialConditions = fs.Eligibility?.SpecialConditions != null ? string.Join('|', fs.Eligibility.SpecialConditions) : string.Empty,
+                    EligibleBarangays = fs.Eligibility?.EligibleBarangays != null ? string.Join('|', fs.Eligibility.EligibleBarangays) : string.Empty,
+                    Provider = fs.Provider ?? string.Empty,
                     Deadline = ParseDateOrDefault(fs.Deadline, DateTime.UtcNow.AddMonths(1)),
                     AvailableSlots = fs.Slots ?? 0,
                     Status = (fs.Status != null && fs.Status.Equals("Active", StringComparison.OrdinalIgnoreCase)) ? ScholarshipStatus.Open : ScholarshipStatus.Closed,
@@ -92,20 +150,21 @@ public static class SeedData
             context.Scholarships.AddRange(scholarships);
             await context.SaveChangesAsync();
 
-            // Seed applicants if file exists
-            if (File.Exists(frontendApplicantsPath))
+            // Seed applicants
+            var rawApplicants = MockDataJson.ApplicantsJson;
+            if (!string.IsNullOrWhiteSpace(rawApplicants))
             {
-                var rawApplicants = await File.ReadAllTextAsync(frontendApplicantsPath);
                 var frontendApplicants = JsonSerializer.Deserialize<List<FrontendApplicant>>(rawApplicants, options) ?? new List<FrontendApplicant>();
 
                 var studentUsers = new List<AuthUser>();
                 var students = new List<StudentProfile>();
                 var applications = new List<Application>();
 
+                var uniqueNames = frontendApplicants.Select(fa => fa.Name ?? string.Empty).Where(n => !string.IsNullOrEmpty(n)).Distinct().ToList();
                 var idx = 1;
-                foreach (var fa in frontendApplicants)
+                foreach (var applicantName in uniqueNames)
                 {
-                    var applicantName = fa.Name ?? $"applicant-{idx}";
+                    var fa = frontendApplicants.First(f => f.Name == applicantName);
                     var userName = applicantName.Replace(' ', '.').ToLowerInvariant();
                     var user = new AuthUser { Id = $"applicant-{idx}", UserName = userName, Role = "Student", CreatedAt = DateTime.UtcNow };
                     user.PasswordHash = passwordHasher.HashPassword(user, "Student123!");
