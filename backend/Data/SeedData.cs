@@ -17,6 +17,19 @@ public static class SeedData
             || await context.Students.AnyAsync()
             || await context.Scholarships.AnyAsync())
         {
+            // Auto-heal existing scholarships with empty/missing requirements
+            var scholarshipsWithEmptyReqs = await context.Scholarships
+                .Where(s => string.IsNullOrEmpty(s.Requirements))
+                .ToListAsync();
+
+            if (scholarshipsWithEmptyReqs.Any())
+            {
+                foreach (var s in scholarshipsWithEmptyReqs)
+                {
+                    s.Requirements = "Certificate of Grades,Barangay Indigency,Valid ID";
+                }
+                await context.SaveChangesAsync();
+            }
             return;
         }
         // Try to seed from frontend mockdata if available
@@ -49,6 +62,7 @@ public static class SeedData
                     RequiredGwa = fs.Eligibility?.MinGwa ?? 0,
                     MaxHouseholdIncome = fs.AmountRaw != 0 ? Convert.ToDecimal(fs.AmountRaw) : 0m,
                     EligibleCourses = fs.Eligibility?.EligibleCourses != null ? string.Join(',', fs.Eligibility.EligibleCourses) : string.Empty,
+                    Requirements = fs.Requirements != null ? string.Join(',', fs.Requirements) : string.Empty,
                     Deadline = ParseDateOrDefault(fs.Deadline, DateTime.UtcNow.AddMonths(1)),
                     AvailableSlots = fs.Slots ?? 0,
                     Status = (fs.Status != null && fs.Status.Equals("Active", StringComparison.OrdinalIgnoreCase)) ? ScholarshipStatus.Open : ScholarshipStatus.Closed,
@@ -213,6 +227,7 @@ public static class SeedData
                 RequiredGwa = 2.0,
                 MaxHouseholdIncome = 20000m,
                 EligibleCourses = "BSIT,BSCS",
+                Requirements = "Certificate of Grades,Barangay Indigency,Valid ID",
                 Deadline = DateTime.UtcNow.AddMonths(1),
                 AvailableSlots = 10,
                 Status = ScholarshipStatus.Open,
@@ -226,6 +241,7 @@ public static class SeedData
                 RequiredGwa = 2.5,
                 MaxHouseholdIncome = 18000m,
                 EligibleCourses = string.Empty,
+                Requirements = "Certificate of Grades,Barangay Indigency,Valid ID",
                 Deadline = DateTime.UtcNow.AddDays(21),
                 AvailableSlots = 15,
                 Status = ScholarshipStatus.Open,
@@ -239,6 +255,7 @@ public static class SeedData
                 RequiredGwa = 2.25,
                 MaxHouseholdIncome = 35000m,
                 EligibleCourses = "BSBA",
+                Requirements = "Certificate of Grades,Barangay Indigency,Valid ID",
                 Deadline = DateTime.UtcNow.AddDays(30),
                 AvailableSlots = 8,
                 Status = ScholarshipStatus.Open,

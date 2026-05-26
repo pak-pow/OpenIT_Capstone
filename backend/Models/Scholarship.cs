@@ -11,6 +11,7 @@ public class Scholarship
     public double RequiredGwa { get; set; }
     public decimal MaxHouseholdIncome { get; set; }
     public string EligibleCourses { get; set; } = string.Empty;
+    public string Requirements { get; set; } = string.Empty;
     public DateTime Deadline { get; set; }
     public int AvailableSlots { get; set; }
     public ScholarshipStatus Status { get; set; } = ScholarshipStatus.Open;

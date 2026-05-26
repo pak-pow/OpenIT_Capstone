@@ -43,7 +43,7 @@ public static class MappingExtensions
         Provider = scholarship.Barangay != null ? scholarship.Barangay.Name : scholarship.Type.ToString(),
         Amount = scholarship.MaxHouseholdIncome > 0 ? $"₱{scholarship.MaxHouseholdIncome:N0}" : string.Empty,
         AmountRaw = scholarship.MaxHouseholdIncome,
-        Requirements = Array.Empty<string>(),
+        Requirements = !string.IsNullOrWhiteSpace(scholarship.Requirements) ? scholarship.Requirements.Split(',').Select(r => r.Trim()).ToArray() : Array.Empty<string>(),
         Eligibility = new ScholarshipEligibilityDto
         {
             MinGwa = scholarship.RequiredGwa,
