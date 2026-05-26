@@ -1,11 +1,13 @@
 using Kaagapay.Api.Dtos;
 using Kaagapay.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kaagapay.Api.Controllers;
 
 [ApiController]
 [Route("api/barangays")]
+[Authorize(Roles = "Admin")]
 public class BarangaysController : ControllerBase
 {
     private readonly BarangayService _service;
