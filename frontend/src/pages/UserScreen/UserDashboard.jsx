@@ -6,6 +6,7 @@ import AllScholarshipsView from '../../components/scholarships/AllScholarshipsVi
 import PaldoModal from '../../components/scholarships/PaldoModal';
 import NotPaldoModal from '../../components/scholarships/NotPaldoModal';
 import ApplyModal from '../../components/scholarships/ApplyModal';
+import EndedModal from '../../components/scholarships/EndedModal';
 import { useScholarships } from '../../context/ScholarshipContext';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -143,26 +144,16 @@ const CurrentScholarshipWidget = ({ application }) => {
             <span className="label">Status</span>
             <span className="value" style={{ color: '#059669' }}>Approved</span>
           </div>
-          <div className="meta-item">
-            <span className="label">Renewal Due</span>
-            <span className="value">{renewalStr}</span>
-          </div>
+            <div className="meta-item">
+              <span className="label">Next Renewal</span>
+              <span className="value">{renewalStr}</span>
+            </div>
         </div>
 
-        {/* Payment disbursement notice */}
-        <div className="payment-notice">
-          <div className="payment-notice-icon">
-            <Banknote size={18} />
-          </div>
-          <div className="payment-notice-text">
-            <strong>Grant Disbursement</strong>
-            <p>
-              Your {application.amount} grant will be disbursed within{' '}
-              <strong>30 working days</strong> after approval
-              {application.schoolName ? ` to your registered account at ${application.schoolName}` : ' to your registered school account'}.
-            </p>
-          </div>
-        </div>
+        <p className="payment-inline-note">
+          Your {application.amount} grant will be disbursed within <strong>30 working days</strong> after approval
+          {application.schoolName ? ` to your registered account at ${application.schoolName}` : ' to your registered school account'}.
+        </p>
       </div>
     </div>
   );
@@ -170,11 +161,14 @@ const CurrentScholarshipWidget = ({ application }) => {
 
 // ─── Featured Scholarships (no active scholar) ────────────────────────────────────
 const FeaturedScholarshipsWidget = ({ onApply }) => {
-  const { scholarships, applyToScholarship } = useScholarships();
+  const { scholarships, applications, applyToScholarship } = useScholarships();
   const [selected, setSelected] = useState(null);
 
+  // IDs of scholarships the user already interacted with (any status)
+  const appliedIds = new Set(applications.map(a => a.scholarshipId));
+
   const featured = scholarships
-    .filter(s => new Date(s.deadline) > new Date())
+    .filter(s => new Date(s.deadline) > new Date() && !appliedIds.has(s.id))
     .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
     .slice(0, 2);
 
@@ -396,11 +390,11 @@ const DashboardSidebar = () => {
 const UserDashboard = ({ addToast }) => {
   const [view, setView] = useState('dashboard');
   const statusRef = useRef(null);
-  const { applications, simulateApproval, simulateRejection, clearJustApproved, clearJustRejected } = useScholarships();
+  const { applications, activeScholarship, simulateApproval, simulateRejection, simulateEnded, clearJustApproved, clearJustRejected, clearJustEnded } = useScholarships();
 
   const approvedApp = applications.find(a => a.justApproved);
   const rejectedApp = applications.find(a => a.justRejected);
-  const activeApprovedScholarship = applications.find(a => a.status === 'Approved');
+  const endedApp = applications.find(a => a.justEnded);
   const hasNoApplications = applications.length === 0;
 
   useEffect(() => {
@@ -408,15 +402,16 @@ const UserDashboard = ({ addToast }) => {
       if (e.shiftKey) {
         if (e.key === '3' || e.key === '#') simulateApproval();
         else if (e.key === '4' || e.key === '$') simulateRejection();
+        else if (e.key === '5' || e.key === '%') simulateEnded();
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [simulateApproval, simulateRejection]);
+  }, [simulateApproval, simulateRejection, simulateEnded]);
 
   const handleApply = (scholarship, result) => {
-    if (result === 'active_scholar' || activeApprovedScholarship) {
-      addToast(`You already have an active scholarship. You can apply for others when it expires.`, 'error');
+    if (result === 'active_scholar') {
+      addToast(`You already have an active scholarship (${activeScholarship?.scholarshipName}). Only one is allowed at a time.`, 'error');
       return;
     }
     if (result === true) addToast(`Successfully applied to "${scholarship.title}"!`, 'success');
@@ -437,6 +432,9 @@ const UserDashboard = ({ addToast }) => {
       {rejectedApp && (
         <NotPaldoModal application={rejectedApp} onClose={() => clearJustRejected(rejectedApp.id)} />
       )}
+      {endedApp && (
+        <EndedModal application={endedApp} onClose={() => clearJustEnded(endedApp.id)} />
+      )}
 
       {view === 'dashboard' ? (
         <>
@@ -450,8 +448,8 @@ const UserDashboard = ({ addToast }) => {
                 addToast={addToast}
               />
 
-              {activeApprovedScholarship ? (
-                <CurrentScholarshipWidget application={activeApprovedScholarship} />
+              {activeScholarship ? (
+                <CurrentScholarshipWidget application={activeScholarship} />
               ) : (
                 <>
                   <FeaturedScholarshipsWidget onApply={handleApply} />
@@ -462,7 +460,7 @@ const UserDashboard = ({ addToast }) => {
               <SmartMatchSection
                 onSeeAll={() => setView('all')}
                 onApply={handleApply}
-                disabled={!!activeApprovedScholarship}
+                disabled={!!activeScholarship}
               />
 
               <div ref={statusRef}>
@@ -477,7 +475,7 @@ const UserDashboard = ({ addToast }) => {
         <AllScholarshipsView
           onBack={() => setView('dashboard')}
           addToast={addToast}
-          disabled={!!activeApprovedScholarship}
+          disabled={!!activeScholarship}
         />
       )}
     </StudentLayout>

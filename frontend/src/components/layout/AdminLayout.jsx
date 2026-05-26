@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { LogOut } from "lucide-react";
 import Sidebar from "./Sidebar";
 import { useAuth } from "../../context/AuthContext";
+import LogoutModal from "../common/LogoutModal";
 
 const AdminLayout = ({ children, activeTab, setActiveTab }) => {
   const { currentUser, logout } = useAuth();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   return (
     <div className="admin-layout">
@@ -31,7 +33,7 @@ const AdminLayout = ({ children, activeTab, setActiveTab }) => {
             <button
               className="icon-btn"
               style={{ color: "var(--text-medium)" }}
-              onClick={logout}
+              onClick={() => setShowLogoutModal(true)}
               title="Sign Out"
             >
               <LogOut size={20} />
@@ -40,6 +42,13 @@ const AdminLayout = ({ children, activeTab, setActiveTab }) => {
         </header>
         <main className="admin-content">{children}</main>
       </div>
+
+      {showLogoutModal && (
+        <LogoutModal 
+          onConfirm={logout} 
+          onCancel={() => setShowLogoutModal(false)} 
+        />
+      )}
     </div>
   );
 };

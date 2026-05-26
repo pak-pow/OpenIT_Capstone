@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Mail, Lock, Eye, EyeOff, Shield, Loader2 } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, GraduationCap, Loader2 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
 const LoginPage = ({ onNavigateRegister, onNavigateAdminLogin }) => {
@@ -31,7 +31,7 @@ const LoginPage = ({ onNavigateRegister, onNavigateAdminLogin }) => {
         email: form.email,
       });
       setIsLoading(false);
-    }, 1500);
+    }, 1000);
   };
 
   return (
@@ -40,7 +40,7 @@ const LoginPage = ({ onNavigateRegister, onNavigateAdminLogin }) => {
         {/* Logo / Brand */}
         <div className="auth-logo">
           <div className="auth-logo-icon">
-            <Shield size={28} color="#FFC000" />
+            <GraduationCap size={28} color="#FFC000" />
           </div>
           <h1 className="auth-title">Paldo</h1>
           <p className="auth-subtitle">

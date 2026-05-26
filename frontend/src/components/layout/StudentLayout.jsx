@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { LogOut } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import BottomNav from "./BottomNav";
+import LogoutModal from "../common/LogoutModal";
 
 const StudentLayout = ({ children, view, setView }) => {
   const { currentUser, logout } = useAuth();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   return (
     <div className="student-layout">
@@ -23,7 +25,7 @@ const StudentLayout = ({ children, view, setView }) => {
               {(currentUser?.firstName?.[0] || "S").toUpperCase()}
             </div>
           </div>
-          <button className="icon-btn" title="Sign Out" onClick={logout}>
+          <button className="icon-btn" title="Sign Out" onClick={() => setShowLogoutModal(true)}>
             <LogOut size={20} />
           </button>
         </div>
@@ -32,6 +34,13 @@ const StudentLayout = ({ children, view, setView }) => {
       <main className="student-main">{children}</main>
 
       <BottomNav activeView={view} setView={setView} />
+      
+      {showLogoutModal && (
+        <LogoutModal 
+          onConfirm={logout} 
+          onCancel={() => setShowLogoutModal(false)} 
+        />
+      )}
     </div>
   );
 };

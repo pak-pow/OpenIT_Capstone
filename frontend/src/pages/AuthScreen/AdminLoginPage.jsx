@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import { User, Lock, Eye, EyeOff, ShieldAlert, Loader2, ArrowLeft } from "lucide-react";
+import { User, Lock, Eye, EyeOff, GraduationCap, Loader2, ArrowLeft } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
 const AdminLoginPage = ({ onNavigateLogin }) => {
@@ -35,10 +35,10 @@ const AdminLoginPage = ({ onNavigateLogin }) => {
       <div className="auth-card">
         <div className="auth-logo">
           <div className="auth-logo-icon admin-theme">
-            <ShieldAlert size={28} color="#FFC000" />
+            <GraduationCap size={28} color="#FFC000" />
           </div>
           <div className="admin-badge">
-            <ShieldAlert size={14} />
+              <GraduationCap size={14} />
             Restricted Access — Authorized Personnel Only
           </div>
           <h1 className="auth-title">Admin Sign In</h1>
