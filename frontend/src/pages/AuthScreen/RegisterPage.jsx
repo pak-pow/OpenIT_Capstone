@@ -198,7 +198,7 @@ const RegisterPage = ({ onNavigateLogin }) => {
     ? GRADE_LEVELS[form.educationLevel]
     : [];
   const availableBarangays = form.city
-    ? BARANGAYS_BY_CITY[form.city]
+    ? [...new Set(BARANGAYS_BY_CITY[form.city])]
     : [];
 
   return (

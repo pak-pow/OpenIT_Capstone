@@ -3,7 +3,7 @@ import { X, Save, Plus, Trash2 } from "lucide-react";
 import { useAdminContext } from "../../context/AdminContext";
 import { BARANGAYS_BY_CITY, COURSES, VOCATIONAL_COURSES, SHS_STRANDS, JHS_TRACKS } from "../../mockdata/constants";
 
-const allBarangays = Object.values(BARANGAYS_BY_CITY).flat().sort();
+const allBarangays = [...new Set(Object.values(BARANGAYS_BY_CITY).flat())].sort();
 const allCourses = [...COURSES, ...VOCATIONAL_COURSES, ...SHS_STRANDS, ...JHS_TRACKS].sort();
 
 const CreateProgramModal = ({ onClose, addToast, editData }) => {
@@ -39,7 +39,7 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title || !formData.amount || !formData.deadline) {
       addToast("Please fill in all required fields.", "error");
@@ -64,11 +64,13 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
     };
 
     if (editData) {
-      updateScholarship({ ...editData, ...newProgram });
-      addToast("Program updated successfully!", "success");
+      const ok = await updateScholarship({ ...editData, ...newProgram });
+      if (ok) addToast("Program updated successfully!", "success");
+      else addToast("Unable to update program right now.", "error");
     } else {
-      createScholarship(newProgram);
-      addToast("New program created successfully!", "success");
+      const ok = await createScholarship(newProgram);
+      if (ok) addToast("New program created successfully!", "success");
+      else addToast("Unable to create program right now.", "error");
     }
     onClose();
   };

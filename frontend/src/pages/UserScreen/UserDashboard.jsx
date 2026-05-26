@@ -410,16 +410,21 @@ const UserDashboard = ({ addToast }) => {
     return () => window.removeEventListener('keydown', onKey);
   }, [simulateApproval, simulateRejection, simulateEnded]);
 
-  const handleApply = (scholarship, result) => {
-    if (result === 'active_scholar') {
+  const handleApply = async (scholarship, result) => {
+    const resolvedResult = result instanceof Promise ? await result : result;
+    if (resolvedResult === 'active_scholar') {
       addToast(`You already have an active scholarship (${activeScholarship?.scholarshipName}). Only one is allowed at a time.`, 'error');
       return;
     }
-    if (result === 'failed') {
+    if (resolvedResult === 'missing_profile') {
+      addToast('Complete your student profile before applying for a scholarship.', 'error');
+      return;
+    }
+    if (resolvedResult === 'failed') {
       addToast('Unable to submit your application right now. Please check your profile details and try again.', 'error');
       return;
     }
-    if (result === true) addToast(`Successfully applied to "${scholarship.title}"!`, 'success');
+    if (resolvedResult === true) addToast(`Successfully applied to "${scholarship.title}"!`, 'success');
     else addToast(`You already applied to "${scholarship.title}".`, 'error');
   };
 

@@ -13,6 +13,12 @@ import {
   Loader,
 } from "lucide-react";
 
+const DEFAULT_REQUIREMENTS = [
+  "Valid school ID",
+  "Certificate of enrollment",
+  "Latest grade report",
+];
+
 // ── Step 1: Overview ──────────────────────────────────────────────
 const OverviewStep = ({ scholarship, onNext, onClose }) => (
   <>
@@ -89,8 +95,11 @@ const UploadStep = ({
   onClose,
   isSubmitting,
 }) => {
+  const requirements = scholarship.requirements?.length > 0
+    ? scholarship.requirements
+    : DEFAULT_REQUIREMENTS;
   const [uploads, setUploads] = useState(
-    scholarship.requirements.map(() => null), // null = not uploaded
+    requirements.map(() => null), // null = not uploaded
   );
   const fileRefs = useRef([]);
 
@@ -109,7 +118,7 @@ const UploadStep = ({
     const onKey = (e) => {
       if (e.shiftKey && (e.key === "0" || e.key === ")")) {
         setUploads(
-          scholarship.requirements.map(
+          requirements.map(
             () =>
               new File(["mock content"], "simulated_document.pdf", {
                 type: "application/pdf",
@@ -120,12 +129,12 @@ const UploadStep = ({
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [scholarship.requirements]);
+  }, [requirements]);
 
   const uploadedCount = uploads.filter(Boolean).length;
-  const totalRequired = scholarship.requirements.length;
+  const totalRequired = requirements.length;
   const allUploaded = uploadedCount === totalRequired;
-  const progressPct = Math.round((uploadedCount / totalRequired) * 100);
+  const progressPct = totalRequired > 0 ? Math.round((uploadedCount / totalRequired) * 100) : 100;
 
   return (
     <>
@@ -161,7 +170,7 @@ const UploadStep = ({
           </p>
 
           <div className="upload-list">
-            {scholarship.requirements.map((req, i) => {
+            {requirements.map((req, i) => {
               const file = uploads[i];
               return (
                 <div

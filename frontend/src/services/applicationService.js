@@ -23,7 +23,7 @@ export const applicationService = {
       await delay(400);
       return []; // Return empty for mock as we manage state locally in Context
     }
-    return await apiClient.get(`/applications/user/${userId}`);
+    return await apiClient.get('/applications');
   },
 
   /**

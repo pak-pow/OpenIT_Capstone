@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Search, ArrowLeft, Filter } from "lucide-react";
 import { useScholarships } from "../../context/ScholarshipContext";
 import ApplyModal from "./ApplyModal";
@@ -48,6 +48,11 @@ const AllScholarshipsView = ({ onBack, addToast, disabled }) => {
       addToast(
         `Successfully applied to "${selectedScholarship.title}"!`,
         "success",
+      );
+    } else if (success === "missing_profile") {
+      addToast(
+        "Complete your student profile before applying for a scholarship.",
+        "error",
       );
     } else if (success === "failed") {
       addToast(

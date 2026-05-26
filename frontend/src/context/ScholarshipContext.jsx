@@ -133,8 +133,13 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
       }
     };
     load();
+    const interval = window.setInterval(() => {
+      if (!mounted) return;
+      load().catch((err) => console.error('Failed to refresh scholarship data', err));
+    }, 15000);
     return () => {
       mounted = false;
+      window.clearInterval(interval);
     };
   }, [token]);
 
@@ -157,6 +162,7 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
 
   // ── Apply: blocked if user already has an active (Approved) scholarship ──
   const applyToScholarship = async (scholarship) => {
+    if (!userProfile) return "missing_profile";
     // Guard 1: already an active scholar
     if (activeScholarship) return "active_scholar";
     // Guard 2: already applied to this specific scholarship
@@ -184,7 +190,10 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
       };
       setApplications((prev) => [newApp, ...prev]);
       return true;
-    } catch {
+    } catch (error) {
+      if (String(error?.message || "").toLowerCase().includes("student profile is missing")) {
+        return "missing_profile";
+      }
       return "failed";
     }
   };
