@@ -389,11 +389,10 @@ const DashboardSidebar = () => {
 const UserDashboard = ({ addToast }) => {
   const [view, setView] = useState('dashboard');
   const statusRef = useRef(null);
-  const { applications, simulateApproval, simulateRejection, clearJustApproved, clearJustRejected } = useScholarships();
+  const { applications, activeScholarship, simulateApproval, simulateRejection, clearJustApproved, clearJustRejected } = useScholarships();
 
   const approvedApp = applications.find(a => a.justApproved);
   const rejectedApp = applications.find(a => a.justRejected);
-  const activeApprovedScholarship = applications.find(a => a.status === 'Approved');
   const hasNoApplications = applications.length === 0;
 
   useEffect(() => {
@@ -408,8 +407,8 @@ const UserDashboard = ({ addToast }) => {
   }, [simulateApproval, simulateRejection]);
 
   const handleApply = (scholarship, result) => {
-    if (result === 'active_scholar' || activeApprovedScholarship) {
-      addToast(`You already have an active scholarship. You can apply for others when it expires.`, 'error');
+    if (result === 'active_scholar') {
+      addToast(`You already have an active scholarship (${activeScholarship?.scholarshipName}). Only one is allowed at a time.`, 'error');
       return;
     }
     if (result === true) addToast(`Successfully applied to "${scholarship.title}"!`, 'success');
@@ -443,8 +442,8 @@ const UserDashboard = ({ addToast }) => {
                 addToast={addToast}
               />
 
-              {activeApprovedScholarship ? (
-                <CurrentScholarshipWidget application={activeApprovedScholarship} />
+              {activeScholarship ? (
+                <CurrentScholarshipWidget application={activeScholarship} />
               ) : (
                 <>
                   <FeaturedScholarshipsWidget onApply={handleApply} />
@@ -455,7 +454,7 @@ const UserDashboard = ({ addToast }) => {
               <SmartMatchSection
                 onSeeAll={() => setView('all')}
                 onApply={handleApply}
-                disabled={!!activeApprovedScholarship}
+                disabled={!!activeScholarship}
               />
 
               <div ref={statusRef}>
@@ -470,7 +469,7 @@ const UserDashboard = ({ addToast }) => {
         <AllScholarshipsView
           onBack={() => setView('dashboard')}
           addToast={addToast}
-          disabled={!!activeApprovedScholarship}
+          disabled={!!activeScholarship}
         />
       )}
     </StudentLayout>

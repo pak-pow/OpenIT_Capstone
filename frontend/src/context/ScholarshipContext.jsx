@@ -17,11 +17,24 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
       .sort((a, b) => b.matchPercentage - a.matchPercentage);
   }, [userProfile]);
 
+  // ── Derived: the single active (Approved) scholarship, if any ────
+  // Uses the most recently approved one (highest id = Date.now())
+  const activeScholarship = useMemo(() => {
+    const approved = applications.filter((a) => a.status === "Approved");
+    if (approved.length === 0) return null;
+    return approved.reduce((latest, a) => (a.id > latest.id ? a : latest));
+  }, [applications]);
+
   const hasApplied = (scholarshipId) =>
     applications.some((a) => a.scholarshipId === scholarshipId);
 
+  // ── Apply: blocked if user already has an active (Approved) scholarship ──
   const applyToScholarship = (scholarship) => {
+    // Guard 1: already an active scholar
+    if (activeScholarship) return "active_scholar";
+    // Guard 2: already applied to this specific scholarship
     if (hasApplied(scholarship.id)) return false;
+
     const newApp = {
       id: Date.now(),
       scholarshipId: scholarship.id,
@@ -37,11 +50,17 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
     return true;
   };
 
+  // ── Simulate approval: only approves ONE at a time ────────────────
+  // If an approved scholarship already exists, this is a no-op.
   const simulateApproval = () => {
     setApplications((prev) => {
+      // Block if any scholarship is already Approved
+      const alreadyHasActive = prev.some((a) => a.status === "Approved");
+      if (alreadyHasActive) return prev;
+
       // Find the first Pending or Under Review application
       const idx = prev.findIndex(
-        (a) => a.status === "Pending" || a.status === "Under Review",
+        (a) => a.status === "Pending" || a.status === "Under Review"
       );
       if (idx === -1) return prev;
 
@@ -51,11 +70,11 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
     });
   };
 
+  // ── Simulate rejection: only rejects ONE at a time ────────────────
   const simulateRejection = () => {
     setApplications((prev) => {
-      // Find the first Pending or Under Review application
       const idx = prev.findIndex(
-        (a) => a.status === "Pending" || a.status === "Under Review",
+        (a) => a.status === "Pending" || a.status === "Under Review"
       );
       if (idx === -1) return prev;
 
@@ -67,13 +86,13 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
 
   const clearJustApproved = (appId) => {
     setApplications((prev) =>
-      prev.map((a) => (a.id === appId ? { ...a, justApproved: false } : a)),
+      prev.map((a) => (a.id === appId ? { ...a, justApproved: false } : a))
     );
   };
 
   const clearJustRejected = (appId) => {
     setApplications((prev) =>
-      prev.map((a) => (a.id === appId ? { ...a, justRejected: false } : a)),
+      prev.map((a) => (a.id === appId ? { ...a, justRejected: false } : a))
     );
   };
 
@@ -82,6 +101,7 @@ export const ScholarshipProvider = ({ children, userProfile }) => {
       value={{
         scholarships: scholarshipsWithMatch,
         applications,
+        activeScholarship,       // ← single source of truth for "am I an active scholar?"
         applyToScholarship,
         hasApplied,
         simulateApproval,
