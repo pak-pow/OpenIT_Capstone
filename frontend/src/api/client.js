@@ -8,11 +8,17 @@ const buildUrl = (path) => {
 
   const normalizedBaseUrl = API_BASE_URL.replace(/\/$/, "");
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  if (normalizedBaseUrl.endsWith("/api") && normalizedPath.startsWith("/api/")) {
-    return `${normalizedBaseUrl}${normalizedPath.slice(4)}`;
+  const apiPath = normalizedPath.startsWith("/api/") || normalizedPath === "/api"
+    ? normalizedPath
+    : `/api${normalizedPath}`;
+
+  if (normalizedBaseUrl.endsWith("/api")) {
+    return apiPath === "/api"
+      ? normalizedBaseUrl
+      : `${normalizedBaseUrl}${apiPath.slice(4)}`;
   }
 
-  return `${normalizedBaseUrl}${normalizedPath}`;
+  return `${normalizedBaseUrl}${apiPath}`;
 };
 
 const parseResponseBody = async (response) => {
