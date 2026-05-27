@@ -30,6 +30,9 @@ backend/obj/
 ehthumbs.db
 Thumbs.db
 
+# Private defense prep notes
+.private/
+
 
 Kaagapay.Api.Tests
 
