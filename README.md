@@ -1,26 +1,35 @@
 # Paldo: Barangay Scholarship System
 
-Paldo is a comprehensive web application designed to streamline the scholarship application and management process for Local Government Units (LGUs) and Barangays. Developed as a Capstone Project, it bridges the gap between students seeking financial assistance and the organizations providing educational grants.
+Paldo is a full-stack scholarship application system (Capstone Project) that connects students and local government scholarship providers. This README summarizes how to run the project, available docs, and quick development workflows.
+
+---
+
+## Quick Links
+- Backend docs: [docs/backend.md](docs/backend.md)
+- Frontend docs: [docs/frontend.md](docs/frontend.md)
+- Docker & Compose notes: [docs/docker.md](docs/docker.md)
 
 ---
 
 ## Architecture Overview
 
-The project is structured as a full-stack application divided into two primary components:
+The repository contains two main components:
 
-* **frontend/**: A Single Page Application (SPA) built with React and Vite.
-* **backend/**: A RESTful Web API built with ASP.NET Core and Entity Framework Core.
+- `backend/` — ASP.NET Core Web API (C#, EF Core, PostgreSQL)
+- `frontend/` — React + Vite Single Page Application
+
+Both components are intended to run independently during development or together via Docker Compose.
 
 ---
 
-## Core Features
+## Quickstart — Local (native)
 
-### Student Portal
-* **Smart Match Engine**: Evaluates a student's profile (General Weighted Average, income rank, etc.) and automatically matches them with eligible scholarship opportunities.
-* **Streamlined Applications**: Enables students to apply for matched scholarships seamlessly without redundant data entry.
-* **Status Tracking**: Provides real-time visibility into application statuses across multiple categories (Pending, Approved, Withdrawn, Ended, Rejected).
-* **Active Scholar Hub**: A dedicated view for approved scholars highlighting active grants and expected stipends.
+Prerequisites:
+- Node.js v18+ (frontend)
+- .NET 8.0 SDK (backend)
+- PostgreSQL (or use the Docker DB from the Compose setup)
 
+<<<<<<< HEAD
 ### Administrator Portal
 * **Centralized Dashboard**: Provides administrators with a high-level overview of active scholarships, pending applications, disbursed funds, and approved scholars.
 * **Program Management**: Create and configure new scholarships with a "Term End Date" that automatically dictates when an approved scholar's stipend concludes.
@@ -85,36 +94,85 @@ OpenIT_Capstone/
 
 ### Frontend Configuration
 The frontend can be run locally using the Vite development server.
+=======
+Frontend (dev server):
+>>>>>>> 30d2348 (fix: readme instructions)
 
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-The application will be accessible at http://localhost:5173.
 
-### Backend Configuration
-The backend requires setting up a PostgreSQL connection string inside `appsettings.json` or `appsettings.Development.json`.
+Backend (run locally):
 
 ```bash
 cd backend
 dotnet restore
 dotnet run
 ```
-The REST API will boot up and listen for requests from the frontend client.
+
+By default Vite runs on port 5173 and the backend listens on the port configured in `appsettings.Development.json` (or as printed in the console). Use the frontend docs for proxy configuration details.
 
 ---
 
-## Frontend Simulation Hotkeys
+## Quickstart — Docker (recommended for parity)
 
+<<<<<<< HEAD
 For demonstration and development purposes, the frontend supports hidden developer hotkeys that allow you to simulate application lifecycle changes. These hotkeys trigger live authenticated API requests to the PostgreSQL database, perfectly synchronizing the Student and Admin dashboards:
 
 * `Shift + 3` (or `#`): **Simulate Approval**. Approves the first pending application on the backend, decrements global available slots, and auto-withdraws the student's other pending applications.
 * `Shift + 4` (or `$`): **Simulate Rejection**. Rejects the oldest pending application.
 * `Shift + 5` (or `%`): **Simulate Application Completed**. Forcefully concludes an active (or pending) application by marking it as "Completed" (Status 6), mimicking the natural end of a term.
+=======
+Start the full stack (backend, frontend, database) using Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+Notes:
+- The Compose stack wires service hostnames (e.g., `db`) so the backend can connect to the database without changing localhost-based connection strings.
+- See [docs/docker.md](docs/docker.md) for Dockerfile patterns and development tips.
+>>>>>>> 30d2348 (fix: readme instructions)
 
 ---
 
-## License
+## Project structure (high-level)
 
-This project was developed as a Capstone Project and is intended for academic, evaluation, and demonstration purposes.
+```
+backend/    # ASP.NET Core API, controllers, services, EF Core migrations
+frontend/   # React (Vite) app, components, pages, services
+docs/       # Explanatory docs (backend, frontend, docker)
+```
+
+See the docs links above for per-file explanations and example snippets.
+
+---
+
+## Development tips
+
+- Use `dotnet watch run` inside `backend/` for automatic recompiles while developing the API.
+- Use the Vite dev server (`npm run dev`) for fast frontend iteration and hot reload.
+- For end-to-end local parity use `docker compose up --build` and the included service networking.
+
+---
+
+## Tests
+
+Unit and integration tests live under `backend/Kaagapay.Api.Tests` — run them with:
+
+```bash
+cd backend
+dotnet test
+```
+
+---
+
+## Contributing
+
+Open a PR against `main`; include a short description of your change and any migration or configuration steps required.
+
+---
+
+If you want, I can add direct file links to each controller and service inside `docs/backend.md` for quick navigation or generate a `docker-compose.override.yml` optimized for local development with mounted volumes.
