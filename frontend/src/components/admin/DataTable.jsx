@@ -157,18 +157,16 @@ const DataTable = ({ addToast }) => {
 
   return (
     <>
-      <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
+      <div className="dt-controls">
         <input
           type="text"
           placeholder="Search applicants or programs..."
-          className="form-input"
-          style={{ flex: 1 }}
+          className="form-input dt-search"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
         <select
-          className="form-input"
-          style={{ width: "200px" }}
+          className="form-input dt-filter"
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
         >
@@ -186,7 +184,7 @@ const DataTable = ({ addToast }) => {
         <table className="data-table">
           <thead>
             <tr>
-              <th style={{ width: "6px", padding: 0 }}></th>
+              <th className="dt-group-th"></th>
               <th>Applicant Name</th>
               <th>Scholarship Program</th>
               <th>GWA</th>
@@ -208,22 +206,18 @@ const DataTable = ({ addToast }) => {
                   >
                     {/* Grouping sidebar cell */}
                     <td
+                      className="dt-group-td"
                       style={{
-                        padding: 0,
-                        width: "6px",
-                        position: "relative",
                         borderBottom:
                           g.isGrouped && !g.isLast ? "none" : undefined,
                       }}
                     >
                       {g.isGrouped && (
                         <div
+                          className="dt-group-indicator"
                           style={{
-                            position: "absolute",
-                            left: 0,
                             top: g.isFirst ? "8px" : 0,
                             bottom: g.isLast ? "8px" : 0,
-                            width: "4px",
                             backgroundColor: g.color,
                             borderRadius:
                               g.isFirst && g.isLast
@@ -238,13 +232,7 @@ const DataTable = ({ addToast }) => {
                       )}
                     </td>
                     <td className="table-cell-name">
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px",
-                        }}
-                      >
+                      <div className="dt-name-container">
                         <span>{a.name}</span>
                         {g.isGrouped && g.isFirst && (
                           <span className="badge badge-info">
@@ -263,11 +251,7 @@ const DataTable = ({ addToast }) => {
                     </td>
                     <td>
                       {a.status === "Approved" || a.status === "Completed" ? (
-                        <button
-                          className="btn-review"
-                          disabled
-                          style={{ opacity: 0.6, cursor: "not-allowed" }}
-                        >
+                        <button className="btn-review" disabled>
                           Reviewed
                         </button>
                       ) : (
@@ -279,14 +263,6 @@ const DataTable = ({ addToast }) => {
                             a.status === "Withdrawn" ||
                             a.status === "Completed"
                           }
-                          style={{
-                            opacity:
-                              a.status === "Rejected" ||
-                              a.status === "Withdrawn" ||
-                              a.status === "Completed"
-                                ? 0.5
-                                : 1,
-                          }}
                         >
                           {a.status === "Rejected" ||
                           a.status === "Withdrawn" ||
@@ -319,40 +295,26 @@ const DataTable = ({ addToast }) => {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginTop: "1rem",
-            padding: "0 0.25rem",
-          }}
-        >
-          <span style={{ fontSize: "0.85rem", color: "var(--text-medium)" }}>
+        <div className="dt-pagination">
+          <span className="dt-page-info">
             Showing {(safeCurrentPage - 1) * ROWS_PER_PAGE + 1}–
             {Math.min(safeCurrentPage * ROWS_PER_PAGE, sortedApplicants.length)}{" "}
             of {sortedApplicants.length} applicants
           </span>
-          <div style={{ display: "flex", gap: "4px" }}>
+          <div className="dt-page-btns">
             <button
               className="btn-review"
               disabled={safeCurrentPage <= 1}
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              style={{ opacity: safeCurrentPage <= 1 ? 0.4 : 1 }}
             >
               ← Prev
             </button>
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <button
                 key={page}
-                className="btn-review"
+                className={`btn-review ${page === safeCurrentPage ? "dt-btn-active" : ""}`}
                 onClick={() => setCurrentPage(page)}
-                style={{
-                  backgroundColor:
-                    page === safeCurrentPage ? "var(--navy-blue)" : undefined,
-                  color: page === safeCurrentPage ? "var(--white)" : undefined,
-                  minWidth: "36px",
-                }}
+                style={{ minWidth: "36px" }}
               >
                 {page}
               </button>
@@ -361,7 +323,6 @@ const DataTable = ({ addToast }) => {
               className="btn-review"
               disabled={safeCurrentPage >= totalPages}
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              style={{ opacity: safeCurrentPage >= totalPages ? 0.4 : 1 }}
             >
               Next →
             </button>

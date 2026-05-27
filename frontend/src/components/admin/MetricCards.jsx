@@ -34,8 +34,8 @@ const MetricCards = () => {
         </div>
       </div>
       <div className="card metric-card">
-        <div className="metric-icon" style={{ backgroundColor: "#fef3c7", color: "#d97706" }}>
-          <span style={{ fontSize: '20px', fontWeight: 'bold' }}>₱</span>
+        <div className="metric-icon metric-icon-gold">
+          <span>₱</span>
         </div>
         <div className="metric-content">
           <span className="metric-label">Funds Disbursed</span>

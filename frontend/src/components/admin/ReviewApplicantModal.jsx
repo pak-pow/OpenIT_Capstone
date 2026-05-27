@@ -30,11 +30,10 @@ const ReviewApplicantModal = ({ applicant, onClose, addToast }) => {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose} style={{ zIndex: 10000 }}>
+    <div className="modal-overlay admin-modal-overlay" onClick={onClose}>
       <div
-        className="modal-card"
+        className="modal-card review-modal-card"
         onClick={(e) => e.stopPropagation()}
-        style={{ maxWidth: "600px" }}
       >
         <div className="modal-header">
           <h2 className="modal-title">Review Application</h2>
@@ -44,159 +43,65 @@ const ReviewApplicantModal = ({ applicant, onClose, addToast }) => {
         </div>
 
         <div className="modal-body">
-          <div
-            style={{ display: "flex", gap: "1.5rem", marginBottom: "1.5rem" }}
-          >
-            <div
-              style={{
-                flex: 1,
-                background: "var(--light-gray)",
-                padding: "1rem",
-                borderRadius: "var(--radius-md)",
-              }}
-            >
-              <p
-                style={{
-                  margin: "0 0 0.5rem",
-                  fontSize: "0.85rem",
-                  color: "var(--text-light)",
-                }}
-              >
+          <div className="review-info-container">
+            <div className="review-info-box">
+              <p className="review-info-label">
                 Applicant Name
               </p>
-              <h3
-                style={{
-                  margin: 0,
-                  fontSize: "1.25rem",
-                  color: "var(--navy-blue)",
-                }}
-              >
+              <h3 className="review-info-value">
                 {applicant.name}
               </h3>
-              <p
-                style={{
-                  margin: "0.5rem 0 0",
-                  fontSize: "0.9rem",
-                  color: "var(--text-medium)",
-                }}
-              >
+              <p className="review-info-sub">
                 {applicant.course || "No course specified"}
               </p>
             </div>
-            <div
-              style={{
-                flex: 1,
-                background: "var(--light-gray)",
-                padding: "1rem",
-                borderRadius: "var(--radius-md)",
-              }}
-            >
-              <p
-                style={{
-                  margin: "0 0 0.5rem",
-                  fontSize: "0.85rem",
-                  color: "var(--text-light)",
-                }}
-              >
+            <div className="review-info-box">
+              <p className="review-info-label">
                 Scholarship Program
               </p>
-              <h3
-                style={{
-                  margin: 0,
-                  fontSize: "1.1rem",
-                  color: "var(--navy-blue)",
-                }}
-              >
+              <h3 className="review-info-value-sm">
                 {applicant.program}
               </h3>
-              <p
-                style={{
-                  margin: "0.5rem 0 0",
-                  fontSize: "0.9rem",
-                  color: "var(--text-medium)",
-                }}
-              >
+              <p className="review-info-sub">
                 Applied: {applicant.appliedDate}
               </p>
             </div>
           </div>
 
-          <div style={{ marginBottom: "1.5rem" }}>
-            <h4 style={{ marginBottom: "0.5rem", color: "var(--navy-blue)" }}>
+          <div>
+            <h4 className="review-section-title">
               Academic & Financial Profile
             </h4>
-            <div
-              style={{
-                display: "flex",
-                gap: "1rem",
-                background: "#fff",
-                border: "1px solid var(--border-light)",
-                padding: "1rem",
-                borderRadius: "var(--radius-md)",
-              }}
-            >
+            <div className="review-gwa-box">
               <div>
-                <span
-                  style={{
-                    display: "block",
-                    fontSize: "0.85rem",
-                    color: "var(--text-light)",
-                  }}
-                >
+                <span className="review-gwa-label">
                   GWA
                 </span>
-                <span style={{ fontWeight: "600", color: "var(--text-dark)" }}>
+                <span className="review-gwa-val">
                   {applicant.gpa}
                 </span>
               </div>
             </div>
           </div>
 
-          <div style={{ marginBottom: "2rem" }}>
-            <h4 style={{ marginBottom: "0.5rem", color: "var(--navy-blue)" }}>
+          <div>
+            <h4 className="review-section-title">
               Submitted Documents
             </h4>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.5rem",
-              }}
-            >
+            <div className="review-docs-list">
               {(applicant.documents || ["Certificate of Grades", "Barangay Indigency", "Valid ID"]).map(
                 (doc, idx) => (
                   <div
                     key={idx}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "0.75rem",
-                      border: "1px solid var(--border-light)",
-                      borderRadius: "var(--radius-md)",
-                    }}
+                    className="review-doc-item"
                   >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.5rem",
-                      }}
-                    >
+                    <div className="review-doc-name">
                       <FileText size={18} color="var(--navy-blue)" />
-                      <span
-                        style={{
-                          fontSize: "0.9rem",
-                          color: "var(--text-dark)",
-                        }}
-                      >
+                      <span className="review-doc-text">
                         {doc}.pdf
                       </span>
                     </div>
-                    <button
-                      className="btn btn-ghost"
-                      style={{ padding: "4px 8px", fontSize: "0.8rem" }}
-                    >
+                    <button className="btn btn-ghost review-doc-btn">
                       View
                     </button>
                   </div>
@@ -205,29 +110,15 @@ const ReviewApplicantModal = ({ applicant, onClose, addToast }) => {
             </div>
           </div>
 
-          <div style={{ display: "flex", gap: "1rem" }}>
+          <div className="review-actions">
             <button
-              className="btn btn-danger"
-              style={{
-                flex: 1,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "0.5rem",
-              }}
+              className="btn btn-danger review-btn"
               onClick={handleReject}
             >
               <XCircle size={18} /> Reject
             </button>
             <button
-              className="btn btn-success"
-              style={{
-                flex: 1,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "0.5rem",
-              }}
+              className="btn btn-success review-btn"
               onClick={handleApprove}
             >
               <Check size={18} /> Approve

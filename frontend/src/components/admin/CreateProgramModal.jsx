@@ -77,11 +77,10 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose} style={{ zIndex: 10000 }}>
+    <div className="modal-overlay admin-modal-overlay" onClick={onClose}>
       <div
-        className="modal-card"
+        className="modal-card create-prog-card"
         onClick={(e) => e.stopPropagation()}
-        style={{ maxWidth: "500px" }}
       >
         <div className="modal-header">
           <h2 className="modal-title">
@@ -94,7 +93,7 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
         <div className="modal-body">
           <form
             onSubmit={handleSubmit}
-            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+            className="create-prog-form"
           >
             <div className="form-group">
               <label className="form-label">Program Title *</label>
@@ -109,8 +108,8 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
               />
             </div>
 
-            <div style={{ display: "flex", gap: "1rem" }}>
-              <div className="form-group" style={{ flex: 1 }}>
+            <div className="form-row">
+              <div className="form-group form-group-flex">
                 <label className="form-label">Provider</label>
                 <input
                   type="text"
@@ -121,7 +120,7 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
                   placeholder="e.g. LGU"
                 />
               </div>
-              <div className="form-group" style={{ flex: 1 }}>
+              <div className="form-group form-group-flex">
                 <label className="form-label">Type</label>
                 <select
                   name="type"
@@ -138,39 +137,19 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
               </div>
             </div>
 
-            <div style={{ display: "flex", gap: "1rem" }}>
-              <div className="form-group" style={{ flex: 1 }}>
+            <div className="form-row">
+              <div className="form-group form-group-flex">
                 <label className="form-label">Stipend Amount *</label>
                 <div
-                  className="form-input"
-                  style={{
-                    display: "flex",
-                    padding: 0,
-                    overflow: "hidden",
-                    alignItems: "center",
-                  }}
+                  className="form-input input-with-prefix"
                 >
-                  <span
-                    style={{
-                      padding: "0 0.75rem",
-                      color: "var(--text-medium)",
-                      fontWeight: "600",
-                    }}
-                  >
+                  <span className="input-prefix">
                     ₱
                   </span>
                   <input
                     type="number"
                     name="amount"
-                    style={{
-                      border: "none",
-                      padding: "0.75rem 0",
-                      width: "100%",
-                      outline: "none",
-                      background: "transparent",
-                      fontSize: "var(--font-size-base)",
-                      color: "var(--text-dark)",
-                    }}
+                    className="input-prefixed-field"
                     value={formData.amount}
                     onChange={handleChange}
                     placeholder="5000"
@@ -178,7 +157,7 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
                   />
                 </div>
               </div>
-              <div className="form-group" style={{ flex: 1 }}>
+              <div className="form-group form-group-flex">
                 <label className="form-label">Slots</label>
                 <input
                   type="number"
@@ -191,8 +170,8 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
               </div>
             </div>
 
-            <div style={{ display: "flex", gap: "1rem" }}>
-              <div className="form-group" style={{ flex: 1 }}>
+            <div className="form-row">
+              <div className="form-group form-group-flex">
                 <label className="form-label">Application Deadline *</label>
                 <input
                   type="date"
@@ -203,7 +182,7 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
                   required
                 />
               </div>
-              <div className="form-group" style={{ flex: 1 }}>
+              <div className="form-group form-group-flex">
                 <label className="form-label">End Term Date (Stipend End)</label>
                 <input
                   type="date"
@@ -227,11 +206,11 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
               />
             </div>
 
-            <hr style={{ margin: "1rem 0", borderColor: "var(--border-light)" }} />
-            <h4 style={{ marginBottom: "0.5rem", color: "var(--navy-blue)" }}>Eligibility Requirements</h4>
+            <hr className="prog-hr" />
+            <h4 className="prog-section-title">Eligibility Requirements</h4>
 
-            <div style={{ display: "flex", gap: "1rem" }}>
-              <div className="form-group" style={{ flex: 1 }}>
+            <div className="form-row">
+              <div className="form-group form-group-flex">
                 <label className="form-label">Minimum GWA (e.g. 1.5)</label>
                 <input
                   type="number"
@@ -242,7 +221,7 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
                   onChange={handleChange}
                 />
               </div>
-              <div className="form-group" style={{ flex: 1 }}>
+              <div className="form-group form-group-flex">
                 <label className="form-label">Max Income Bracket</label>
                 <select
                   name="maxIncomeRank"
@@ -259,8 +238,8 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
               </div>
             </div>
 
-            <div style={{ display: "flex", gap: "1rem" }}>
-              <div className="form-group" style={{ flex: 1 }}>
+            <div className="form-row">
+              <div className="form-group form-group-flex">
                 <label className="form-label">Barangay Restriction</label>
                 <select
                   name="eligibleBarangay"
@@ -274,7 +253,7 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
                   ))}
                 </select>
               </div>
-              <div className="form-group" style={{ flex: 1 }}>
+              <div className="form-group form-group-flex">
                 <label className="form-label">Course Restriction</label>
                 <select
                   name="eligibleCourse"
@@ -290,43 +269,24 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
               </div>
             </div>
 
-            <hr style={{ margin: "1rem 0", borderColor: "var(--border-light)" }} />
-            <h4 style={{ marginBottom: "0.5rem", color: "var(--navy-blue)" }}>Required Documents</h4>
-            <p style={{ fontSize: "var(--font-size-xs)", color: "var(--text-medium)", marginBottom: "0.75rem" }}>
+            <hr className="prog-hr" />
+            <h4 className="prog-section-title">Required Documents</h4>
+            <p className="prog-desc">
               Add the documents that applicants must submit. Each entry becomes a required document in the application form.
             </p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <div className="prog-req-list">
               {requirements.map((req, idx) => (
                 <div
                   key={idx}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                  }}
+                  className="prog-req-item"
                 >
-                  <span
-                    style={{
-                      minWidth: "24px",
-                      height: "24px",
-                      borderRadius: "50%",
-                      backgroundColor: "var(--info-bg)",
-                      color: "var(--info-text)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "0.7rem",
-                      fontWeight: 700,
-                      flexShrink: 0,
-                    }}
-                  >
+                  <span className="prog-req-num">
                     {idx + 1}
                   </span>
                   <input
                     type="text"
-                    className="form-input"
-                    style={{ flex: 1 }}
+                    className="form-input prog-req-input"
                     value={req}
                     onChange={(e) => updateRequirement(idx, e.target.value)}
                     placeholder={`e.g. Certified true copy of grades`}
@@ -334,18 +294,8 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
                   {requirements.length > 1 && (
                     <button
                       type="button"
+                      className="prog-req-remove"
                       onClick={() => removeRequirement(idx)}
-                      style={{
-                        background: "none",
-                        border: "none",
-                        cursor: "pointer",
-                        color: "var(--danger-text)",
-                        padding: "4px",
-                        borderRadius: "var(--radius-sm)",
-                        display: "flex",
-                        alignItems: "center",
-                        transition: "background var(--transition-fast)",
-                      }}
                       title="Remove this document"
                     >
                       <Trash2 size={16} />
@@ -356,44 +306,19 @@ const CreateProgramModal = ({ onClose, addToast, editData }) => {
             </div>
             <button
               type="button"
+              className="prog-add-btn"
               onClick={addRequirement}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.4rem",
-                marginTop: "0.5rem",
-                background: "none",
-                border: "1.5px dashed var(--border-color)",
-                borderRadius: "var(--radius-sm)",
-                padding: "0.5rem 1rem",
-                cursor: "pointer",
-                color: "var(--primary)",
-                fontWeight: 600,
-                fontSize: "var(--font-size-sm)",
-                transition: "all var(--transition-fast)",
-                width: "100%",
-                justifyContent: "center",
-              }}
             >
               <Plus size={16} /> Add Document Requirement
             </button>
 
-            <div
-              className="form-actions"
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                gap: "1rem",
-                marginTop: "1rem",
-              }}
-            >
+            <div className="form-actions prog-form-actions">
               <button type="button" className="btn btn-ghost" onClick={onClose}>
                 Cancel
               </button>
               <button
                 type="submit"
-                className="btn btn-primary"
-                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+                className="btn btn-primary prog-save-btn"
               >
                 <Save size={18} /> {editData ? "Save Changes" : "Save Program"}
               </button>
